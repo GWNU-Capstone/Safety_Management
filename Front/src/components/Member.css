@@ -1,0 +1,84 @@
+/* member.css */
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.member-container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  text-align: center;
+  overflow-x: hidden;
+
+  background-image: url('../../public/img/member-background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.memberLogo {
+  margin: 0 auto;
+  width: 40vw;
+  height: auto;
+}
+
+.table-container {
+  max-height: 70vh;
+  max-width: 97vw;
+  overflow-y: auto;
+  border: 1px solid;
+  margin: 0 auto;
+
+}
+
+.table-container table {
+  border-collapse: collapse;
+  width: 100%;
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: black;
+}
+
+.table-header {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  font-family: 'Jalnan2', sans-serif;
+  font-size: 15px;
+  color: black;
+}
+
+.table-body {
+  margin-top: -2px;
+  margin-bottom: 10px;
+}
+
+.table-container th {
+  height: 40px;
+  padding: 8px;
+  text-align: left;
+}
+
+.table-container td {
+  padding: 8px; /* 셀 내부 여백 설정 */
+  border: 1px solid #ddd; /* 테두리 설정 */
+  text-align: left; /* 텍스트 정렬 설정 */
+}
+
+.table-container th {
+  background-color: #f2f2f2; /* 헤더 배경색 설정 */
+}
+
+
+a {
+  text-decoration: none; /* 링크의 밑줄 제거 */
+  color: inherit; /* 부모 요소의 글자색을 상속 */
+}
+
+a:hover {
+  text-decoration: none; /* 호버 시 밑줄 추가 */
+  color: inherit; /* 부모 요소의 글자색을 상속 */
+}
