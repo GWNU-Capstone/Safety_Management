@@ -20,7 +20,7 @@ public class UserDrinkController {
 
     private final UserDataRepository userDataRepository;
 
-    @GetMapping("/members/{user_no}/drink")
+    @GetMapping("/members/{user_no}.drink")
     public UserDataDTO getUserData(@PathVariable("user_no") int user_no) {
         UserData userData = userDataRepository.findById(user_no).orElseThrow(() -> new EntityNotFoundException("Not Found Id"));
         UserDataDTO dto = new UserDataDTO();
