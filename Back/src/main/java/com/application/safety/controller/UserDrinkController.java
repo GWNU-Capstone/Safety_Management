@@ -2,9 +2,7 @@ package com.application.safety.controller;
 
 
 import com.application.safety.dto.UserDataDTO;
-import com.application.safety.dto.UserProfileDTO;
 import com.application.safety.entity.UserData;
-import com.application.safety.entity.UserProfile;
 import com.application.safety.repository.UserDataRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
