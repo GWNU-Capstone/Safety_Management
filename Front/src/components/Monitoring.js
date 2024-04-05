@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './Monitoring.css';
 
 const MonitoringScreen = () => {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(1);
   const [temperature, setTemperature] = useState(null);
   const [alcoholLevel, setAlcoholLevel] = useState(null);
   const [fingerprintScanComplete, setFingerprintScanComplete] = useState(false);
@@ -12,16 +12,8 @@ const MonitoringScreen = () => {
   const [isGuidanceStarted, setIsGuidanceStarted] = useState(false);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (step < 6) {
-        setStep(prevStep => prevStep + 1);
-      } else {
-        clearInterval(interval);
-      }
-    }, 7000);
-    
-    return () => clearInterval(interval);
-  }, [step]);
+    startGuidance(); // 안내 시작
+  }, []);
 
   const startGuidance = () => {
     setIsGuidanceStarted(true);
@@ -97,7 +89,7 @@ const MonitoringScreen = () => {
   }, [step, temperature, alcoholLevel, isGuidanceStarted]);
 
   const resetMeasurement = () => {
-    setStep(0);
+    setStep(1);
     setTemperature(null);
     setAlcoholLevel(null);
     setFingerprintScanComplete(false);
@@ -107,12 +99,6 @@ const MonitoringScreen = () => {
 
   const renderStep = () => {
     switch (step) {
-      case 0:
-        return (
-          <div>
-            <p>단계 0: 시작 중...</p>
-          </div>
-        );
       case 1:
         return (
           <div>
@@ -179,8 +165,8 @@ const MonitoringScreen = () => {
           <div className="info-box-1"></div>
           <div className="info-box-2"></div>
           <div className="info-box-3"></div>
-          <div className="info-box-4"></div>
-          <div className="info-box-5"></div>
+          <div className="info-box-4">{alcoholLevel !== null && <p>알코올 농도: {alcoholLevel}</p>}</div>
+          <div className="info-box-5">{temperature !== null && <p>체온: {temperature}°C</p>}</div>
           <div className="info-box-6"></div>
         </div>
       </div>
