@@ -1,0 +1,127 @@
+.Main {
+    text-align: center;
+    overflow: hidden; /* 스크롤 바 숨기기 */
+  
+    background-image: url('../../public/img/background.jpg');
+    background-size: cover; /* 이미지를 웹 페이지에 맞게 조절 */
+    background-position: center;
+    background-repeat: no-repeat; /* 이미지 반복 방지 */
+  
+    /* 웹 페이지의 너비에 따라 이미지 크기 조절 */
+    width: 100vw;
+    height: 100vh;
+  
+    /*수직 중앙 정렬*/
+    display: flex;
+    align-items: center;
+  }
+  
+  /* 배경화면 위에 투명도가 20%인 검은색 화면 추가 */
+  .Main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .logo {
+    animation: moveUpDown 2s ease-in-out infinite alternate; /* 애니메이션 적용 */
+  
+    width: 60vw;
+    height: auto;
+    
+    margin: 0 auto;
+  
+    /* 수직 중앙 정렬을 위한 추가 CSS */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .notice {
+    position: absolute; /* 절대 위치 설정 */
+    bottom: 10px; /* 아래 여백 설정 */
+    left: 10px; /* 왼쪽 여백 설정 */
+    color: white; /* 텍스트 색상 설정 */
+  
+    font-family: 'Jalnan2', sans-serif;
+    font-size: 15px;
+  }
+  
+  .additional-text {
+    text-indent: 0;
+    margin-left: 10px;
+    font-size: 13px;
+  }
+  .menu-wrapper {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 50px; /* 이미지 크기 설정 */
+    height: auto;
+  }
+  
+  .menu-button {
+    width: 100%;
+    height: auto;
+  }
+  
+  .menu-button:hover {
+    cursor: pointer;
+  }
+  
+  .menu-dropdown {
+    position: absolute;
+  
+    width: 150px;
+    height: auto;
+  
+    top: 60px;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0);
+    border: 2px solid white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .menu-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: transparent;
+    color: white;
+    font-family: 'Jalnan2', sans-serif;
+    font-size: 18px;
+    text-align: left;
+  }
+  
+  .menu-icon {
+    width: 30px;
+    height: auto;
+    margin-right: 10px;
+  }
+  
+  .menu-item:hover {
+    cursor: pointer;
+  }
+  
+  
+  @font-face {
+    font-family: 'Jalnan2';
+    src: url('../../public/fonts/Jalnan2.otf') format('opentype');
+  }
+  
+  /* 로고가 위아래로 이동하는 애니메이션 */
+  @keyframes moveUpDown {
+    0% {
+      transform: translateY(0); /* 초기 위치 */
+    }
+    100% {
+      transform: translateY(10px); /* 최종 위치 */
+    }
+  }

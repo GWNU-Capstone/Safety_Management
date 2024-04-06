@@ -1,0 +1,71 @@
+.monitoring-container {
+  display: grid;
+  grid-template-columns: 50vw 50vw;
+  grid-template-rows: 30vh 70vh;
+  height: 100vh;
+
+  background-image: url('../../public/img/member-background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  
+  overflow-y: hidden;
+}
+
+.logo-container {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-container img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+}
+
+
+.info-container {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.square {
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
+  position: absolute;
+  border: 2px dashed white;
+  top: 20px;
+  left: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3개의 열 설정 */
+  grid-template-rows: repeat(2, 1fr); /* 2개의 행 설정 */
+  gap: 10px; /* 그리드 간격 설정 */
+}
+
+.square > div {
+  background-color: lightblue; /* 배경색 설정 */
+}
+
+.help-container {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.help-container p {
+  animation: moveUpDown 2s ease-in-out infinite alternate;
+  
+  font-family: 'Jalnan2', sans-serif;
+  font-size: 3vw;
+  color: rgb(255, 255, 84);
+}
