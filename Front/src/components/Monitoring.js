@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import './Monitoring.css';
 
 const MonitoringScreen = () => {
@@ -10,7 +11,9 @@ const MonitoringScreen = () => {
   const [fingerprintScanComplete, setFingerprintScanComplete] = useState(false);
   const [employeeID, setEmployeeID] = useState('');
   const [employeeName, setEmployeeName] = useState('');
+  const [employeeImage, setEmployeeImage] = useState('');
   const [isGuidanceStarted, setIsGuidanceStarted] = useState(false);
+  const [randomEmployeeID, setRandomEmployeeID] = useState(null); // Define randomEmployeeID state
 
   useEffect(() => {
     startGuidance();
@@ -23,23 +26,65 @@ const MonitoringScreen = () => {
 
   const scanFingerprint = () => {
     setFingerprintScanComplete(true);
-    setEmployeeID('001');
-    setEmployeeName('김민서');
+    const id = Math.floor(Math.random() * 6) + 1; // 1부터 6까지의 랜덤 ID
+    setRandomEmployeeID(id); // Update randomEmployeeID state
+    axios.get(`http://localhost:8080/members/${id}`)
+      .then(response => {
+        const { UserInfo, userProfile } = response.data;
+        const { userImage } = UserInfo;
+        const { userName, userNoPk } = userProfile;
+        setEmployeeID(userNoPk);
+        setEmployeeName(userName);
+        setEmployeeImage(userImage); 
+      })
+      .catch(error => {
+        console.error('Error fetching employee data:', error);
+      });
     setStep(2);
   };
 
-  const measureAlcoholLevel = () => {
-    const randomAlcoholLevel = Math.floor(Math.random() * (0.1 - 0.0 + 0.01)) + 0.0;
-    setAlcoholLevel(randomAlcoholLevel);
-    setStep(4);
+  const fetchAlcoholLevel = (id) => {
+    return axios.get(`http://localhost:8080/members/${id}/drink`)
+      .then(response => {
+        return response.data.userDrink;
+      })
+      .catch(error => {
+        console.error('Error fetching alcohol level:', error);
+        return null;
+      });
   };
 
-  const measureTemperatureAndBloodPressure = () => {
-    const randomTemperature = Math.floor(Math.random() * (40 - 35 + 1)) + 35;
-    const randomBloodPressure = Math.floor(Math.random() * (140 - 90 + 1)) + 90;
-    setTemperature(randomTemperature);
-    setBloodPressure(randomBloodPressure);
-    setStep(6);
+  const fetchTemperatureAndHeartRate = (id) => {
+    return axios.get(`http://localhost:8080/members/${id}/tempHeart`)
+      .then(response => {
+        const { userTemp, userHeartRate } = response.data;
+        return { temperature: userTemp, heartRate: userHeartRate };
+      })
+      .catch(error => {
+        console.error('Error fetching temperature and heart rate:', error);
+        return { temperature: null, heartRate: null };
+      });
+  };
+
+  const measureAlcoholLevel = async () => {
+    try {
+      const alcoholLevel = await fetchAlcoholLevel(randomEmployeeID);
+      setAlcoholLevel(alcoholLevel);
+      setStep(4);
+    } catch (error) {
+      console.error('Error measuring alcohol level:', error);
+    }
+  };
+
+  const measureTemperatureAndBloodPressure = async () => {
+    try {
+      const { temperature, heartRate } = await fetchTemperatureAndHeartRate(randomEmployeeID);
+      setTemperature(temperature);
+      setBloodPressure(heartRate);
+      setStep(6);
+    } catch (error) {
+      console.error('Error measuring temperature and blood pressure:', error);
+    }
   };
 
   const speak = (text) => {
@@ -101,6 +146,8 @@ const MonitoringScreen = () => {
     setIsGuidanceStarted(false);
     setEmployeeID('');
     setEmployeeName('');
+    setEmployeeImage('');
+    setRandomEmployeeID(null); // Reset randomEmployeeID state
   };
 
   const renderStep = () => {
@@ -169,7 +216,11 @@ const MonitoringScreen = () => {
 
       <div className="info-container">
         <div className="square">
-          <div className="info-box-1"></div>
+          <div className="info-box-1">
+            {fingerprintScanComplete && (
+              <img src="/img/1.png" alt="Employee" style={{ width: '200px', height: '200px' }} />
+            )}
+          </div>
           <div className="info-box-2">{fingerprintScanComplete && <p>사원번호: {employeeID}</p>}</div>
           <div className="info-box-3">{fingerprintScanComplete && <p>이름: {employeeName}</p>}</div>
           <div className="info-box-4">{alcoholLevel !== null && <p>알코올 농도: {alcoholLevel}</p>}</div>
