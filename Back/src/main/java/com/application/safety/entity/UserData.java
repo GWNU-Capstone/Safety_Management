@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 
@@ -32,6 +33,9 @@ public class UserData {
 
     @Column(name="USER_TEMP")
     private float UserTemp;
+
+    @Column(name = "DATE")
+    private LocalDate date;
 
     @Column(name="USER_START")
     private LocalTime UserStart;
