@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class UserInfo {
     @Id
     @Column(name="USER_NO")
-    private int UserNoPk;
+    private int UserNo;
 
     @Column(name = "USER_IMAGE")
     private String UserImage;
@@ -28,11 +28,11 @@ public class UserInfo {
     private int UserAge;
 
     @Column(name="USER_TELNO")
-    private String UserTelno;
+    private String UserTelNo;
 
     @OneToOne
     @MapsId
     @JoinColumn(name = "USER_NO")
-    private UserProfile userProfile;
+    private UserProfile UserProfile;
 
 }

@@ -27,7 +27,7 @@ public class MemberController {
         // 사원 번호, 사용자 이름 DTO
         UserProfile userProfile = userProfileRepository.findById(user_no).orElseThrow();
         UserProfileDTO userProfileDTO = new UserProfileDTO();
-        userProfileDTO.setUserNoPk(userProfile.getUserNoPk());
+        userProfileDTO.setUserNoPk(userProfile.getUserNo());
         userProfileDTO.setUserName(userProfile.getUserName());
 
         // 사용자 사진 DTO

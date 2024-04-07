@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserInfoDTO {
-    private String UserImage;
+    private String userImage;
 }
