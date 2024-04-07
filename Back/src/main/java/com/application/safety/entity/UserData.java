@@ -27,8 +27,6 @@ public class UserData {
     @Column(name="USER_DRINK")
     private float UserDrink;
 
-    // 혈압-> 심박수로 변경
-    // [Oh] 에러 USER_HEART_RATE -> USER_HEARTRATE
     @Column(name="USER_HEARTRATE")
     private int UserHeartRate;
 

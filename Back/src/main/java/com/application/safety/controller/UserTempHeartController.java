@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserTempHeartController {
 
     private final UserDataRepository userDataRepository;
-    // . -> / 수정
     @GetMapping("/members/{user_no}/tempHeart")
     public UserDataDTO getUserData(@PathVariable("user_no") int user_no) {
         UserData userData = userDataRepository.findById(user_no).orElseThrow(() -> new EntityNotFoundException("Not Found Id"));
@@ -24,7 +23,6 @@ public class UserTempHeartController {
         dto.setUserHeartRate(userData.getUserHeartRate());
 
         return dto;
-
     }
 
 

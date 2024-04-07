@@ -21,5 +21,4 @@ public class UserProfile {
 
     @Column(name = "USER_NAME")
     private String UserName;
-
 }

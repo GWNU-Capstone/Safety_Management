@@ -18,7 +18,9 @@ public class UserInfo {
     @Column(name="USER_NO")
     private int UserNoPk;
 
-    // 얼굴 사진 경로 -> 지문 변경
+    @Column(name = "USER_IMAGE")
+    private String UserImage;
+
     @Column(name="USER_FINGER_PRINT")
     private String UserFingerPrint;
 
