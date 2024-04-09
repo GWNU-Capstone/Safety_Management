@@ -11,11 +11,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class UserTempHeartController {
+public class UserDrinkTempHeartController {
 
     private final UserDataRepository userDataRepository;
-    @GetMapping("/members/{user_no}/tempHeart")
-    public UserDataDTO getUserData(@PathVariable("user_no") int user_no) {
+    @GetMapping("/members/{user_no}/drink")
+    public UserDataDTO getUserData1(@PathVariable("user_no") int user_no) {
+        UserData userData = userDataRepository.findById(user_no).orElseThrow(() -> new EntityNotFoundException("Not Found Id"));
+
+        UserDataDTO dto = new UserDataDTO();
+        dto.setUserDrink(userData.getUserDrink());
+
+        return dto;
+    }
+
+    // TempHeart 클래스의 코드 가져오기
+    // 매핑 주소 소문자로 변경
+    @GetMapping("/members/{user_no}/tempheart")
+    public UserDataDTO getUserData2(@PathVariable("user_no") int user_no) {
         UserData userData = userDataRepository.findById(user_no).orElseThrow(() -> new EntityNotFoundException("Not Found Id"));
 
         UserDataDTO dto = new UserDataDTO();
@@ -24,7 +36,4 @@ public class UserTempHeartController {
 
         return dto;
     }
-
-
-
 }
