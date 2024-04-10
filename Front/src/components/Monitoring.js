@@ -21,7 +21,43 @@ const MonitoringScreen = () => {
 
   const startGuidance = () => {
     setIsGuidanceStarted(true);
-    speakStepGuide();
+    //speakStepGuide();
+  };
+
+  const [currentDate, setCurrentDate] = useState('');
+
+  useEffect(() => {
+    const updateDate = () => {
+      const now = new Date();
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const dateString = now.toLocaleDateString('ko-KR', options);
+      setCurrentDate(dateString);
+    };
+
+    // 페이지 로드될 때 한 번 실행
+    updateDate();
+
+    // 1초마다 날짜 업데이트
+    const intervalId = setInterval(() => {
+      updateDate();
+    }, 1000);
+
+    // 컴포넌트가 unmount될 때 interval 정리
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const [currentTime, setCurrentTime] = useState(new Date()); // 현재 시간 상태 변수 추가
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentTime(new Date()); // 현재 시간 갱신
+    }, 1000); // 1초마다 갱신
+
+    return () => clearInterval(intervalId); // 컴포넌트가 언마운트되면 setInterval 정리
+  }, []);
+
+  const formatTime = (time) => {
+    return time.toLocaleTimeString('ko-KR', { hour12: false });
   };
 
   const scanFingerprint = () => {
@@ -133,7 +169,7 @@ const MonitoringScreen = () => {
 
   useEffect(() => {
     if (isGuidanceStarted) {
-      speakStepGuide();
+      //speakStepGuide();
     }
   }, [step, temperature, bloodPressure, alcoholLevel, isGuidanceStarted]);
 
@@ -210,28 +246,75 @@ const MonitoringScreen = () => {
 
   return (
     <div className="monitoring-container">
-      <Link to="/main" className="logo-container">
-        <img src="/img/capston_title.png" alt="로고"/>
-      </Link>
+      <div className="logo-container">
+        <Link to="/main">
+          <img src="/img/capston_title.png" alt="로고"/>
+        </Link>
+      </div>
 
       <div className="info-container">
         <div className="square">
-          <div className="info-box-1">
-            {fingerprintScanComplete && (
-              <img src="/img/1.png" alt="Employee" style={{ width: '200px', height: '200px' }} />
+          <div className="info-box-1" style={{ width: '100%', height: '100%' }}>
+            {fingerprintScanComplete ? (
+              <img src="/img/1.png" alt="Employee" style={{ width: '100%', height: '100%' }} />
+            ) : (
+              <div style={{ width: '100%', height: '100%', backgroundColor: '#fff' }}></div>
             )}
           </div>
-          <div className="info-box-2">{fingerprintScanComplete && <p>사원번호: {employeeID}</p>}</div>
-          <div className="info-box-3">{fingerprintScanComplete && <p>이름: {employeeName}</p>}</div>
-          <div className="info-box-4">{alcoholLevel !== null && <p>알코올 농도: {alcoholLevel}</p>}</div>
-          <div className="info-box-5">{temperature !== null && <p>체온: {temperature}°C</p>}</div>
-          <div className="info-box-6">{bloodPressure !== null && <p>혈압: {bloodPressure}mmHg</p>}</div>
+
+
+          <div className="info-box-2">
+            {fingerprintScanComplete && employeeID ? (
+              <p>사원번호: {employeeID}</p>
+            ) : (
+              <p>사원번호: 측정 전</p>
+            )}
+            {fingerprintScanComplete && employeeName ? (
+              <p>이름: {employeeName}</p>
+            ) : (
+              <p>이름: 측정 전</p>
+            )}
+          </div>
+
+          <div className="info-box-3">
+            <img src="/img/alcoholic.png" alt="alcoholic"/>
+            <p>Blood Alcohol Content</p>
+            {alcoholLevel !== null ? <p2>알코올 농도: {alcoholLevel}</p2> : <p2>측정 전</p2>}
+          </div>
+
+          <div className="info-box-4">
+            <img src="/img/thermometer.png" alt="thermometer"/>
+            <p>Temperature</p>
+            {temperature !== null ? <p2>체온: {temperature}°C</p2> : <p2>측정 전</p2>}
+          </div>
+
+          <div className="info-box-5">
+            <img src="/img/heartrate.png" alt="heartrate"/>
+            <p>Heart Rate</p>
+            {bloodPressure !== null ? <p2>혈압: {bloodPressure}mmHg</p2> : <p2>측정 전</p2>}
+          </div>
+
         </div>
       </div>
 
       <div className="help-container">
-        {renderStep()}
-        {!isGuidanceStarted && <button onClick={startGuidance}>안내 시작</button>}
+        <div className="help-square">
+          <div className="help-1">
+            <p>{renderStep()}</p>
+            
+          </div>
+
+          <div className="help-2" /*onClick={handleNextStep}*/> 
+            <p>다음 단계</p>
+          </div>
+
+          <div className="help-3">
+            {!isGuidanceStarted && <button onClick={startGuidance}>안내 시작</button>}
+            <p>{currentDate}</p>
+            <p2>{formatTime(currentTime)}</p2>
+          </div>
+        </div>
+
       </div>
     </div>
   );
