@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,9 +32,15 @@ public class MemberController {
                         .uri("/finger")
                         .retrieve()
                         .bodyToMono(UserProfileDTO.class)
+                        .timeout(Duration.ofSeconds(5))
                         .block();
 
-        int user_no = DTO.getUserNo();
+        // 에러 처리를 다음과 같이 해두었지만,
+        // 나중에 지문 인식 센서에서 잘못된 지문이 입력되었을 때,
+        // 반환 되는 값을 보고 프론트로 잘못된 지문이 입력되었다는 걸
+        // 화면에 출력 되도록 해야함.
+        // 그 이후 프론트에서는 재측정을 요구하는 화면과 재요청 시행.
+        int user_no = DTO != null ? DTO.getUserNo() : 0;
 
         // 사원 번호, 사용자 이름 DTO
         UserProfile userProfile = userProfileRepository.findById(user_no).orElseThrow();
@@ -50,7 +57,6 @@ public class MemberController {
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("userProfile", userProfileDTO);
         responseData.put("UserInfo", userInfoDTO);
-
 
         return ResponseEntity.ok().body(responseData);
     }
