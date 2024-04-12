@@ -16,6 +16,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -47,7 +49,7 @@ public class UserProfileController {
         // 그 이후 프론트에서는 재측정을 요구하는 화면과 재요청 시행.
         int user_no = DTO != null ? DTO.getUserNo() : 0;
 
-
+        Map<String, Object> responseData = new HashMap<>();
 
         // 사원 번호, 사용자 이름 DTO
         UserProfile userProfile = userProfileRepository.findById(user_no).orElseThrow();
@@ -55,14 +57,31 @@ public class UserProfileController {
         userProfileDTO.setUserNo(userProfile.getUserNo());
         userProfileDTO.setUserName(userProfile.getUserName());
 
-        // 오늘 날짜 [출근 O 퇴근 X : 퇴근 요청 코드 반환] [출근 O 퇴근 O : 퇴근 완료 코드 반환]
+        // 오늘 날짜 [출근 O 퇴근 X : 퇴근 기록 후 코드 반환] [출근 O 퇴근 O : 퇴근 완료 코드 반환]
         Optional<UserData> optionalUserData = userDataRepository.findByUserProfileAndDate(userProfile , LocalDate.parse("2024-04-03"));
+
+        // 오늘 날짜 기준으로 해당 지문의 사람의 출퇴근 기록 조회.
         if(optionalUserData.isPresent()) {
             UserData userData = optionalUserData.get();
-            if (userData.getUserEnd() == null)
-                System.out.println("출근은 했지만, 퇴근은 안함");
-            else
-                System.out.println("출근도 했고. 퇴근도 함");
+
+            // 출근은 했으나, 퇴근 여부 확인
+            if (userData.getUserEnd() == null) {
+                // 아직 퇴근 전 이므로, 요청 시간을 기준으로 퇴근 기록 설정.
+                LocalTime now = LocalTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+                String formatedNow = now.format(formatter);
+                userData.setUserEnd(LocalTime.parse(formatedNow));
+                userDataRepository.save(userData);
+
+                responseData.put("code", 101);
+                responseData.put("userEnd", userData.getUserEnd());
+                return ResponseEntity.ok().body(responseData);
+            }
+            else {
+                // 퇴근 이후 이므로, 퇴근 처리가 이미 되었다는 신호 전달
+                responseData.put("code", 102);
+                return ResponseEntity.ok().body(responseData);
+            }
         }
 
         // 사용자 사진 DTO
@@ -71,7 +90,7 @@ public class UserProfileController {
         userInfoDTO.setUserImage(userInfo.getUserImage());
 
         // Map 활용으로 2개 DTO 합쳐서 반환
-        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("code", 103);
         responseData.put("userProfile", userProfileDTO);
         responseData.put("UserInfo", userInfoDTO);
 
