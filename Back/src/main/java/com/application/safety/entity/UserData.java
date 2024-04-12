@@ -24,7 +24,7 @@ public class UserData {
 
     @ManyToOne
     @JoinColumn(name = "USER_NO")
-    private UserProfile UserProfile;
+    private UserProfile userProfile;
 
     @Column(name="USER_DRINK")
     private float UserDrink;
