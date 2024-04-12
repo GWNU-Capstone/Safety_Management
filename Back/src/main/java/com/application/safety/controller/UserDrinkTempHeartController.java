@@ -5,35 +5,71 @@ import com.application.safety.entity.UserData;
 import com.application.safety.repository.UserDataRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 public class UserDrinkTempHeartController {
 
     private final UserDataRepository userDataRepository;
-    @GetMapping("/members/{user_no}/drink")
-    public UserDataDTO getUserData1(@PathVariable("user_no") int user_no) {
-        UserData userData = userDataRepository.findById(user_no).orElseThrow(() -> new EntityNotFoundException("Not Found Id"));
+    private final WebClient webClient;
 
-        UserDataDTO dto = new UserDataDTO();
-        dto.setUserDrink(userData.getUserDrink());
 
-        return dto;
+    // 알코올 데이터 요청
+    @GetMapping("/user/drink")
+    public ResponseEntity<Float> getUserDrink() {
+
+        UserDataDTO DTO =
+                webClient.get()
+                        .uri("/drink")
+                        .retrieve()
+                        .bodyToMono(UserDataDTO.class)
+                        .timeout(Duration.ofSeconds(5))
+                        .block();
+
+        int user_no = DTO != null ? DTO.getUserNo() : 0;
+
+        UserData userData = userDataRepository.findById(user_no).orElseThrow();
+
+        Float userDrink = userData.getUserDrink();
+
+        return ResponseEntity.ok().body(userDrink);
+
     }
 
-    // TempHeart 클래스의 코드 가져오기
-    // 매핑 주소 소문자로 변경
-    @GetMapping("/members/{user_no}/tempheart")
-    public UserDataDTO getUserData2(@PathVariable("user_no") int user_no) {
-        UserData userData = userDataRepository.findById(user_no).orElseThrow(() -> new EntityNotFoundException("Not Found Id"));
 
-        UserDataDTO dto = new UserDataDTO();
-        dto.setUserTemp(userData.getUserTemp());
-        dto.setUserHeartRate(userData.getUserHeartRate());
+    // 체온, 심박수 요청
+    @GetMapping("/user/tempheart")
+    public ResponseEntity<Map<String, Object>> getUserTempHeart() {
 
-        return dto;
+        UserDataDTO DTO =
+                webClient.get()
+                        .uri("/finger")
+                        .retrieve()
+                        .bodyToMono(UserDataDTO.class)
+                        .timeout(Duration.ofSeconds(5))
+                        .block();
+
+        int user_no = DTO != null ? DTO.getUserNo() : 0;
+
+        UserData userData = userDataRepository.findById(user_no).orElseThrow();
+
+        UserDataDTO userDataDTO = new UserDataDTO();
+        userDataDTO.setUserTemp((float)userData.getUserTemp());
+        userDataDTO.setUserHeartRate((int) userData.getUserHeartRate());
+
+        Map<String, Object> responseData = new HashMap<>();
+
+        responseData.put("userData", userDataDTO);
+
+        return ResponseEntity.ok().body(responseData);
     }
 }
