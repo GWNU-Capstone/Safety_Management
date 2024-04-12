@@ -1,5 +1,6 @@
 package com.application.safety.dto;
 
+import com.application.safety.entity.UserData;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,4 +24,15 @@ public class UserDataDTO {
 
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime userEnd;
+
+    public UserData toEntity() {
+        return UserData.builder()
+                .userDrink(userDrink)
+                .userHeartRate(userHeartRate)
+                .userTemp(userTemp)
+                .date(date)
+                .userStart(userStart)
+                .userEnd(userEnd)
+                .build();
+    }
 }

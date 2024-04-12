@@ -2,6 +2,7 @@ package com.application.safety.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -43,4 +44,13 @@ public class UserData {
     @Column(name="USER_END")
     private LocalTime UserEnd;
 
+    @Builder
+    public UserData(float userDrink, int userHeartRate, float userTemp, LocalDate date, LocalTime userStart, LocalTime userEnd) {
+        this.UserDrink = userDrink;
+        this.UserHeartRate = userHeartRate;
+        this.UserTemp = userTemp;
+        this.date = date;
+        this.UserStart = userStart;
+        this.UserEnd = userEnd;
+    }
 }
