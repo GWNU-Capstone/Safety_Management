@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-public class MemberController {
+public class UserProfileController {
     private final UserProfileRepository userProfileRepository;
     private final UserInfoRepository userInfoRepository;
     private final WebClient webClient;
