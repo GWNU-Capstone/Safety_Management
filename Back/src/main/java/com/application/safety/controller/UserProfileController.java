@@ -17,6 +17,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,7 +59,9 @@ public class UserProfileController {
         userProfileDTO.setUserName(userProfile.getUserName());
 
         // 오늘 날짜 [출근 O 퇴근 X : 퇴근 기록 후 코드 반환] [출근 O 퇴근 O : 퇴근 완료 코드 반환]
-        Optional<UserData> optionalUserData = userDataRepository.findByUserProfileAndDate(userProfile , LocalDate.parse("2024-04-03"));
+        // 현재 한국 시간
+        LocalDate nowDate = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        Optional<UserData> optionalUserData = userDataRepository.findByUserProfileAndDate(userProfile , nowDate);
 
         // 오늘 날짜 기준으로 해당 지문의 사람의 출퇴근 기록 조회.
         if(optionalUserData.isPresent()) {
