@@ -123,7 +123,7 @@
 .help-square {
   display: grid;
   width: calc(100% - 40px);
-  height: calc(100% - 40px);
+  height: calc(100% - 20px);
   grid-template-columns: 23vw 23vw;
   grid-template-rows: 1fr 1fr;
   grid-column-gap: 20px;

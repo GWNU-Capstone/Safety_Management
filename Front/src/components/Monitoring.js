@@ -13,18 +13,18 @@ const MonitoringScreen = () => {
   const [employeeName, setEmployeeName] = useState('');
   const [employeeImage, setEmployeeImage] = useState('');
   const [isGuidanceStarted, setIsGuidanceStarted] = useState(false);
-  const [randomEmployeeID, setRandomEmployeeID] = useState(null); // Define randomEmployeeID state
+  const [randomEmployeeID, setRandomEmployeeID] = useState(null);
+  const [currentDate, setCurrentDate] = useState('');
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [errorSpoken, setErrorSpoken] = useState(false); // Add state for tracking error spoken status
+
+  const startGuidance = () => {
+    setIsGuidanceStarted(true);
+  };
 
   useEffect(() => {
     startGuidance();
   }, []);
-
-  const startGuidance = () => {
-    setIsGuidanceStarted(true);
-    //speakStepGuide();
-  };
-
-  const [currentDate, setCurrentDate] = useState('');
 
   useEffect(() => {
     const updateDate = () => {
@@ -34,93 +34,66 @@ const MonitoringScreen = () => {
       setCurrentDate(dateString);
     };
 
-    // 페이지 로드될 때 한 번 실행
     updateDate();
 
-    // 1초마다 날짜 업데이트
     const intervalId = setInterval(() => {
       updateDate();
     }, 1000);
 
-    // 컴포넌트가 unmount될 때 interval 정리
     return () => clearInterval(intervalId);
   }, []);
 
-  const [currentTime, setCurrentTime] = useState(new Date()); // 현재 시간 상태 변수 추가
-
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setCurrentTime(new Date()); // 현재 시간 갱신
-    }, 1000); // 1초마다 갱신
+      setCurrentTime(new Date());
+    }, 1000);
 
-    return () => clearInterval(intervalId); // 컴포넌트가 언마운트되면 setInterval 정리
+    return () => clearInterval(intervalId);
   }, []);
-
-  const formatTime = (time) => {
-    return time.toLocaleTimeString('ko-KR', { hour12: false });
-  };
 
   const scanFingerprint = () => {
     setFingerprintScanComplete(true);
-    const id = Math.floor(Math.random() * 6) + 1; // 1부터 6까지의 랜덤 ID
-    setRandomEmployeeID(id); // Update randomEmployeeID state
-    axios.get(`http://localhost:8080/members/${id}`)
+    const id = Math.floor(Math.random() * 6) + 1;
+    setRandomEmployeeID(id);
+    axios.get(`http://localhost:8080/user/fingerprint`)
       .then(response => {
-        const { UserInfo, userProfile } = response.data;
+        const { code, UserInfo, userProfile } = response.data;
         const { userImage } = UserInfo;
-        const { userName, userNoPk } = userProfile;
-        setEmployeeID(userNoPk);
+        const { userName, userNo } = userProfile;
+        setEmployeeID(userNo);
         setEmployeeName(userName);
         setEmployeeImage(userImage); 
+        if (code === 101 || code === 102) {
+          resetStatesAndScan(); // Reset states and restart scanning
+        } else if (code === 103) {
+          speak("출근 절차를 진행합니다.");
+          setStep(2);
+        }
       })
-      .catch(error => {
-        console.error('Error fetching employee data:', error);
-      });
-    setStep(2);
+      .catch(handleError);
   };
 
-  const fetchAlcoholLevel = (id) => {
-    return axios.get(`http://localhost:8080/members/${id}/drink`)
-      .then(response => {
-        return response.data.userDrink;
-      })
-      .catch(error => {
-        console.error('Error fetching alcohol level:', error);
-        return null;
-      });
-  };
-
-  const fetchTemperatureAndHeartRate = (id) => {
-    return axios.get(`http://localhost:8080/members/${id}/tempHeart`)
-      .then(response => {
-        const { userTemp, userHeartRate } = response.data;
-        return { temperature: userTemp, heartRate: userHeartRate };
-      })
-      .catch(error => {
-        console.error('Error fetching temperature and heart rate:', error);
-        return { temperature: null, heartRate: null };
-      });
-  };
-
-  const measureAlcoholLevel = async () => {
-    try {
-      const alcoholLevel = await fetchAlcoholLevel(randomEmployeeID);
-      setAlcoholLevel(alcoholLevel);
-      setStep(4);
-    } catch (error) {
-      console.error('Error measuring alcohol level:', error);
+  const handleError = (error) => {
+    console.error('Error fetching employee data:', error);
+    if (!errorSpoken) {
+      speak("서버 오류가 발생했습니다. 지문 스캔을 다시 진행합니다.");
+      setErrorSpoken(true); // Set errorSpoken to true after speaking error message
     }
+    resetStatesAndScan(); // Reset states and restart scanning
   };
 
-  const measureTemperatureAndBloodPressure = async () => {
-    try {
-      const { temperature, heartRate } = await fetchTemperatureAndHeartRate(randomEmployeeID);
-      setTemperature(temperature);
-      setBloodPressure(heartRate);
-      setStep(6);
-    } catch (error) {
-      console.error('Error measuring temperature and blood pressure:', error);
-    }
+  const resetStatesAndScan = () => {
+    setFingerprintScanComplete(false);
+    setAlcoholLevel(null);
+    setTemperature(null);
+    setBloodPressure(null);
+    setIsGuidanceStarted(false);
+    setStep(1);
+    scanFingerprint(); // Restart fingerprint scanning
+  };
+
+  const formatTime = (time) => {
+    return time.toLocaleTimeString('ko-KR', { hour12: false });
   };
 
   const speak = (text) => {
@@ -169,21 +142,31 @@ const MonitoringScreen = () => {
 
   useEffect(() => {
     if (isGuidanceStarted) {
-      //speakStepGuide();
+      speakStepGuide();
     }
   }, [step, temperature, bloodPressure, alcoholLevel, isGuidanceStarted]);
 
-  const resetMeasurement = () => {
-    setStep(1);
-    setTemperature(null);
-    setBloodPressure(null);
-    setAlcoholLevel(null);
-    setFingerprintScanComplete(false);
-    setIsGuidanceStarted(false);
-    setEmployeeID('');
-    setEmployeeName('');
-    setEmployeeImage('');
-    setRandomEmployeeID(null); // Reset randomEmployeeID state
+  const registerAttendance = () => {
+    const requestData = {
+      userNo: employeeID,
+      userDrink: alcoholLevel,
+      userHeartRate: bloodPressure,
+      userTemp: temperature,
+      date: currentDate,
+      userStart: formatTime(currentTime)
+    };
+  
+    axios.post('http://localhost:8080/user/go', requestData)
+      .then(response => {
+        console.log('Attendance registered successfully:', response.data);
+      })
+      .catch(error => {
+        console.error('Error registering attendance:', error);
+        if (!errorSpoken) {
+          speak("서버 오류가 발생했습니다. 출퇴근 정보 등록에 실패했습니다.");
+          setErrorSpoken(true); // Set errorSpoken to true after speaking error message
+        }
+      });
   };
 
   const renderStep = () => {
@@ -232,6 +215,13 @@ const MonitoringScreen = () => {
             <p>단계 6: 체온 및 혈압 측정 완료!</p>
             <p>체온: {temperature !== null ? `${temperature}°C` : '--'}</p>
             <p>혈압: {bloodPressure !== null ? `${bloodPressure}mmHg` : '--'}</p>
+            <button onClick={registerAttendance}>출근 등록</button>
+          </div>
+        );
+      case 7:
+        return (
+          <div>
+            <p>출근 및 퇴근 절차가 완료되었습니다.</p>
             <button onClick={resetMeasurement}>다음 사람</button>
           </div>
         );
@@ -242,6 +232,63 @@ const MonitoringScreen = () => {
           </div>
         );
     }
+  };
+
+  const resetMeasurement = () => {
+    setStep(1);
+    setTemperature(null);
+    setBloodPressure(null);
+    setAlcoholLevel(null);
+    setFingerprintScanComplete(false);
+    setIsGuidanceStarted(false);
+    setEmployeeID('');
+    setEmployeeName('');
+    setEmployeeImage('');
+    setRandomEmployeeID(null);
+  };
+
+  const measureAlcoholLevel = async () => {
+    try {
+      const alcoholLevel = await fetchAlcoholLevel(randomEmployeeID);
+      setAlcoholLevel(alcoholLevel);
+      setStep(4);
+    } catch (error) {
+      console.error('Error measuring alcohol level:', error);
+    }
+  };
+
+  const measureTemperatureAndBloodPressure = async () => {
+    try {
+      const { temperature, heartRate } = await fetchTemperatureAndHeartRate(randomEmployeeID);
+      setTemperature(temperature);
+      setBloodPressure(heartRate);
+      setStep(6);
+    } catch (error) {
+      console.error('Error measuring temperature and blood pressure:', error);
+    }
+  };
+
+  const fetchAlcoholLevel = (id) => {
+    return axios.get(`http://localhost:8080/user/drink`)
+      .then(response => {
+        return response.data.userDrink;
+      })
+      .catch(error => {
+        console.error('Error fetching alcohol level:', error);
+        return null;
+      });
+  };
+
+  const fetchTemperatureAndHeartRate = (id) => {
+    return axios.get(`http://localhost:8080/user/tempheart`)
+      .then(response => {
+        const { userTemp, userHeartRate } = response.data;
+        return { temperature: userTemp, heartRate: userHeartRate };
+      })
+      .catch(error => {
+        console.error('Error fetching temperature and heart rate:', error);
+        return { temperature: null, heartRate: null };
+      });
   };
 
   return (
