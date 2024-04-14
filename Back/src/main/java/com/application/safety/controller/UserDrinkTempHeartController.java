@@ -3,11 +3,9 @@ package com.application.safety.controller;
 import com.application.safety.dto.UserDataDTO;
 import com.application.safety.entity.UserData;
 import com.application.safety.repository.UserDataRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -25,51 +23,49 @@ public class UserDrinkTempHeartController {
 
     // 알코올 데이터 요청
     @GetMapping("/user/drink")
-    public ResponseEntity<Float> getUserDrink() {
+    public UserDataDTO getUserDrink() {
 
-        UserDataDTO DTO =
-                webClient.get()
+        return webClient.get()
                         .uri("/drink")
                         .retrieve()
                         .bodyToMono(UserDataDTO.class)
                         .timeout(Duration.ofSeconds(5))
                         .block();
 
-        int user_no = DTO != null ? DTO.getUserNo() : 0;
-
-        UserData userData = userDataRepository.findById(user_no).orElseThrow();
-
-        Float userDrink = userData.getUserDrink();
-
-        return ResponseEntity.ok().body(userDrink);
+//        int user_no = DTO != null ? DTO.getUserNo() : 0;
+//
+//        UserData userData = userDataRepository.findById(user_no).orElseThrow();
+//
+//        Float userDrink = userData.getUserDrink();
+//
+//        return ResponseEntity.ok().body(userDrink);
 
     }
 
 
     // 체온, 심박수 요청
     @GetMapping("/user/tempheart")
-    public ResponseEntity<Map<String, Object>> getUserTempHeart() {
+    public UserDataDTO getUserTempHeart() {
 
-        UserDataDTO DTO =
-                webClient.get()
-                        .uri("/finger")
+        return webClient.get()
+                        .uri("/tempheart")
                         .retrieve()
                         .bodyToMono(UserDataDTO.class)
                         .timeout(Duration.ofSeconds(5))
                         .block();
 
-        int user_no = DTO != null ? DTO.getUserNo() : 0;
-
-        UserData userData = userDataRepository.findById(user_no).orElseThrow();
-
-        UserDataDTO userDataDTO = new UserDataDTO();
-        userDataDTO.setUserTemp((float)userData.getUserTemp());
-        userDataDTO.setUserHeartRate((int) userData.getUserHeartRate());
-
-        Map<String, Object> responseData = new HashMap<>();
-
-        responseData.put("userData", userDataDTO);
-
-        return ResponseEntity.ok().body(responseData);
+//        int user_no = DTO != null ? DTO.getUserNo() : 0;
+//
+//        UserData userData = userDataRepository.findById(user_no).orElseThrow();
+//
+//        UserDataDTO userDataDTO = new UserDataDTO();
+//        userDataDTO.setUserTemp((float)userData.getUserTemp());
+//        userDataDTO.setUserHeartRate((int) userData.getUserHeartRate());
+//
+//        Map<String, Object> responseData = new HashMap<>();
+//
+//        responseData.put("userData", userDataDTO);
+//
+//        return ResponseEntity.ok().body(responseData);
     }
 }
