@@ -64,7 +64,23 @@ void loop() {
   }
 
   /* 공사장 온도, 습도, 체온, 음주, 심박수, */
-  String data = String(temperature) + " " + String(humidity) + " " + String(objecttemp) + " " String(alcohol) + " " + String(beatsPerMinute); //산소포화도 추가예정
-  Serial.println(data);                // 시리얼 통신으로 온도 값을 전송
-  delay(2000);                                 // 2초 기다림
+  //String data = String(temperature) + " " + String(humidity) + " " + String(objecttemp) + " " String(alcohol) + " " + String(beatsPerMinute); //산소포화도 추가예정
+  //Serial.println(data);                // 시리얼 통신으로 온도 값을 전송
+
+  //요청에 대한 응답.
+  if (Serial.available() > 0) {
+    String request = Serial.readStringUntil('\n');
+    request.trim();
+
+    if (request == "alc")
+    {
+      Serial.println(alcohol);
+    }
+    else if (request == "temp")
+    {
+      String tempdata = String(objecttemp, beatsPerMinute);
+      Serial.println(tempdata);
+    }
+  }
+  delay(500);                                 // 0.5초 기다림
 }
