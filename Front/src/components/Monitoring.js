@@ -93,8 +93,12 @@ const MonitoringScreen = () => {
   };
 
   const formatTime = (time) => {
-    return time.toLocaleTimeString('ko-KR', { hour12: false });
+    const hour = time.getHours();
+    const minute = time.getMinutes();
+    const second = time.getSeconds();
+    return `${hour}시 ${minute}분 ${second}초`;
   };
+  
 
   const speak = (text) => {
     const speechSynthesis = window.speechSynthesis;
@@ -301,26 +305,30 @@ const MonitoringScreen = () => {
 
       <div className="info-container">
         <div className="square">
-          <div className="info-box-1" style={{ width: '100%', height: '100%' }}>
-            {fingerprintScanComplete ? (
-              <img src="/img/1.png" alt="Employee" style={{ width: '100%', height: '100%' }} />
-            ) : (
-              <div style={{ width: '100%', height: '100%', backgroundColor: '#fff' }}></div>
-            )}
-          </div>
+        <div className="info-box-1" style={{ width: '100%', height: '100%' }}>
+          {fingerprintScanComplete ? (
+            <img src="/img/1.png" alt="Employee" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            <div style={{ width: '100%', height: '100%', backgroundColor: '#000' }}>
+            </div>
+          )}
+        </div>
 
 
           <div className="info-box-2">
-            {fingerprintScanComplete && employeeID ? (
-              <p>사원번호: {employeeID}</p>
-            ) : (
-              <p>사원번호: 측정 전</p>
-            )}
-            {fingerprintScanComplete && employeeName ? (
-              <p>이름: {employeeName}</p>
-            ) : (
-              <p>이름: 측정 전</p>
-            )}
+            
+              {fingerprintScanComplete && employeeID ? (
+                <p>사원번호: {employeeID}</p>
+              ) : (
+                <p>사원번호: 측정 전</p>
+              )}
+              {fingerprintScanComplete && employeeName ? (
+                <p>이름: {employeeName}</p>
+              ) : (
+                <p>이름: 측정 전</p>
+              )}
+
+            
           </div>
 
           <div className="info-box-3">
@@ -351,12 +359,7 @@ const MonitoringScreen = () => {
             
           </div>
 
-          <div className="help-2" /*onClick={handleNextStep}*/> 
-            <p>다음 단계</p>
-          </div>
-
-          <div className="help-3">
-            {!isGuidanceStarted && <button onClick={startGuidance}>안내 시작</button>}
+          <div className="help-2">
             <p>{currentDate}</p>
             <p2>{formatTime(currentTime)}</p2>
           </div>

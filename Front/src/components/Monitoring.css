@@ -60,11 +60,22 @@
   border: 3px dashed white;
 }
 
+
 .square img {
   max-width: 80%;
   max-height: 80%;
   width: auto;
   height: auto;
+}
+
+.info-box-2 {
+  grid-area: two;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .info-box-3,
@@ -94,6 +105,7 @@
   color: #ffffff;
   font-size: 30px;
   font-family: 'Jalnan2', sans-serif;
+  text-align: center;
 }
 
 .info-box-3 p,
@@ -124,7 +136,7 @@
   display: grid;
   width: calc(100% - 40px);
   height: calc(100% - 20px);
-  grid-template-columns: 23vw 23vw;
+  grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   grid-column-gap: 20px;
   grid-row-gap: 20px;
@@ -139,6 +151,7 @@
   grid-column: 1 / span 2;
   grid-row: 1;
   overflow: hidden;
+  text-align: center;
 }
 
 .help-1 > p {
@@ -149,51 +162,27 @@
 }
 
 .help-2 {
-  grid-column: 1;
+  grid-column:  1 / span 2;
   grid-row: 2;
-  background-color: rgba(0, 0, 0, 0.6);
-  border: 3px dashed white;
+  background-color: rgba(0, 0, 0, 0.7);
   border-radius: 10px;
   overflow: hidden;
-  height: 100%;
-  width: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.help-2 p {
-  overflow: hidden; /* 텍스트 오버플로우를 숨김 */
-  white-space: nowrap; /* 텍스트가 줄바꿈되지 않도록 설정 */
-  text-overflow: ellipsis; /* 텍스트가 그리드를 벗어나면 생략 부호 (...)로 표시 */
   color: white;
-}
-
-
-
-.help-3 {
-  grid-column: 2;
-  grid-row: 2;
-  background-color: rgba(0, 0, 0, 0.6);
-  border: 3px dashed white;
-  border-radius: 10px;
-  overflow: hidden;
-  height: 100%;
-  width: 50%;
-  color: white;
-  font-size: 20px;
+  font-size: 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-.help-3 p {
+.help-2 p {
   margin-left: 10px;
-  align-self: flex-start;
+  text-align: center;
+  font-weight: bold;
 }
 
-.help-3 p2 {
-  font-size: 2vw;
+.help-2 p2 {
+  font-size: 3.5vw;
   text-align: center;
   align-self: center;
+  font-weight: bold;
 }
