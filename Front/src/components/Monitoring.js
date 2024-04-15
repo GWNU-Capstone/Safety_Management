@@ -95,8 +95,7 @@ const MonitoringScreen = () => {
   const formatTime = (time) => {
     const hour = time.getHours();
     const minute = time.getMinutes();
-    const second = time.getSeconds();
-    return `${hour}시 ${minute}분 ${second}초`;
+    return `${hour}시 ${minute}분`;
   };
   
 
