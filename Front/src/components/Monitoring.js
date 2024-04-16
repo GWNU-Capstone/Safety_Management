@@ -13,13 +13,14 @@ const MonitoringScreen = () => {
   const [employeeName, setEmployeeName] = useState('');
   const [employeeImage, setEmployeeImage] = useState('');
   const [isGuidanceStarted, setIsGuidanceStarted] = useState(false);
-  const [randomEmployeeID, setRandomEmployeeID] = useState(null);
   const [currentDate, setCurrentDate] = useState('');
   const [currentTime, setCurrentTime] = useState(new Date());
   const [errorSpoken, setErrorSpoken] = useState(false);
+  const [code, setCode] = useState(null); // code 상태 추가
 
   const startGuidance = () => {
     setIsGuidanceStarted(true);
+    setStep(1); // 지문 스캔 단계로 초기화
   };
 
   useEffect(() => {
@@ -62,11 +63,10 @@ const MonitoringScreen = () => {
 
   const scanFingerprint = () => {
     setFingerprintScanComplete(true);
-    const id = Math.floor(Math.random() * 6) + 1;
-    setRandomEmployeeID(id);
     axios.get(`http://localhost:8080/user/fingerprint`)
       .then(response => {
-        const { code, UserInfo, userProfile } = response.data;
+        const { code, UserInfo, userProfile } = response.data; // 서버 응답에서 code 값 가져오기
+        setCode(code); // code 값 설정
         const { userImage } = UserInfo;
         const { userName, userNo } = userProfile;
         setEmployeeID(userNo);
@@ -97,8 +97,11 @@ const MonitoringScreen = () => {
     setTemperature(null);
     setBloodPressure(null);
     setIsGuidanceStarted(false);
+    setEmployeeID(''); // 사원번호 초기화
+    setEmployeeName(''); // 이름 초기화
+    setEmployeeImage(''); // 이미지 초기화
+    setCode(null); // code 초기화
     setStep(1);
-    scanFingerprint();
   };
 
   const formatTime = (time) => {
@@ -156,6 +159,12 @@ const MonitoringScreen = () => {
             <button onClick={measureTemperatureAndBloodPressure}>체온 및 혈압 측정 시작</button>
           </div>
         );
+      case 5: // 변경된 부분: 모든 단계가 완료될 때 "출근이 완료되었습니다." 안내
+        return (
+          <div>
+            <p>출근이 완료되었습니다.</p>
+          </div>
+        );
       default:
         return (
           <div>
@@ -164,12 +173,12 @@ const MonitoringScreen = () => {
         );
     }
   };
-
+  
   const measureAlcoholLevel = async () => {
     try {
-      const alcoholLevel = await fetchAlcoholLevel(randomEmployeeID);
+      const alcoholLevel = await fetchAlcoholLevel(employeeID);
       setAlcoholLevel(alcoholLevel);
-      setStep(3);
+      setStep(3); // 변경된 부분: step을 5로 변경
     } catch (error) {
       console.error('Error measuring alcohol level:', error);
     }
@@ -177,10 +186,26 @@ const MonitoringScreen = () => {
 
   const measureTemperatureAndBloodPressure = async () => {
     try {
-      const { temperature, heartRate } = await fetchTemperatureAndHeartRate(randomEmployeeID);
+      const { temperature, heartRate } = await fetchTemperatureAndHeartRate(employeeID);
       setTemperature(temperature);
       setBloodPressure(heartRate);
-      setStep(4);
+      setStep(5); // 변경된 부분: step을 5로 변경
+
+      // 출근 등록 요청 보내기
+      axios.post('http://localhost:8080/user/go', {
+        userNo: employeeID,
+        userDrink: alcoholLevel,
+        userHeartRate: heartRate,
+        userTemp: temperature,
+        date: formatDate(new Date()), // ISO 8601 형식으로 변환된 날짜 전송
+        userStart: formatTime(currentTime)
+      })
+      .then(response => {
+        console.log('출근 등록 성공:', response.data);
+      })
+      .catch(error => {
+        console.error('출근 등록 실패:', error);
+      });
     } catch (error) {
       console.error('Error measuring temperature and blood pressure:', error);
     }
@@ -207,6 +232,11 @@ const MonitoringScreen = () => {
         console.error('Error fetching temperature and heart rate:', error);
         return { temperature: null, heartRate: null };
       });
+  };
+
+  const formatDate = (date) => {
+    // 현재 날짜를 ISO 8601 형식으로 변환
+    return date.toISOString().split('T')[0];
   };
 
   return (
