@@ -11,15 +11,12 @@ const MonitoringScreen = () => {
   const [fingerprintScanComplete, setFingerprintScanComplete] = useState(false);
   const [employeeID, setEmployeeID] = useState('');
   const [employeeName, setEmployeeName] = useState('');
-  const [employeeImage, setEmployeeImage] = useState('');
-  const [isGuidanceStarted, setIsGuidanceStarted] = useState(false);
+  const [employeeImage, setEmployeeImage] = useState(''); 
   const [currentDate, setCurrentDate] = useState('');
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [errorSpoken, setErrorSpoken] = useState(false);
   const [code, setCode] = useState(null); // code 상태 추가
 
   const startGuidance = () => {
-    setIsGuidanceStarted(true);
     setStep(1); // 지문 스캔 단계로 초기화
   };
 
@@ -53,7 +50,7 @@ const MonitoringScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (step === 5) {
+    if (step === 4 || step === 5) {
       const timer = setTimeout(() => {
         resetStatesAndScan();
       }, 5000);
@@ -72,10 +69,11 @@ const MonitoringScreen = () => {
         setEmployeeID(userNo);
         setEmployeeName(userName);
         setEmployeeImage(userImage); 
-        if (code === 101 || code === 102) {
+        if (code === 102) {
           resetStatesAndScan();
+        } else if(code === 101) {
+          setStep(4);
         } else if (code === 103) {
-          speak("출근 절차를 진행합니다.");
           setStep(2);
         }
       })
@@ -84,10 +82,6 @@ const MonitoringScreen = () => {
 
   const handleError = (error) => {
     console.error('Error fetching employee data:', error);
-    if (!errorSpoken) {
-      speak("서버 오류가 발생했습니다. 지문 스캔을 다시 진행합니다.");
-      setErrorSpoken(true);
-    }
     resetStatesAndScan();
   };
 
@@ -96,7 +90,6 @@ const MonitoringScreen = () => {
     setAlcoholLevel(null);
     setTemperature(null);
     setBloodPressure(null);
-    setIsGuidanceStarted(false);
     setEmployeeID(''); // 사원번호 초기화
     setEmployeeName(''); // 이름 초기화
     setEmployeeImage(''); // 이미지 초기화
@@ -105,32 +98,10 @@ const MonitoringScreen = () => {
   };
 
   const formatTime = (time) => {
-    const hour = time.getHours();
-    const minute = time.getMinutes();
-    return `${hour}시 ${minute}분`;
-  };
-  
-  const speak = (text) => {
-    const speechSynthesis = window.speechSynthesis;
-    const utterance = new SpeechSynthesisUtterance(text);
-    speechSynthesis.cancel();
-    speechSynthesis.speak(utterance);
-  };
-
-  const speakStepGuide = () => {
-    switch (step) {
-      case 1:
-        speak('지문 스캔을 시작합니다. 지문 센서에 가까이 와주시길 바랍니다.');
-        break;
-      case 2:
-        speak('알코올 농도를 측정합니다. 입에 붙어 주시길 바랍니다.');
-        break;
-      case 3:
-        speak('체온과 혈압을 측정합니다. 지문 인식기 옆에 체온 센서와 혈압 측정기에 가까이 와주시길 바랍니다.');
-        break;
-      default:
-        break;
-    }
+    const hour = time.getHours().toString().padStart(2, '0');
+    const minute = time.getMinutes().toString().padStart(2, '0');
+    const second = time.getSeconds().toString().padStart(2, '0');
+    return `${hour}:${minute}:${second}`;
   };
 
   const renderStep = () => {
@@ -159,7 +130,13 @@ const MonitoringScreen = () => {
             <button onClick={measureTemperatureAndBloodPressure}>체온 및 혈압 측정 시작</button>
           </div>
         );
-      case 5: // 변경된 부분: 모든 단계가 완료될 때 "출근이 완료되었습니다." 안내
+      case 4:
+        return (
+          <div>
+            <p>퇴근이 완료되었습니다.</p>
+          </div>
+        );
+      case 5:
         return (
           <div>
             <p>출근이 완료되었습니다.</p>
