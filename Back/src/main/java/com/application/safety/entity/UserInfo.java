@@ -21,9 +21,6 @@ public class UserInfo {
     @Column(name = "USER_IMAGE")
     private String UserImage;
 
-    @Column(name="USER_FINGER_PRINT")
-    private String UserFingerPrint;
-
     @Column(name="USER_AGE")
     private int UserAge;
 
