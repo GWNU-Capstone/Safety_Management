@@ -272,7 +272,7 @@ const MonitoringScreen = () => {
           <div className="info-box-5">
             <img src="/img/heartrate.png" alt="heartrate"/>
             <p>Heart Rate</p>
-            {bloodPressure !== null ? <p2>혈압: {bloodPressure}mmHg</p2> : <p2>측정 전</p2>}
+            {bloodPressure !== null ? <p2>심박수: {bloodPressure}mmHg</p2> : <p2>측정 전</p2>}
           </div>
         </div>
       </div>
