@@ -1,31 +1,21 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import './Statistics.css';
 
 function StatisticsPage() {
     return (
         <div>
-            <h1>통계 페이지</h1>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                    <tr>
-                        <th style={{ border: '1px solid #dddddd', textAlign: 'left', padding: '8px', backgroundColor: '#f2f2f2' }}>항목</th>
-                        <th style={{ border: '1px solid #dddddd', textAlign: 'left', padding: '8px', backgroundColor: '#f2f2f2' }}>값</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style={{ border: '1px solid #dddddd', textAlign: 'left', padding: '8px' }}>총 방문자 수</td>
-                        <td style={{ border: '1px solid #dddddd', textAlign: 'left', padding: '8px' }}>100</td>
-                    </tr>
-                    <tr>
-                        <td style={{ border: '1px solid #dddddd', textAlign: 'left', padding: '8px' }}>평균 근무 시간 (분)</td>
-                        <td style={{ border: '1px solid #dddddd', textAlign: 'left', padding: '8px' }}>365.4</td>
-                    </tr>
-                    <tr>
-                        <td style={{ border: '1px solid #dddddd', textAlign: 'left', padding: '8px' }}>페이지 뷰 수</td>
-                        <td style={{ border: '1px solid #dddddd', textAlign: 'left', padding: '8px' }}>300</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div className="header">
+                <Link to="/main">
+                    <img src="/img/capston_title.png" alt="로고" className="Logo"/>
+                </Link>
+            </div>
+
+            <div className="container">
+                <div className="item1">aaaaaaaaaaaaaaa1</div>
+                <div className="item2">2</div>
+                <div className="item3">3</div>
+            </div>
         </div>
     );
 }

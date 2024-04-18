@@ -100,8 +100,8 @@ const MonitoringScreen = () => {
   const formatTime = (time) => {
     const hour = time.getHours().toString().padStart(2, '0');
     const minute = time.getMinutes().toString().padStart(2, '0');
-    const second = time.getSeconds().toString().padStart(2, '0');
-    return `${hour}:${minute}:${second}`;
+    //const second = time.getSeconds().toString().padStart(2, '0');
+    return `${hour}시 ${minute}분`;
   };
 
   const renderStep = () => {
@@ -226,12 +226,11 @@ const MonitoringScreen = () => {
 
       <div className="info-container">
         <div className="square">
-          <div className="info-box-1" style={{ width: '100%', height: '100%' }}>
+          <div className="info-box-1">
             {fingerprintScanComplete ? (
-              <img src="/img/1.png" alt="Employee" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src="/img/1.png" alt="Employee" />
             ) : (
-              <div style={{ width: '100%', height: '100%', backgroundColor: '#000' }}>
-              </div>
+              <div className="placeholder"></div>
             )}
           </div>
 
