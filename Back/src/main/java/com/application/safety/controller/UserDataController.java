@@ -25,10 +25,10 @@ public class UserDataController {
         "userDrink" : 0.05,
         "userHeartRate": 69,
         "userTemp": 29.8,
-        "date": "2024-04-03",
-        "userStart": "18:30:00"
     }
-     */
+    위와 같은 요청이 Front 에서 전달해서 올 예정입니다.
+    여기에 date, userStart 의 값을 요청 기준으로 값을 삽입해서 데이터 베이스에 넣어주시면 됩니다.
+    */
     @PostMapping("/user/go")
     public ResponseEntity<UserData> userGoToWork(@RequestBody UserDataDTO userDataDTO) {
         // 요청의 userNo 번호를 토대로 UserProfile 에서 사용자 정보 탐색
