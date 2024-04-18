@@ -14,10 +14,10 @@ const MonitoringScreen = () => {
   const [employeeImage, setEmployeeImage] = useState(''); 
   const [currentDate, setCurrentDate] = useState('');
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [code, setCode] = useState(null); // code 상태 추가
+  const [code, setCode] = useState(null); 
 
   const startGuidance = () => {
-    setStep(1); // 지문 스캔 단계로 초기화
+    setStep(1); 
   };
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const MonitoringScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (step === 4 || step === 5) {
+    if (step === 4 || step === 5 || step === 6) {
       const timer = setTimeout(() => {
         resetStatesAndScan();
       }, 5000);
@@ -62,15 +62,21 @@ const MonitoringScreen = () => {
     setFingerprintScanComplete(true);
     axios.get(`http://localhost:8080/user/fingerprint`)
       .then(response => {
-        const { code, UserInfo, userProfile } = response.data; // 서버 응답에서 code 값 가져오기
-        setCode(code); // code 값 설정
-        const { userImage } = UserInfo;
-        const { userName, userNo } = userProfile;
-        setEmployeeID(userNo);
-        setEmployeeName(userName);
-        setEmployeeImage(userImage); 
+        const { code, UserInfo, userProfile } = response.data; 
+        setCode(code); 
+        if (UserInfo && UserInfo.userImage) { 
+          const { userImage } = UserInfo;
+          const { userName, userNo } = userProfile;
+          setEmployeeID(userNo);
+          setEmployeeName(userName);
+          setEmployeeImage(userImage); 
+        } else {
+          // UserInfo 객체나 userImage 속성이 존재하지 않는 경우에 대한 처리
+          // 예를 들어 기본 이미지를 설정하거나 에러를 처리할 수 있습니다.
+        }
         if (code === 102) {
           resetStatesAndScan();
+          setStep(6);
         } else if(code === 101) {
           setStep(4);
         } else if (code === 103) {
@@ -90,18 +96,18 @@ const MonitoringScreen = () => {
     setAlcoholLevel(null);
     setTemperature(null);
     setBloodPressure(null);
-    setEmployeeID(''); // 사원번호 초기화
-    setEmployeeName(''); // 이름 초기화
-    setEmployeeImage(''); // 이미지 초기화
-    setCode(null); // code 초기화
+    setEmployeeID(''); 
+    setEmployeeName(''); 
+    setEmployeeImage(''); 
+    setCode(null); 
     setStep(1);
   };
 
   const formatTime = (time) => {
     const hour = time.getHours().toString().padStart(2, '0');
     const minute = time.getMinutes().toString().padStart(2, '0');
-    //const second = time.getSeconds().toString().padStart(2, '0');
-    return `${hour}시 ${minute}분`;
+    const second = time.getSeconds().toString().padStart(2, '0');
+    return `${hour}:${minute}:${second}`;
   };
 
   const renderStep = () => {
@@ -142,6 +148,12 @@ const MonitoringScreen = () => {
             <p>출근이 완료되었습니다.</p>
           </div>
         );
+      case 6:
+        return (
+          <div>
+            <p>오늘 출근 및 퇴근절차가 완료되었습니다.</p>
+          </div>
+        );
       default:
         return (
           <div>
@@ -155,7 +167,7 @@ const MonitoringScreen = () => {
     try {
       const alcoholLevel = await fetchAlcoholLevel(employeeID);
       setAlcoholLevel(alcoholLevel);
-      setStep(3); // 변경된 부분: step을 5로 변경
+      setStep(3); 
     } catch (error) {
       console.error('Error measuring alcohol level:', error);
     }
@@ -166,15 +178,14 @@ const MonitoringScreen = () => {
       const { temperature, heartRate } = await fetchTemperatureAndHeartRate(employeeID);
       setTemperature(temperature);
       setBloodPressure(heartRate);
-      setStep(5); // 변경된 부분: step을 5로 변경
+      setStep(5); 
 
-      // 출근 등록 요청 보내기
       axios.post('http://localhost:8080/user/go', {
         userNo: employeeID,
         userDrink: alcoholLevel,
         userHeartRate: heartRate,
         userTemp: temperature,
-        date: formatDate(new Date()), // ISO 8601 형식으로 변환된 날짜 전송
+        date: formatDate(new Date()), 
         userStart: formatTime(currentTime)
       })
       .then(response => {
@@ -212,7 +223,6 @@ const MonitoringScreen = () => {
   };
 
   const formatDate = (date) => {
-    // 현재 날짜를 ISO 8601 형식으로 변환
     return date.toISOString().split('T')[0];
   };
 
