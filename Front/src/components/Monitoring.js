@@ -4,7 +4,7 @@ import axios from 'axios';
 import './Monitoring.css';
 
 const MonitoringScreen = () => {
-  const [step, setStep] = useState(0); // 0단계로 초기화
+  const [step, setStep] = useState(0);
   const [temperature, setTemperature] = useState(null);
   const [bloodPressure, setBloodPressure] = useState(null);
   const [alcoholLevel, setAlcoholLevel] = useState(null);
@@ -17,31 +17,28 @@ const MonitoringScreen = () => {
   const [code, setCode] = useState(null);
   const [userId, setUserId] = useState(null);
 
+  const fingerprintApiBaseUrl = 'http://hj020711.iptime.org:5050';
+  const userApiBaseUrl = 'http://localhost:8080';
+
   useEffect(() => {
     const fetchUserId = async () => {
       try {
-        const url = 'http://localhost:8080/fingerprint';
+        const url = `${fingerprintApiBaseUrl}/fingerprint`;
         const response = await axios.get(url);
-        // 응답이 성공적으로 왔을 때
         if (response.status === 200) {
-          // 응답 데이터에서 사용자 ID 추출
           const data = response.data;
-          // 사용자 ID 설정
-          setUserId(data.userId);
-          // 콘솔에 가져온 사용자 ID 표시
-          console.log('Fetched user ID:', data.userId);
+          setUserId(data);
+          console.log('Fetched user ID:', data);
         } else {
-          // 응답이 실패했을 때 에러 처리
           console.error('Failed to fetch user ID');
         }
       } catch (error) {
-        // 네트워크 오류 등에 대한 예외 처리
         console.error('Error fetching user ID:', error);
+        setUserId(null);
       }
     };
-    // 컴포넌트가 마운트될 때 한 번만 사용자 ID 요청을 보냄
     fetchUserId();
-  }, []); 
+  }, []);   
 
   useEffect(() => {
     const updateDate = () => {
@@ -69,16 +66,28 @@ const MonitoringScreen = () => {
   }, []);
 
   useEffect(() => {
+    if (step === 1 || step === 2 || step === 3) {
+      const timer = setTimeout(() => {
+        setStep(0);
+      }, 20000);
+      return () => clearTimeout(timer);
+    }
+  }, [step]);
+
+  useEffect(() => {
     if (step === 4 || step === 5 || step === 6) {
       const timer = setTimeout(() => {
         resetStatesAndScan();
       }, 2500);
       return () => clearTimeout(timer);
     }
+    else if(step === 2) {
+      measureAlcoholLevel();
+    }
   }, [step]);
 
   const startGuidance = () => {
-    setStep(0); // 0단계로 시작
+    setStep(0);
   };
 
   useEffect(() => {
@@ -86,32 +95,35 @@ const MonitoringScreen = () => {
   }, []);
 
   const scanFingerprint = () => {
-    setFingerprintScanComplete(true);
-    axios.get(`http://localhost:8080/user/fingerprint`)
-      .then(response => {
-        const { code, UserInfo, userProfile } = response.data; 
-        setCode(code); 
-        if (UserInfo && UserInfo.userImage) { 
-          const { userImage } = UserInfo;
-          const { userName, userNo } = userProfile;
-          setEmployeeID(userNo);
-          setEmployeeName(userName);
-          setEmployeeImage(userImage); 
-        } else {
-          // UserInfo 객체나 userImage 속성이 존재하지 않는 경우에 대한 처리
-          // 예를 들어 기본 이미지를 설정하거나 에러를 처리할 수 있습니다.
-        }
-        if (code === 102) {
-          resetStatesAndScan();
-          setStep(6);
-        } else if(code === 101) {
-          setStep(4);
-        } else if (code === 103) {
-          setStep(2);
-        }
-      })
-      .catch(handleError);
-  };
+    if (userId) {
+      setFingerprintScanComplete(true);
+      axios.get(`${userApiBaseUrl}/user/fingerprint/${userId}`)
+        .then(response => {
+          const { code, UserInfo, userProfile } = response.data; 
+          setCode(code); 
+          if (UserInfo && UserInfo.userImage) { 
+            const { userImage } = UserInfo;
+            const { userName, userNo } = userProfile;
+            setEmployeeID(userNo);
+            setEmployeeName(userName);
+            setEmployeeImage(userImage); 
+          } else {
+            // Handle case where UserInfo object or userImage property does not exist
+          }
+          if (code === 102) {
+            resetStatesAndScan();
+            setStep(6);
+          } else if(code === 101) {
+            setStep(4);
+          } else if (code === 103) {
+            setStep(2);
+          }
+        })
+        .catch(handleError);
+    } else {
+      console.error('User ID is null. Cannot fetch fingerprint data.');
+    }
+  };     
 
   const handleError = (error) => {
     console.error('Error fetching employee data:', error);
@@ -127,14 +139,13 @@ const MonitoringScreen = () => {
     setEmployeeName(''); 
     setEmployeeImage(''); 
     setCode(null); 
-    setStep(1); // 1단계로 변경
+    setStep(1);
   };
 
   const formatTime = (time) => {
     const hour = time.getHours().toString().padStart(2, '0');
     const minute = time.getMinutes().toString().padStart(2, '0');
-    const second = time.getSeconds().toString().padStart(2, '0');
-    return `${hour}:${minute}:${second}`;
+    return `${hour}시 ${minute}분`;
   };
 
   const renderStep = () => {
@@ -185,7 +196,7 @@ const MonitoringScreen = () => {
       case 6:
         return (
           <div>
-            <p>오늘 출근 및 퇴근절차가 완료되었습니다.</p>
+            <p>오늘 출근과 퇴근절차가 완료되었습니다.</p>
           </div>
         );
       default:
@@ -200,8 +211,10 @@ const MonitoringScreen = () => {
   const measureAlcoholLevel = async () => {
     try {
       const alcoholLevel = await fetchAlcoholLevel(employeeID);
-      setAlcoholLevel(alcoholLevel);
-      setStep(3); 
+      if (alcoholLevel !== null) {
+        setAlcoholLevel(alcoholLevel);
+        setStep(3); 
+      }
     } catch (error) {
       console.error('Error measuring alcohol level:', error);
     }
@@ -214,13 +227,11 @@ const MonitoringScreen = () => {
       setBloodPressure(heartRate);
       setStep(5); 
 
-      axios.post('http://localhost:8080/user/go', {
+      axios.post(`${userApiBaseUrl}/user/go`, {
         userNo: employeeID,
         userDrink: alcoholLevel,
         userHeartRate: heartRate,
-        userTemp: temperature,
-        date: formatDate(new Date()), 
-        userStart: formatTime(currentTime)
+        userTemp: temperature
       })
       .then(response => {
         console.log('출근 등록 성공:', response.data);
@@ -234,9 +245,14 @@ const MonitoringScreen = () => {
   };
 
   const fetchAlcoholLevel = (id) => {
-    return axios.get(`http://localhost:8080/user/drink`)
+    return axios.get(`${fingerprintApiBaseUrl}/drink`)
       .then(response => {
-        return response.data.userDrink;
+        const alcoholLevel = response.data;
+        if (alcoholLevel !== null) {
+          return alcoholLevel;
+        } else {
+          return null;
+        }
       })
       .catch(error => {
         console.error('Error fetching alcohol level:', error);
@@ -245,8 +261,9 @@ const MonitoringScreen = () => {
   };
 
   const fetchTemperatureAndHeartRate = (id) => {
-    return axios.get(`http://localhost:8080/user/tempheart`)
+    return axios.get(`${fingerprintApiBaseUrl}/tempheart`)
       .then(response => {
+        console.log(response);
         const { userTemp, userHeartRate } = response.data;
         return { temperature: userTemp, heartRate: userHeartRate };
       })
@@ -256,13 +273,7 @@ const MonitoringScreen = () => {
       });
   };
 
-  const formatDate = (date) => {
-    return date.toISOString().split('T')[0];
-  };
-
-  // 0단계 버튼 클릭 시 호출되는 함수
   const handleScanButtonClick = () => {
-    // 버튼 클릭 시 1단계로 이동
     setStep(1);
   };
 
