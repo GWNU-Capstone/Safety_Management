@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
 @Service
 @RequiredArgsConstructor
 public class UserDataService {
@@ -28,11 +30,15 @@ public class UserDataService {
         LocalDate currentDate = LocalDate.now(seoulTimeZone);
         LocalTime currentTime = LocalTime.now(seoulTimeZone);
 
+        // (HH:mm:ss)
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        String formattedTime = currentTime.format(timeFormatter);
+
         UserData userData = userDataDTO.toEntity();
         userData.setUserProfile(userProfile);
 
         userData.setDate(currentDate);
-        userData.setUserStart(currentTime);
+        userData.setUserStart(LocalTime.parse(formattedTime));
 
         userDataRepository.save(userData);
 
