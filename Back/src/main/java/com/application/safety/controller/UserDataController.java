@@ -33,7 +33,6 @@ public class UserDataController {
 
         UserData userData = userDataService.userDataStart(userDataDTO);
 
-
         return ResponseEntity.ok(userData);
     }
 }
