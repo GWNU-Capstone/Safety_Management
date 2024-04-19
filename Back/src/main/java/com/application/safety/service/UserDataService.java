@@ -30,7 +30,7 @@ public class UserDataService {
         LocalDate currentDate = LocalDate.now(seoulTimeZone);
         LocalTime currentTime = LocalTime.now(seoulTimeZone);
 
-        // (HH:mm:ss)
+        // 시간 포맷(HH:mm:ss)
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         String formattedTime = currentTime.format(timeFormatter);
 
