@@ -4,25 +4,44 @@ import axios from 'axios';
 import './Monitoring.css';
 
 const MonitoringScreen = () => {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0); // 0단계로 초기화
   const [temperature, setTemperature] = useState(null);
   const [bloodPressure, setBloodPressure] = useState(null);
   const [alcoholLevel, setAlcoholLevel] = useState(null);
   const [fingerprintScanComplete, setFingerprintScanComplete] = useState(false);
   const [employeeID, setEmployeeID] = useState('');
   const [employeeName, setEmployeeName] = useState('');
-  const [employeeImage, setEmployeeImage] = useState(''); 
+  const [employeeImage, setEmployeeImage] = useState('');
   const [currentDate, setCurrentDate] = useState('');
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [code, setCode] = useState(null); 
-
-  const startGuidance = () => {
-    setStep(1); 
-  };
+  const [code, setCode] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    startGuidance();
-  }, []);
+    const fetchUserId = async () => {
+      try {
+        const url = 'http://localhost:8080/fingerprint';
+        const response = await axios.get(url);
+        // 응답이 성공적으로 왔을 때
+        if (response.status === 200) {
+          // 응답 데이터에서 사용자 ID 추출
+          const data = response.data;
+          // 사용자 ID 설정
+          setUserId(data.userId);
+          // 콘솔에 가져온 사용자 ID 표시
+          console.log('Fetched user ID:', data.userId);
+        } else {
+          // 응답이 실패했을 때 에러 처리
+          console.error('Failed to fetch user ID');
+        }
+      } catch (error) {
+        // 네트워크 오류 등에 대한 예외 처리
+        console.error('Error fetching user ID:', error);
+      }
+    };
+    // 컴포넌트가 마운트될 때 한 번만 사용자 ID 요청을 보냄
+    fetchUserId();
+  }, []); 
 
   useEffect(() => {
     const updateDate = () => {
@@ -57,6 +76,14 @@ const MonitoringScreen = () => {
       return () => clearTimeout(timer);
     }
   }, [step]);
+
+  const startGuidance = () => {
+    setStep(0); // 0단계로 시작
+  };
+
+  useEffect(() => {
+    startGuidance();
+  }, []);
 
   const scanFingerprint = () => {
     setFingerprintScanComplete(true);
@@ -100,7 +127,7 @@ const MonitoringScreen = () => {
     setEmployeeName(''); 
     setEmployeeImage(''); 
     setCode(null); 
-    setStep(1);
+    setStep(1); // 1단계로 변경
   };
 
   const formatTime = (time) => {
@@ -112,6 +139,13 @@ const MonitoringScreen = () => {
 
   const renderStep = () => {
     switch (step) {
+      case 0:
+        return (
+          <div>
+            <p>버튼을 누르면 지문 측정이 시작됩니다.</p>
+            <button onClick={handleScanButtonClick}>지문 스캔 시작</button>
+          </div>
+        );
       case 1:
         return (
           <div>
@@ -224,6 +258,12 @@ const MonitoringScreen = () => {
 
   const formatDate = (date) => {
     return date.toISOString().split('T')[0];
+  };
+
+  // 0단계 버튼 클릭 시 호출되는 함수
+  const handleScanButtonClick = () => {
+    // 버튼 클릭 시 1단계로 이동
+    setStep(1);
   };
 
   return (
