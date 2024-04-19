@@ -23,6 +23,7 @@ public class UserProfileService {
     private final UserProfileRepository userProfileRepository;
     private final UserDataRepository userDataRepository;
     private final UserInfoService userInfoService;
+    private final MessageService messageService;
 
     // UserProfile DTO
     public UserProfileDTO getProfile(int user_no) {
@@ -64,6 +65,9 @@ public class UserProfileService {
                 String formatedNow = now.format(formatter);
                 userData.setUserEnd(LocalTime.parse(formatedNow));
                 userDataRepository.save(userData);
+
+                // 퇴근 문자 전송
+                messageService.sendSMS("퇴근", user_no);
 
                 responseData.put("code", 101);
                 responseData.put("userEnd", userData.getUserEnd());
