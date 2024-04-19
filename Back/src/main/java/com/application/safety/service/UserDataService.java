@@ -23,11 +23,9 @@ public class UserDataService {
         UserProfile userProfile = userProfileRepository.findById(userDataDTO.getUserNo())
                 .orElseThrow(() -> new EntityNotFoundException("Not Found UserProfile"));
 
-
         ZoneId seoulTimeZone = ZoneId.of("Asia/Seoul");
         LocalDate currentDate = LocalDate.now(seoulTimeZone);
         LocalTime currentTime = LocalTime.now(seoulTimeZone);
-
 
         UserData userData = userDataDTO.toEntity();
         userData.setUserProfile(userProfile);
