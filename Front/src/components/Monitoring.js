@@ -21,24 +21,27 @@ const MonitoringScreen = () => {
   const userApiBaseUrl = 'http://localhost:8080';
 
   useEffect(() => {
-    const fetchUserId = async () => {
-      try {
-        const url = `${fingerprintApiBaseUrl}/fingerprint`;
-        const response = await axios.get(url);
-        if (response.status === 200) {
-          const data = response.data;
-          setUserId(data);
-          console.log('Fetched user ID:', data);
-        } else {
-          console.error('Failed to fetch user ID');
+    // 페이지가 처음 렌더링될 때만 사용자 ID를 가져옴
+    if (!userId && step === 1) {
+      const fetchUserId = async () => {
+        try {
+          const url = `${fingerprintApiBaseUrl}/fingerprint`;
+          const response = await axios.get(url);
+          if (response.status === 200) {
+            const data = response.data;
+            setUserId(data);
+            console.log('Fetched user ID:', data);
+          } else {
+            console.error('Failed to fetch user ID');
+          }
+        } catch (error) {
+          console.error('Error fetching user ID:', error);
+          setUserId(null);
         }
-      } catch (error) {
-        console.error('Error fetching user ID:', error);
-        setUserId(null);
-      }
-    };
-    fetchUserId();
-  }, []);   
+      };
+      fetchUserId();
+    }
+  }, [userId, step]);
 
   useEffect(() => {
     const updateDate = () => {
@@ -68,6 +71,7 @@ const MonitoringScreen = () => {
   useEffect(() => {
     if (step === 1 || step === 2 || step === 3) {
       const timer = setTimeout(() => {
+        resetStatesAndScan();
         setStep(0);
       }, 20000);
       return () => clearTimeout(timer);
@@ -82,8 +86,15 @@ const MonitoringScreen = () => {
       return () => clearTimeout(timer);
     }
     else if(step === 2) {
-      measureAlcoholLevel();
+      setTimeout(() => {
+        measureAlcoholLevel();
+      }, 2000);
     }
+    else if(step === 3) {
+      setTimeout(() => {
+        measureTemperatureAndBloodPressure();
+      }, 2000);
+    }    
   }, [step]);
 
   const startGuidance = () => {
@@ -92,6 +103,13 @@ const MonitoringScreen = () => {
 
   useEffect(() => {
     startGuidance();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      // 페이지가 언마운트될 때 모든 진행 상태를 초기화
+      resetStatesAndScan();
+    };
   }, []);
 
   const scanFingerprint = () => {
@@ -153,8 +171,7 @@ const MonitoringScreen = () => {
       case 0:
         return (
           <div>
-            <p>버튼을 누르면 지문 측정이 시작됩니다.</p>
-            <button onClick={handleScanButtonClick}>지문 스캔 시작</button>
+            <p onClick={handleScanButtonClick}>이 부분을 누르면 지문 측정이 시작됩니다.</p>
           </div>
         );
       case 1:
@@ -170,7 +187,6 @@ const MonitoringScreen = () => {
           <div>
             <p>알코올 농도 측정 중...</p>
             <p>입에 붙어 주시길 바랍니다.</p>
-            <button onClick={measureAlcoholLevel}>알코올 농도 측정 시작</button>
           </div>
         );
       case 3:
@@ -178,7 +194,6 @@ const MonitoringScreen = () => {
           <div>
             <p>체온 및 혈압 측정 중...</p>
             <p>체온 센서, 혈압 측정기에 오시길 바랍니다.</p>
-            <button onClick={measureTemperatureAndBloodPressure}>체온 및 혈압 측정 시작</button>
           </div>
         );
       case 4:
