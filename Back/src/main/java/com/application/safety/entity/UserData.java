@@ -2,9 +2,11 @@ package com.application.safety.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 
@@ -27,13 +29,14 @@ public class UserData {
     @Column(name="USER_DRINK")
     private float UserDrink;
 
-    // 혈압-> 심박수로 변경
-    // [Oh] 에러 USER_HEART_RATE -> USER_HEARTRATE
     @Column(name="USER_HEARTRATE")
     private int UserHeartRate;
 
     @Column(name="USER_TEMP")
     private float UserTemp;
+
+    @Column(name = "DATE")
+    private LocalDate date;
 
     @Column(name="USER_START")
     private LocalTime UserStart;
@@ -41,4 +44,13 @@ public class UserData {
     @Column(name="USER_END")
     private LocalTime UserEnd;
 
+    @Builder
+    public UserData(float userDrink, int userHeartRate, float userTemp, LocalDate date, LocalTime userStart, LocalTime userEnd) {
+        this.UserDrink = userDrink;
+        this.UserHeartRate = userHeartRate;
+        this.UserTemp = userTemp;
+        this.date = date;
+        this.UserStart = userStart;
+        this.UserEnd = userEnd;
+    }
 }
