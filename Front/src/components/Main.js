@@ -20,7 +20,7 @@ function Main() {
           <div className="menu-dropdown">
             <Link to="/member" className="menu-item">
               <img src="/img/member.png" alt="member" className="menu-icon" />
-              <span>멤버 관리</span>
+              <span>직원 관리</span>
             </Link>
 
             <Link to="/statistics" className="menu-item">

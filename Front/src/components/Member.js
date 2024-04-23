@@ -28,7 +28,7 @@ function Member() {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'ID',
+        Header: '사원번호',
         accessor: 'id'
       },
       {

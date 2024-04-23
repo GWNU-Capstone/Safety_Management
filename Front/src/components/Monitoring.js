@@ -17,11 +17,10 @@ const MonitoringScreen = () => {
   const [code, setCode] = useState(null);
   const [userId, setUserId] = useState(null);
 
-  const fingerprintApiBaseUrl = 'http://hj020711.iptime.org:5050';
-  const userApiBaseUrl = 'http://localhost:8080';
+  const fingerprintApiBaseUrl = 'http://192.168.55.187:5000'; //소프트웨어 flask서버 ip
+  const userApiBaseUrl = 'http://192.168.55.148:8080'; //서버 ip
 
   useEffect(() => {
-    // 페이지가 처음 렌더링될 때만 사용자 ID를 가져옴
     if (!userId && step === 1) {
       const fetchUserId = async () => {
         try {
@@ -88,12 +87,12 @@ const MonitoringScreen = () => {
     else if(step === 2) {
       setTimeout(() => {
         measureAlcoholLevel();
-      }, 2000);
+      }, 5000);
     }
     else if(step === 3) {
       setTimeout(() => {
         measureTemperatureAndBloodPressure();
-      }, 2000);
+      }, 5000);
     }    
   }, [step]);
 
@@ -107,7 +106,6 @@ const MonitoringScreen = () => {
 
   useEffect(() => {
     return () => {
-      // 페이지가 언마운트될 때 모든 진행 상태를 초기화
       resetStatesAndScan();
     };
   }, []);
@@ -338,7 +336,7 @@ const MonitoringScreen = () => {
           <div className="info-box-5">
             <img src="/img/heartrate.png" alt="heartrate"/>
             <p>Heart Rate</p>
-            {bloodPressure !== null ? <p2>심박수: {bloodPressure}mmHg</p2> : <p2>측정 전</p2>}
+            {bloodPressure !== null ? <p2>심박수: {bloodPressure}bpm</p2> : <p2>측정 전</p2>}
           </div>
         </div>
       </div>
