@@ -15,6 +15,7 @@ public class UserDataDTO {
     private float userDrink;
     private int userHeartRate;
     private float userTemp;
+    private int userOxygen;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
@@ -30,6 +31,7 @@ public class UserDataDTO {
                 .userDrink(userDrink)
                 .userHeartRate(userHeartRate)
                 .userTemp(userTemp)
+                .userOxygen(userOxygen)
                 .date(date)
                 .userStart(userStart)
                 .userEnd(userEnd)
