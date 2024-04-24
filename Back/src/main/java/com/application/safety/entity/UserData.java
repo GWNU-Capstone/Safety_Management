@@ -35,6 +35,10 @@ public class UserData {
     @Column(name="USER_TEMP")
     private float UserTemp;
 
+    // 엔티티 추가 (산소포화도)
+    @Column(name="USER_OXYGEN")
+    private int UserOxygen;
+
     @Column(name = "DATE")
     private LocalDate date;
 
@@ -45,10 +49,11 @@ public class UserData {
     private LocalTime UserEnd;
 
     @Builder
-    public UserData(float userDrink, int userHeartRate, float userTemp, LocalDate date, LocalTime userStart, LocalTime userEnd) {
+    public UserData(float userDrink, int userHeartRate, float userTemp, int userOxygen, LocalDate date, LocalTime userStart, LocalTime userEnd) {
         this.UserDrink = userDrink;
         this.UserHeartRate = userHeartRate;
         this.UserTemp = userTemp;
+        this.UserOxygen = userOxygen;
         this.date = date;
         this.UserStart = userStart;
         this.UserEnd = userEnd;
