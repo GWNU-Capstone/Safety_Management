@@ -169,7 +169,7 @@ const MonitoringScreen = () => {
       case 0:
         return (
           <div>
-            <p onClick={handleScanButtonClick}>이 부분을 누르면 지문 측정이 시작됩니다.</p>
+            <p onClick={handleScanButtonClick}>이곳을 눌러 지문 측정을 시작하세요.</p>
           </div>
         );
       case 1:

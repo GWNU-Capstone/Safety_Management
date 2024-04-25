@@ -1,0 +1,59 @@
+body {
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .header {
+    background-color: #f8f8f8;
+    padding: 1rem;
+    text-align: left;
+    font-weight: bold;
+    font-size: 1.5rem;
+  }
+  
+  .header img {
+    width: 15vw;
+    height: auto;
+  }
+  
+  .container {
+    margin-top: 2rem;
+  }
+  
+  .profile-img {
+    display: flex;
+    justify-content: center;
+    width: 20vw;
+    height: 20vh;
+  }
+  
+  .rounded {
+    border-radius: 50%;
+  }
+  
+  .info-table,
+  .record-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .info-table td,
+  .record-table td {
+    border: 1px solid #ddd;
+    padding: 0.5rem;
+  }
+  
+  .info-table th,
+  .record-table th {
+    padding: 0.75rem;
+    text-align: left;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+  }
+  
+  .info-heading,
+  .record-heading {
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
