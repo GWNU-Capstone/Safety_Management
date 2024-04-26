@@ -1,59 +1,226 @@
+/* Body 전체의 배경색 설정 */
 body {
-    font-family: 'Arial', sans-serif;
+  background-color: #f8f8f8;
+  margin: 0; /* 기본 마진 제거 */
+  padding: 0; /* 기본 패딩 제거 */
+  font-family: 'Arial', sans-serif; /* 전체 폰트 설정 */
+}
+
+/* Header와 Main Content 상위 컨테이너 스타일 */
+.detail-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* 전체 화면의 높이와 같게 설정 */
+  margin: 20px;
+  overflow: hidden; /* 컨테이너 외부로 내용이 넘칠 경우 숨김 처리 */
+}
+
+.header {
+  display: flex;
+  height: 70px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logo-section .detail-logo {
+  width: 15vw;
+  height: auto;
+}
+
+.edit-profile-section .edit-profile-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Main Content의 배경색 및 레이아웃 설정 */
+.main-content {
+  display: flex;
+  flex-grow: 1; /* 남은 공간을 모두 채움 */
+  overflow: hidden; /* main-content 내 스크롤바 비활성화 */
+  flex-wrap: wrap;
+  gap: 20px;
+  background-color: #ffffff; /* 배경색을 흰색으로 설정 */
+  padding: 20px; /* 패딩 추가 */
+  border-radius: 5px; /* 경계선 둥글게 처리 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 약간의 그림자 효과 */
+  max-height: calc(100vh - 160px); /* 헤더, 푸터, 마진을 고려한 높이 */
+}
+
+.footer {
+  flex-shrink: 0; /* 크기 유지 */
+  text-align: center;
+  height: 20px;
+  padding: 10px 0;
+  background-color: white;
+  color: #ddd;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+.profile {
+  flex-basis: 40%;
+  max-width: 40%;
+  height: calc(71vh);
+  margin-right: 20px;
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+.profile-img {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.profile-name {
+  text-align: center;
+}
+
+.profile-img .user-profile-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ddd;
+  background-color: #ddd;
+  text-align: center;
+}
+
+.personal-info {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.attendance-records {
+  flex-grow: 1;
+  overflow-y: hidden;
+  height: calc(71vh);
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+.personal-info table {
+  border-collapse: collapse; /* 테이블 경계선 합치기 */
+  table-layout: fixed; /* 고정 테이블 레이아웃 적용 */
+  width: 100%;
+}
+
+.personal-info th {
+  border-right: 1px solid rgb(207, 207, 207);
+}
+
+.personal-info td {
+  border: none;
+}
+
+.personal-info th:first-child {
+  width: 40px; /* 첫 번째 헤더만 고정 너비를 줍니다 */
+}
+
+/* 테이블 헤더와 셀의 높이 고정 */
+.personal-info th,
+.personal-info td {
+  text-align: left;
+  padding: 8px;
+  height: 22px; /* 고정 높이 설정 */
+  line-height: 22px; /* 텍스트를 셀 안에서 수직 중앙에 배치 */
+  width: 120px; /* 고정 너비 설정 */
+  box-sizing: border-box;
+}
+
+/* 입력 필드 스타일 */
+input[type="text"] {
+  padding: 4px; /* 내부 여백 조정 */
+  margin: 0;
+  border: 1px solid #ddd;
+  height: 22px; /* 셀의 높이와 동일하게 설정 */
+  line-height: 22px; /* 높이와 동일하게 설정하여 텍스트 중앙에 배치 */
+  box-sizing: border-box; /* 내부 패딩과 보더가 높이에 포함되도록 */
+  width: calc(100% - 18px); /* 패딩과 보더를 고려한 너비 계산 */
+}
+
+/* 입력 필드가 비활성화되었을 때 스타일을 일반 텍스트와 동일하게 유지 */
+input[type="text"]:disabled {
+  border: none;
+  background-color: transparent;
+  color: inherit;
+  height: 22px; /* 높이를 고정값으로 유지 */
+  line-height: 22px; /* 높이와 동일하게 설정하여 텍스트 중앙에 배치 */
+  padding: 0; /* 비활성화 상태에서 내부 여백 제거 */
+}
+
+.editable {
+  border: 1px dashed #007bff; /* 테두리 추가 */
+  background-color: #e7f4ff; /* 배경색 변경 */
+  padding: 4px; /* 패딩 추가 */
+  border-radius: 4px; /* 모서리 둥글게 */
+  cursor: text; /* 텍스트 커서 표시 */
+}
+
+/* 편집 상태에서 텍스트가 없을 때 placeholder 표시 */
+.editable:empty:before {
+  content: '이름 입력...'; /* 플레이스홀더 텍스트 */
+  color: #adb5bd; /* 플레이스홀더 색상 */
+}
+
+.table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-wrapper {
+  max-height: 600px; /* 원하는 최대 높이로 조정 */
+  overflow-y: auto; /* 필요할 때 스크롤바 표시 */
+  border-radius: 10px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.table-wrapper::-webkit-scrollbar {
+  display: none; /* Chrome, Safari 및 Opera 용 */
+}
+
+.attendance-records table thead th {
+  background-color: #f8f9fa;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.table-wrapper table th, table td {
+  border-bottom: 1px solid #ebeaea;
+  padding: 8px;
+  text-align: center;
+}
+
+.table-wrapper table td {
+  text-align: center;
+}
+
+.table-wrapper table th {
+  background-color: #f8f9fa;
+}
+
+
+
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
   }
-  
-  .header {
-    background-color: #f8f8f8;
-    padding: 1rem;
-    text-align: left;
-    font-weight: bold;
-    font-size: 1.5rem;
-  }
-  
-  .header img {
-    width: 15vw;
-    height: auto;
-  }
-  
-  .container {
-    margin-top: 2rem;
-  }
-  
-  .profile-img {
-    display: flex;
-    justify-content: center;
-    width: 20vw;
-    height: 20vh;
-  }
-  
-  .rounded {
-    border-radius: 50%;
-  }
-  
-  .info-table,
-  .record-table {
+
+  .profile, .attendance-records {
     width: 100%;
-    border-collapse: collapse;
   }
-  
-  .info-table td,
-  .record-table td {
-    border: 1px solid #ddd;
-    padding: 0.5rem;
-  }
-  
-  .info-table th,
-  .record-table th {
-    padding: 0.75rem;
-    text-align: left;
-    background-color: #f8f8f8;
-    border: 1px solid #ddd;
-  }
-  
-  .info-heading,
-  .record-heading {
-    margin-bottom: 0.5rem;
-    font-size: 1.25rem;
-    font-weight: bold;
-  }
-  
+}
