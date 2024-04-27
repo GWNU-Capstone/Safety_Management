@@ -1,6 +1,9 @@
+body {
+  overflow: hidden; /* 스크롤 바 숨기기 */
+
+}
 .Main {
     text-align: center;
-    overflow: hidden; /* 스크롤 바 숨기기 */
   
     background-image: url('../../public/img/background.jpg');
     background-size: cover; /* 이미지를 웹 페이지에 맞게 조절 */
@@ -24,8 +27,19 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.95);
   }
+
+.main-container {
+  display: flex;
+  width: calc(100% - 40px);  /* 전체 너비에서 40px(양쪽 여백)을 뺀 값 */
+  height: calc(100% - 40px); /* 전체 높이에서 40px(상하 여백)을 뺀 값 */
+  position: absolute;
+  align-items: center;
+  border-radius: 10px;
+  border: 2px dashed white;
+  margin: 20px;
+}
   
   .logo {
     animation: moveUpDown 2s ease-in-out infinite alternate; /* 애니메이션 적용 */
@@ -73,43 +87,50 @@
     cursor: pointer;
   }
   
-  .menu-dropdown {
+  .main-header-menu {
     position: absolute;
-  
-    width: 150px;
-    height: auto;
-  
-    top: 60px;
+    margin-right: 20px;
+    top: 20px;
     right: 0;
-    background-color: rgba(255, 255, 255, 0);
-    border: 2px solid white;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-  
-  .menu-item {
-    display: flex;
+    display: flex; /* 세로로 정렬하기 위해 flex 사용 */
+    flex-direction: column; /* 아이템을 세로로 정렬 */
     align-items: center;
-    width: 100%;
-    padding: 10px;
-    border: none;
-    background-color: transparent;
-    color: white;
-    font-family: 'Jalnan2', sans-serif;
-    font-size: 18px;
-    text-align: left;
+    background-color: rgb(255, 255, 255);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-height: calc(100vh - 160px);
+  }
+  .main-menu-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap; /* 아이템이 줄바꿈되지 않도록 설정 */
   }
   
-  .menu-icon {
+  .main-menu-item {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.8vw;
+    font-weight: bold;
+    margin-right: 20px; /* 아이템 간 간격 */
+  }
+  
+  .main-menu-item:last-child {
+    margin-right: 0;
+  }
+  
+  .main-menu-icon {
+    vertical-align: middle; /* 아이콘을 텍스트 중앙에 정렬 */
     width: 30px;
     height: auto;
     margin-right: 10px;
   }
   
-  .menu-item:hover {
+  .main-menu-item:hover {
     cursor: pointer;
+    color: rgb(189, 189, 189);
   }
-  
   
   @font-face {
     font-family: 'Jalnan2';

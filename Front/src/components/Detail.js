@@ -4,6 +4,8 @@ import './Detail.css';
 
 function Detail() {
   const [editMode, setEditMode] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+
   const [inputFields, setInputFields] = useState({
     name: 'Test',
     age: '25',
@@ -55,56 +57,96 @@ function Detail() {
   };
 
   const attendanceRecords = [
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', oxy: '??', status: 'Present', note: ''}
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
+    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''}
   ];
 
   return (
     <div className="detail-container">
-      <header className="header">
+      <header className="detail-header">
         <div className="logo-section">
           <Link to="/main">
-            <img src="/img/capston_title.png" alt="logo" className="detail-logo" />
+            <img src="/img/capstone_title.png" alt="logo" className="detail-logo" />
           </Link>
         </div>
-        <div className="edit-profile-section">
-          <button className="edit-profile-btn" onClick={handleEditProfile}>
-            {editMode ? 'Save' : 'Edit Profile'}
-          </button>
+        
+
+        <div className="detail-rightSection">
+          <div className="edit-profile-section">
+            <button className="edit-profile-btn" onClick={handleEditProfile}>
+              {editMode ? 'Save' : 'Edit Profile'}
+            </button>
+          </div>
+
+          <div className="detail-search">
+            <div className="detail-search-container">
+              <img src="/img/search.png" alt="icon" className="detail-search-icon" />
+              <h> 데이터 검색</h>
+            </div>
+            <input 
+              type="text" 
+              placeholder="데이터를 입력하세요." 
+              value={searchTerm} 
+              onChange={(e) => setSearchTerm(e.target.value)}
+              title="날짜 또는 상태를 입력하세요."
+            />
+          </div>
+
+          <div className="detail-header-menu">
+            <div className="detail-menu-wrapper">
+              <Link to="/member" className="detail-menu-item">
+                <img src="/img/member.png" alt="member" className="detail-menu-icon" />
+                <span>직원 관리</span>
+              </Link>
+
+              <Link to="/statistics" className="detail-menu-item">
+                <img src="/img/statistics.png" alt="statistics" className="detail-menu-icon" />
+                <span>통계</span>
+              </Link>
+
+              <Link to="/monitoring" className="detail-menu-item">
+                <img src="/img/monitoring.png" alt="monitoring" className="detail-menu-icon" />
+                <span>모니터링</span>
+              </Link>
+            </div>
+          </div>
         </div>
       </header>
 
       <div className="main-content">
 
         <div className="profile">
-          <div className="profile-img">
-            <img src="/path/to/profile-image.jpg" alt="P" className="user-profile-img" />
-          </div>
+          <div className="profile-info">
+            <div className="profile-img">
+              <img src="/img/user.png" alt="" className="user-profile-img" />
+            </div>
 
-          <h2
-            className={`profile-name ${editMode ? "editable" : ""}`}
-            contentEditable={editMode}
-            suppressContentEditableWarning={true}
-          >
-            {inputFields.name || '이름 입력...'}
-          </h2>
+            <h2
+              className={`profile-name ${editMode ? "editable" : ""}`}
+              contentEditable={editMode}
+              suppressContentEditableWarning={true}
+            >
+              {inputFields.name || '이름 입력...'}
+            </h2>
+          </div>
 
           <div className="personal-info">
             <h2>Personal Information</h2>
@@ -147,25 +189,33 @@ function Detail() {
                   <th>퇴근시간</th>
                   <th>알코올 농도</th>
                   <th>체온</th>
+                  <th>심박수</th>
                   <th>산소포화도</th>
                   <th>상태</th>
                   <th>비고</th>
                 </tr>
               </thead>
               <tbody className="table-body">
-                {attendanceRecords.map((record, index) => (
+                {attendanceRecords.filter((record) => {
+                  return (
+                    record.date.includes(searchTerm) ||
+                    record.status.toLowerCase().includes(searchTerm.toLowerCase())
+                  );
+                }).map((record, index) => (
                   <tr key={index}>
                     <td>{record.date}</td>
                     <td>{record.enter}</td>
                     <td>{record.exit}</td>
                     <td>{record.bac}%</td>
                     <td>{record.temp}°C</td>
-                    <td>{record.oxy}</td>
+                    <td>{record.hr} bpm</td>
+                    <td>{record.oxy}%</td>
                     <td>{record.status}</td>
                     <td>{record.note}</td>
                   </tr>
                 ))}
               </tbody>
+
             </table>
           </div>
         </div>

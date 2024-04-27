@@ -42,7 +42,7 @@ function StatisticsPage() {
         <div>
             <div className="header">
                 <Link to="/main">
-                    <img src="/img/capston_title.png" alt="로고" className="Logo"/>
+                    <img src="/img/capstone_title.png" alt="로고" className="Logo"/>
                 </Link>
                 <div className="calendar-container">
                     <button onClick={toggleCalendar}>Toggle Calendar</button> {/* Icon to toggle calendar */}

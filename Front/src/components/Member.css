@@ -1,77 +1,151 @@
 /* member.css */
 
 html, body {
-  height: 100%;
+  background-color: #f8f8f8;
   margin: 0;
   padding: 0;
+  font-family: 'Arial', sans-serif;
 }
 
-.member-container {
-  width: 100vw;
-  height: 100vh;
-  position: relative;
-  text-align: center;
-  overflow-x: hidden;
-
-  background-image: url('../../public/img/member-background.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+.member-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 헤더 좌우 정렬 */
+  height: 70px;
+  margin-bottom: 20px;
 }
 
-.memberLogo {
-  margin: 0 auto;
-  width: 40vw;
+.member-logo-section {
+  flex: 1;
+}
+
+.member-header-menu {
+  display: flex;
+  flex: 0 0 50px;
+  margin-left: auto; /* 우측 정렬 */
+  align-items: center;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  max-height: calc(100vh - 160px);
+}
+
+.member-menu-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  white-space: nowrap; /* 아이템이 줄바꿈되지 않도록 설정 */
+}
+
+.member-menu-item {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 20px; /* 아이템 간 간격 */
+}
+
+.member-menu-item:last-child {
+  margin-right: 0;
+}
+
+.member-search h {
+  margin-bottom: 5px;
+}
+
+.member-search-icon {
+  width: 15px;
   height: auto;
 }
 
-.table-container {
-  max-height: 70vh;
-  max-width: 97vw;
-  overflow-y: auto;
-  border: 1px solid;
-  margin: 0 auto;
-
+.member-search {
+  display: flex;
+  height: 30px;
+  margin-right: 20px;
+  margin-left: auto; /* 우측 정렬 */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* 수평 중앙 정렬 */
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  max-height: calc(100vh - 160px);
 }
 
-.table-container table {
-  border-collapse: collapse;
+
+.member-menu-icon {
+  vertical-align: middle; /* 아이콘을 텍스트 중앙에 정렬 */
+  width: 30px;
+  height: auto;
+  margin-right: 10px;
+}
+
+.member-logo-section .member-logo {
+  width: 15vw;
+  height: auto;
+}
+
+.member-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* 전체 화면의 높이와 같게 설정 */
+  margin: 20px;
+}
+
+.member-table-wrapper table {
   width: 100%;
-  position: relative;
-  background-color: rgba(255, 255, 255, 0.8);
-  color: black;
+  border-collapse: collapse;
 }
 
-.table-header {
+.member-main-content {
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+  flex-wrap: wrap;
+  gap: 20px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  max-height: calc(100vh - 160px);
+}
+
+.member-table-wrapper {
+  width: 100%;
+  max-height: 100%; /* 변경 */
+  overflow-y: auto; /* 변경 */
+  border-radius: 10px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  border: 1px solid #f8f8f8;
+}
+
+
+.member-table-wrapper::-webkit-scrollbar {
+  display: none; /* Chrome, Safari 및 Opera 용 */
+}
+
+/*테이블 헤더*/
+.member-table-wrapper table thead th {
+  background-color: #f8f8f8;
   position: sticky;
   top: 0;
-  background-color: white;
-  font-family: 'Jalnan2', sans-serif;
-  font-size: 15px;
-  color: black;
+  z-index: 2;
 }
 
-.table-body {
-  margin-top: -2px;
-  margin-bottom: 10px;
-}
-
-.table-container th {
-  height: 40px;
+.member-table-wrapper table th, table td {
+  border-bottom: 1px solid #ebeaea;
   padding: 8px;
-  text-align: left;
+  text-align: center;
 }
 
-.table-container td {
-  padding: 8px; /* 셀 내부 여백 설정 */
-  border: 1px solid #ddd; /* 테두리 설정 */
-  text-align: left; /* 텍스트 정렬 설정 */
+.member-table-wrapper table td {
+  text-align: center;
 }
 
-.table-container th {
-  background-color: #f2f2f2; /* 헤더 배경색 설정 */
+.member-table-wrapper table th {
+  background-color: #f8f9fa;
 }
-
 
 a {
   text-decoration: none; /* 링크의 밑줄 제거 */
@@ -81,4 +155,33 @@ a {
 a:hover {
   text-decoration: none; /* 호버 시 밑줄 추가 */
   color: inherit; /* 부모 요소의 글자색을 상속 */
+}
+
+.member-menu-item:hover {
+  cursor: pointer;
+  color: rgb(189, 189, 189);
+}
+
+.member-footer {
+  flex-shrink: 0; /* 크기 유지 */
+  text-align: center;
+  height: 20px;
+  padding: 10px 0;
+  background-color: white;
+  color: #ddd;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+  }
+
+  .profile, .attendance-records {
+    width: 100%;
+  }
 }

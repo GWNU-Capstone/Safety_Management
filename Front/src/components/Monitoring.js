@@ -169,29 +169,29 @@ const MonitoringScreen = () => {
       case 0:
         return (
           <div>
-            <p onClick={handleScanButtonClick}>이곳을 눌러 지문 측정을 시작하세요.</p>
+            <p>이곳을 눌러 지문 측정을 시작하세요.</p>
           </div>
         );
       case 1:
         return (
           <div>
-            <p>지문 스캔 중...</p>
-            <p>지문 센서에 가까이 와주시길 바랍니다.</p>
+            <p>지문을 스캔합니다.</p>
+            <p>센서에 손을 올려주세요.</p>
             <button onClick={scanFingerprint}>지문 스캔 시작</button>
           </div>
         );
       case 2:
         return (
           <div>
-            <p>알코올 농도 측정 중...</p>
-            <p>입에 붙어 주시길 바랍니다.</p>
+            <p>혈중 알코올 농도를 측정합니다.</p>
+            <p>센서에 입으로 공기를 불어주세요.</p>
           </div>
         );
       case 3:
         return (
           <div>
-            <p>체온 및 혈압 측정 중...</p>
-            <p>체온 센서, 혈압 측정기에 오시길 바랍니다.</p>
+            <p>체온 및 혈압을 측정합니다.</p>
+            <p>센서에 손을 올려주세요.</p>
           </div>
         );
       case 4:
@@ -209,7 +209,7 @@ const MonitoringScreen = () => {
       case 6:
         return (
           <div>
-            <p>오늘 출근과 퇴근절차가 완료되었습니다.</p>
+            <p>이미 퇴근 처리가 완료된 사용자입니다.</p>
           </div>
         );
       default:
@@ -292,67 +292,113 @@ const MonitoringScreen = () => {
 
   return (
     <div className="monitoring-container">
-      <div className="logo-container">
-        <Link to="/main">
-          <img src="/img/capston_title.png" alt="로고"/>
-        </Link>
-      </div>
+      <header className="monitoring-header">
+        <div className="monitoring-logo-section">
+          <Link to="/main">
+            <img src="/img/capstone_title.png" alt="logo" className="monitoring-logo" />
+          </Link>
+        </div>
 
-      <div className="info-container">
-        <div className="square">
-          <div className="info-box-1">
+        <div className="monitoring-rightSection">
+          
+          <div className="monitoring-time">
+            <p>{currentDate}</p>
+            <p2>{formatTime(currentTime)}</p2>
+          </div>
+
+          <div className="monitoring-header-menu">
+            <div className="monitoring-menu-wrapper">
+              <Link to="/member" className="monitoring-menu-item">
+                <img src="/img/member.png" alt="member" className="monitoring-menu-icon" />
+                <span>직원 관리</span>
+              </Link>
+
+              <Link to="/statistics" className="monitoring-menu-item">
+                <img src="/img/statistics.png" alt="statistics" className="monitoring-menu-icon" />
+                <span>통계</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="monitoring-content">
+        <div className="monitoring-content-div" onClick={handleScanButtonClick}>
+          <p>{renderStep()}</p>
+        </div>
+
+        <div className="monitoring-content-div2">
+          <div className="monitoring-profile-img">
             {fingerprintScanComplete ? (
               <img src="/img/1.png" alt="Employee" />
             ) : (
               <div className="placeholder"></div>
             )}
           </div>
+          
+          <div className="monitoring-profile-info">
+            <div className="monitoring-profile-img">
+              {fingerprintScanComplete ? (
+                <img src="/img/1.png" alt="Employee"  className="monitoring-user-profile-img"/>
+              ) : (
+                <img src="/img/user.png" alt="" className="monitoring-user-profile-img" />
+              )}
+              
+            </div>
 
-          <div className="info-box-2">
-            {fingerprintScanComplete && employeeID ? (
-              <p>사원번호: {employeeID}</p>
-            ) : (
-              <p>사원번호: 측정 전</p>
-            )}
             {fingerprintScanComplete && employeeName ? (
-              <p>이름: {employeeName}</p>
+              <p>{employeeName}</p>
             ) : (
-              <p>이름: 측정 전</p>
+              <p>지문을 스캔하세요.</p>
+            )}
+            {fingerprintScanComplete && employeeID ? (
+              <p>사원번호<br></br>{employeeID}</p>
+            ) : (
+                <p></p>
             )}
           </div>
 
-          <div className="info-box-3">
-            <img src="/img/alcoholic.png" alt="alcoholic"/>
-            <p>Blood Alcohol Content</p>
-            {alcoholLevel !== null ? <p2>알코올 농도: {alcoholLevel}</p2> : <p2>측정 전</p2>}
-          </div>
-
-          <div className="info-box-4">
-            <img src="/img/thermometer.png" alt="thermometer"/>
-            <p>Temperature</p>
-            {temperature !== null ? <p2>체온: {temperature}°C</p2> : <p2>측정 전</p2>}
-          </div>
-
-          <div className="info-box-5">
-            <img src="/img/heartrate.png" alt="heartrate"/>
-            <p>Heart Rate</p>
-            {bloodPressure !== null ? <p2>심박수: {bloodPressure}bpm</p2> : <p2>측정 전</p2>}
-          </div>
         </div>
       </div>
 
-      <div className="help-container">
-        <div className="help-square">
-          <div className="help-1">
-            <p>{renderStep()}</p>
-          </div>
-
-          <div className="help-2">
-            <p>{currentDate}</p>
-            <p2>{formatTime(currentTime)}</p2>
+      <div className="monitoring-content2">
+        <div className="monitoring-content2-div">
+          <img src="/img/alcoholic.png" alt="alcoholic" className="monitoring-content2-icon"/>
+          <div className="monitoring-content2-text">
+            <p>알코올 농도</p>
+            {alcoholLevel !== null ? <p2>{alcoholLevel}%</p2> : <p2>측정 전</p2>}
           </div>
         </div>
+        <div className="monitoring-content2-div">
+          <img src="/img/thermometer.png" alt="thermometer" className="monitoring-content2-icon"/>
+          <div className="monitoring-content2-text">
+            <p>체온</p>
+            {temperature !== null ? <p2>{temperature}°C</p2> : <p2>측정 전</p2>}
+          </div>
+        </div>
+        <div className="monitoring-content2-div">
+          <img src="/img/heartrate.png" alt="heartrate" className="monitoring-content2-icon"/>
+          <div className="monitoring-content2-text">
+            <p>심박수</p>
+            {bloodPressure !== null ? <p2>{bloodPressure}bpm</p2> : <p2>측정 전</p2>}
+
+          </div>
+
+        </div>
+        <div className="monitoring-content2-div">
+          <img src="/img/oximeter.png" alt="oximeter" className="monitoring-content2-icon"/>
+          <div className="monitoring-content2-text">
+            <p>산소 포화도</p>
+            {bloodPressure !== null ? <p2>{bloodPressure}%</p2> : <p2>측정 전</p2>}
+
+          </div>
+
+        </div>
       </div>
+
+      <footer className="monitoring-footer">
+        Ⓒ 안전하조. 캡스톤 디자인 프로젝트
+      </footer>
     </div>
   );
 };
