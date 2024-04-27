@@ -55,13 +55,16 @@ public class UserInfoService {
     }
 
 
-    /*
     // 사원정보(상세) 수정
     // 연령, 성별, 주민등록번호, 전화번호, 이메일, 주소, 직위, 입사일자, 은행명, 계좌번호
     public UserInfo updateUserInfo(UserInfoDTO userInfoDTO) {
         // 회원 id로 UserInfo 찾기
         UserInfo userInfo = userInfoRepository.findById(userInfoDTO.getUserNo())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        // 이름
+        UserProfile userProfile = userInfo.getUserProfile();
+        userProfile.setUserName(userInfoDTO.getUserName());
 
         userInfo.setUserAge(userInfoDTO.getUserAge());
         userInfo.setUserGender(userInfoDTO.getUserGender());
@@ -74,20 +77,10 @@ public class UserInfoService {
         userInfo.setUserBank(userInfoDTO.getUserBank());
         userInfo.setUserAccount(userInfoDTO.getUserAccount());
 
-        // 이름
-        UserProfile userProfile = userInfo.getUserProfile();
-        if (userProfile != null) {
-            userProfile.setUserName(userInfoDTO.getUserName());
-        }
-
         userInfoRepository.save(userInfo);
 
         return userInfo;
     }
-
-    */
-
-
 
     // 사원 삭제
     public void deleteUser(int userNo) {

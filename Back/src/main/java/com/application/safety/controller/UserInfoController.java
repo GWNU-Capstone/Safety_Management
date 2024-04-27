@@ -25,17 +25,15 @@ import org.springframework.web.bind.annotation.*;
         }
 
 
-        /*
         // 사원정보(상세) 수정
         @PatchMapping("/update/{user_no}")
-        public ResponseEntity<UserInfo> updateUserInfo(@PathVariable("user_no") int userNo, @RequestBody UserInfoDTO userInfoDTO) {
+        public ResponseEntity<UserInfo> updateUserInfo(@PathVariable("user_no") int user_no, @RequestBody UserInfoDTO userInfoDTO) {
 
+            userInfoDTO.setUserNo(user_no);
             UserInfo updatedUserInfo = userInfoService.updateUserInfo(userInfoDTO);
 
             return ResponseEntity.ok(updatedUserInfo);
         }
-
-        */
 
 
         // 사원 삭제
