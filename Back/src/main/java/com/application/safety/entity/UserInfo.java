@@ -22,13 +22,17 @@ public class UserInfo {
     @Column(name = "USER_IMAGE")
     private String UserImage;
 
+    // 주민등록번호 추가
+    @Column(name = "USER_RESIDENT_NUM")
+    private String UserResidentNum;
+
     @Column(name="USER_AGE")
     private int UserAge;
 
     @Column(name="USER_TELNO")
     private String UserTelNo;
 
-    // 엔티티 추가 (성별, 직위, 이메일, 주소, 은행명, 계좌번호, 입사일자, 근무날짜, 비고)
+    // 추가 (성별, 직위, 이메일, 주소, 은행명, 계좌번호, 입사일자, 근무날짜, 비고)
 
     @Column(name="USER_GENDER")
     private String UserGender;
