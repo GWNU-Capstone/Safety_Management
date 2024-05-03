@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useTable } from 'react-table';
 import { Link } from 'react-router-dom';
 import './Member.css';
+import { fingerprintApiBaseUrl, userApiBaseUrl } from './Api';
 
 function Member() {
   // 데이터와 컬럼 정의
   const [membersData, setMembersData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [name, setName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,6 +90,19 @@ function Member() {
   // useTable 훅을 사용하여 테이블 생성
   const table = useTable({ columns, data: membersData });
 
+  // 모달 열기/닫기 함수
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };
+
+  // 회원가입 핸들러
+  const handleSubmit = () => {
+    // 이름과 전화번호를 이용하여 회원가입 처리
+    console.log("이름:", name);
+    console.log("전화번호:", phoneNumber);
+    // 여기에 회원가입 처리 로직을 추가하세요.
+  };
+
   return (
     <div className="member-container">
       <header className="member-header">
@@ -95,7 +112,10 @@ function Member() {
           </Link>
         </div>
 
-        
+        <div className="member-search-left">
+          <button className="new-profile-button" onClick={toggleModal}>직원 등록</button>
+        </div>
+
         <div className="member-search">
           <div className="member-search-container">
             <img src="/img/search.png" alt="icon" className="member-search-icon" />
@@ -123,38 +143,30 @@ function Member() {
             </Link>
           </div>
         </div>
-
       </header>
 
-      {/* 테이블 컨테이너 */}
       <div className="member-main-content">
-
         <div className="member-table-wrapper">
           <table>
-            {/* 테이블 헤더 렌더링 */}
             <thead className="member-table-header">
               {table.headerGroups.map(headerGroup => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
-                  {/* 각 컬럼 헤더 렌더링 */}
                   {headerGroup.headers.map(column => (
                     <th {...column.getHeaderProps()}>{column.render('Header')}</th>
                   ))}
                 </tr>
               ))}
             </thead>
-            {/* 테이블 바디 렌더링 */}
             <tbody className="member-table-body">
               {table.rows.map((row, rowIndex) => {
-                // 테이블 행 필터링
                 if (
                   row.original.id.toString().includes(searchTerm) ||
                   row.original.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                   row.original.pos.toLowerCase().includes(searchTerm.toLowerCase())
                 ) {
-                  table.prepareRow(row); // 각 행 준비
+                  table.prepareRow(row);
                   return (
                     <tr {...row.getRowProps()} key={rowIndex}>
-                      {/* 각 셀 렌더링 */}
                       {row.cells.map((cell, cellIndex) => {
                         return (
                           <td {...cell.getCellProps()} key={cellIndex}>
@@ -165,17 +177,42 @@ function Member() {
                     </tr>
                   )
                 } else {
-                  return null; // 검색어와 일치하지 않으면 해당 행을 렌더링하지 않습니다.
+                  return null;
                 }
               })}
             </tbody>
-
           </table>
         </div>
-
       </div>
 
-
+      {/* 모달 */}
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={toggleModal}>&times;</span>
+            <h2>직원 등록</h2>
+            <div className="form-group">
+              <label htmlFor="name">이름:</label>
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="phoneNumber">전화번호:</label>
+              <input
+                type="text"
+                id="phoneNumber"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+              />
+            </div>
+            <button className="new-profile-button" onClick={handleSubmit}>가입</button>
+          </div>
+        </div>
+      )}
       <footer>
         <div className="member-footer">
           Ⓒ 안전하조. 캡스톤 디자인 프로젝트

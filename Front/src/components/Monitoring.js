@@ -16,6 +16,8 @@ const MonitoringScreen = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [code, setCode] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [spo2, setSpo2] = useState(null);
+
 
   const fingerprintApiBaseUrl = 'http://192.168.55.187:5000'; //소프트웨어 flask서버 ip
   const userApiBaseUrl = 'http://192.168.55.148:8080'; //서버 ip
@@ -190,7 +192,7 @@ const MonitoringScreen = () => {
       case 3:
         return (
           <div>
-            <p>체온 및 혈압을 측정합니다.</p>
+            <p>체온과 혈압, 산소포화도를 측정합니다.</p>
             <p>센서에 손을 올려주세요.</p>
           </div>
         );
@@ -277,14 +279,18 @@ const MonitoringScreen = () => {
     return axios.get(`${fingerprintApiBaseUrl}/tempheart`)
       .then(response => {
         console.log(response);
-        const { userTemp, userHeartRate } = response.data;
-        return { temperature: userTemp, heartRate: userHeartRate };
+        const { userTemp, userHeartRate, userSpo2 } = response.data;
+        setTemperature(userTemp);
+        setBloodPressure(userHeartRate);
+        setSpo2(userSpo2);
       })
       .catch(error => {
-        console.error('Error fetching temperature and heart rate:', error);
-        return { temperature: null, heartRate: null };
+        console.error('Error fetching temperature, heart rate, and spo2:', error);
+        setTemperature(null);
+        setBloodPressure(null);
+        setSpo2(null);
       });
-  };
+  };  
 
   const handleScanButtonClick = () => {
     setStep(1);
@@ -298,14 +304,11 @@ const MonitoringScreen = () => {
             <img src="/img/capstone_title.png" alt="logo" className="monitoring-logo" />
           </Link>
         </div>
-
         <div className="monitoring-rightSection">
-          
           <div className="monitoring-time">
             <p>{currentDate}</p>
             <p2>{formatTime(currentTime)}</p2>
           </div>
-
           <div className="monitoring-header-menu">
             <div className="monitoring-menu-wrapper">
               <Link to="/member" className="monitoring-menu-item">
@@ -321,12 +324,10 @@ const MonitoringScreen = () => {
           </div>
         </div>
       </header>
-
       <div className="monitoring-content">
         <div className="monitoring-content-div" onClick={handleScanButtonClick}>
           <p>{renderStep()}</p>
         </div>
-
         <div className="monitoring-content-div2">
           <div className="monitoring-profile-img">
             {fingerprintScanComplete ? (
@@ -335,7 +336,6 @@ const MonitoringScreen = () => {
               <div className="placeholder"></div>
             )}
           </div>
-          
           <div className="monitoring-profile-info">
             <div className="monitoring-profile-img">
               {fingerprintScanComplete ? (
@@ -345,7 +345,6 @@ const MonitoringScreen = () => {
               )}
               
             </div>
-
             {fingerprintScanComplete && employeeName ? (
               <p>{employeeName}</p>
             ) : (
@@ -357,10 +356,8 @@ const MonitoringScreen = () => {
                 <p></p>
             )}
           </div>
-
         </div>
       </div>
-
       <div className="monitoring-content2">
         <div className="monitoring-content2-div">
           <img src="/img/alcoholic.png" alt="alcoholic" className="monitoring-content2-icon"/>
@@ -381,21 +378,16 @@ const MonitoringScreen = () => {
           <div className="monitoring-content2-text">
             <p>심박수</p>
             {bloodPressure !== null ? <p2>{bloodPressure}bpm</p2> : <p2>측정 전</p2>}
-
           </div>
-
         </div>
         <div className="monitoring-content2-div">
           <img src="/img/oximeter.png" alt="oximeter" className="monitoring-content2-icon"/>
           <div className="monitoring-content2-text">
             <p>산소 포화도</p>
-            {bloodPressure !== null ? <p2>{bloodPressure}%</p2> : <p2>측정 전</p2>}
-
+            {spo2 !== null ? <p2>{spo2}%</p2> : <p2>측정 전</p2>}
           </div>
-
         </div>
       </div>
-
       <footer className="monitoring-footer">
         Ⓒ 안전하조. 캡스톤 디자인 프로젝트
       </footer>
