@@ -1,5 +1,6 @@
 package com.application.safety.service;
 
+import com.application.safety.dto.UserAllDTO;
 import com.application.safety.dto.UserInfoDTO;
 import com.application.safety.entity.UserInfo;
 import com.application.safety.entity.UserProfile;
@@ -8,6 +9,9 @@ import com.application.safety.repository.UserProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -90,10 +94,26 @@ public class UserInfoService {
 
             userProfileRepository.delete(userInfo.getUserProfile());
             userInfoRepository.delete(userInfo);
-        }
-
-
-
     }
+
+    // 사원 정보 전체 조회
+    public List<UserAllDTO> getUserInfoAll() {
+        List<UserInfo> userInfoList = userInfoRepository.findAll();
+
+        return userInfoList.stream().map(userInfo -> {
+            UserAllDTO userAllDTO = new UserAllDTO();
+            userAllDTO.setUserNo(userInfo.getUserNo());
+            userAllDTO.setUserPosition(userInfo.getUserPosition());
+            userAllDTO.setUserName(userInfo.getUserProfile().getUserName());
+            userAllDTO.setUserAge(userInfo.getUserAge());
+            userAllDTO.setUserGender(userInfo.getUserGender());
+            userAllDTO.setUserTelNo(userInfo.getUserTelNo());
+            userAllDTO.setUserEmail(userInfo.getUserEmail());
+            userAllDTO.setUserAddress(userInfo.getUserAddress());
+            return userAllDTO;
+        }).collect(Collectors.toList());
+    }
+
+}
 
 
