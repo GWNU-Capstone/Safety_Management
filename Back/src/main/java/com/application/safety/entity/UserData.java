@@ -35,7 +35,6 @@ public class UserData {
     @Column(name="USER_TEMP")
     private float UserTemp;
 
-    // 엔티티 추가 (산소포화도)
     @Column(name="USER_OXYGEN")
     private int UserOxygen;
 
