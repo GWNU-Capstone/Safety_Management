@@ -186,6 +186,7 @@ a:hover {
   }
 }
 
+/* 추가된 코드 시작 */
 .member-search-left {
   display: flex;
   align-items: center;
@@ -239,3 +240,14 @@ a:hover {
   text-decoration: none;
   cursor: pointer;
 }
+
+.delete-button {
+  padding: 8px 16px;
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+/* 추가된 범위 끝 */
