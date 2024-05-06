@@ -19,7 +19,31 @@ function Member() {
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [deleteId, setDeleteId] = useState('');
-
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${userApiBaseUrl}/user/all`);
+        const userData = response.data.map(user => ({
+          id: user.userNo,
+          pos: user.userPosition,
+          name: user.userName,
+          age: user.userAge,
+          gender: user.userGender,
+          pNumber: user.userTelNo,
+          email: user.userEmail,
+          address: user.userAddress
+        }));
+        setMembersData(userData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
+  /*
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -56,6 +80,7 @@ function Member() {
 
     fetchData();
   }, []);
+  */
 
   const columns = React.useMemo(
     () => [
@@ -125,10 +150,19 @@ function Member() {
         `${fingerprintApiBaseUrl}/fingerprint/rm/?location=${location}`
       );
       console.log(response.data);
-      // Handle success, e.g., show a success message
     } catch (error) {
       console.error('Error removing fingerprint:', error);
-      // Handle error, e.g., show an error message
+    }
+  };
+
+  const employeeRemoval = async (location) => {
+    try {
+      const response = await axios.delete(
+        `${userApiBaseUrl}/delete`
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error removing employee:', error);
     }
   };
 
@@ -183,6 +217,7 @@ function Member() {
     }
 
     handleFingerprintRemoval(deleteId);
+    employeeRemoval(deleteId);
   
     // 사원번호와 일치하는 행을 삭제하고 업데이트된 데이터를 설정합니다.
     const updatedData = [...membersData];

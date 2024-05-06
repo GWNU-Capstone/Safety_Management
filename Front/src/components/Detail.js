@@ -1,25 +1,51 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import './Detail.css';
+import { userApiBaseUrl } from './Api';
 
 function Detail() {
   const [editMode, setEditMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-
   const [inputFields, setInputFields] = useState({
-    name: 'Test',
-    age: '25',
-    gender: '남',
-    ssn: '000101-3111111',
-    id: '1',
-    phone: '123-456-7890',
-    email: 'test@example.com',
-    address: '강원도 원주시 테스트 테스트 1001 (26400)',
-    pos: 'Owner',
-    empDate: '2024-01-01',
-    bank: '농협',
-    account: '000-0000-0000-00'
+    name: '',
+    age: '',
+    gender: '',
+    ssn: '',
+    id: '',
+    phone: '',
+    email: '',
+    address: '',
+    pos: '',
+    empDate: '',
+    bank: '',
+    account: ''
   });
+
+  const { id } = useParams();
+
+  useEffect(() => {
+    // API를 호출하여 해당 사원의 정보를 가져옵니다.
+    fetch(`${userApiBaseUrl}/detail/${id}`)
+      .then(response => response.json())
+      .then(data => {
+        // API 응답 데이터를 상태에 반영합니다.
+        setInputFields({
+          name: data.userName,
+          age: data.userAge,
+          gender: data.userGender,
+          ssn: data.userResidentNum,
+          id: data.userNo,
+          phone: data.userTelNo,
+          email: data.userEmail,
+          address: data.userAddress,
+          pos: data.userPosition,
+          empDate: data.userJoinDate,
+          bank: data.userBank,
+          account: data.userAccount
+        });
+      })
+      .catch(error => console.error('Error fetching user data:', error));
+  }, [id]);
 
   const handleEditProfile = () => {
     // editMode가 true에서 false로 바뀔 때 상태를 업데이트합니다.
