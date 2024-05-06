@@ -19,11 +19,6 @@ const MonitoringScreen = () => {
   const [userId, setUserId] = useState(null);
   const [spo2, setSpo2] = useState(null);
 
-  /*
-  const fingerprintApiBaseUrl = 'http://192.168.55.187:5000'; //소프트웨어 flask서버 ip
-  const userApiBaseUrl = 'http://192.168.55.148:8080'; //서버 ip
-  */
-
   useEffect(() => {
     if (!userId && step === 1) {
       const fetchUserId = async () => {

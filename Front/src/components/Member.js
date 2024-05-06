@@ -158,7 +158,7 @@ function Member() {
   const employeeRemoval = async (location) => {
     try {
       const response = await axios.delete(
-        `${userApiBaseUrl}/delete`
+        `${userApiBaseUrl}/delete/${location}`
       );
       console.log(response.data);
     } catch (error) {

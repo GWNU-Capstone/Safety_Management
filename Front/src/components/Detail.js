@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import './Detail.css';
 import { userApiBaseUrl } from './Api';
+import axios from 'axios';
 
 function Detail() {
   const [editMode, setEditMode] = useState(false);
@@ -24,11 +25,9 @@ function Detail() {
   const { id } = useParams();
 
   useEffect(() => {
-    // API를 호출하여 해당 사원의 정보를 가져옵니다.
-    fetch(`${userApiBaseUrl}/detail/${id}`)
-      .then(response => response.json())
-      .then(data => {
-        // API 응답 데이터를 상태에 반영합니다.
+    axios.get(`${userApiBaseUrl}/detail/${id}`)
+      .then(response => {
+        const data = response.data;
         setInputFields({
           name: data.userName,
           age: data.userAge,
@@ -45,7 +44,7 @@ function Detail() {
         });
       })
       .catch(error => console.error('Error fetching user data:', error));
-  }, [id]);
+  }, [id]);  
 
   const handleEditProfile = () => {
     // editMode가 true에서 false로 바뀔 때 상태를 업데이트합니다.
@@ -57,6 +56,32 @@ function Detail() {
         ...prevFields,
         name: newName
       }));
+  
+      // 프로필 정보 업데이트 요청 보내기
+      axios.put(`${userApiBaseUrl}/update/${inputFields.id}`, {
+        userNo: inputFields.id,
+        userName: inputFields.name,
+        userImage: inputFields.name, // 이미지 정보는 여기서 추가해야 할 수도 있습니다.
+        userResidentNum: inputFields.ssn,
+        userAge: inputFields.age,
+        userTelNo: inputFields.phone,
+        userGender: inputFields.gender,
+        userPosition: inputFields.pos,
+        userEmail: inputFields.email,
+        userAddress: inputFields.address,
+        userBank: inputFields.bank,
+        userAccount: inputFields.account,
+        userJoinDate: inputFields.empDate,
+        // 기타 필요한 필드들도 추가해야 합니다.
+      })
+      .then(response => {
+        console.log('프로필 업데이트 요청 성공:', response.data);
+        // 서버로부터 성공적인 응답을 받았을 때 추가적인 작업 수행 가능
+      })
+      .catch(error => {
+        console.error('프로필 업데이트 요청 실패:', error);
+        // 서버로부터 오류 응답을 받았을 때 추가적인 처리 가능
+      });
     }
     setEditMode(!editMode);
   };
