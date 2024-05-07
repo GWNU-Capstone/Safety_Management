@@ -19,6 +19,12 @@ function Member() {
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [deleteId, setDeleteId] = useState('');
+  const [employeeId, setEmployeeId] = useState(''); // 사원번호 상태 추가
+
+  // 사원번호 상태 초기화
+  useEffect(() => {
+    setEmployeeId('');
+  }, [showRegistrationModal]); // 모달이 열릴 때마다 사원번호 상태 초기화
 
   useEffect(() => {
     const fetchData = async () => {
@@ -134,10 +140,15 @@ function Member() {
 
   const handleFingerprintRegistration = async () => {
     try {
-      const location = membersData.length > 0 ? membersData.length + 1 : 1; // 마지막 사원번호에서 +1을 해서 할당합니다.
-      const response = await axios.post(
+      const location = membersData.length > 0 ? membersData.length + 1 : ''; // 마지막 사원번호에서 +1을 해서 할당합니다.
+      const response = await axios.get(
         `${fingerprintApiBaseUrl}/fingerprint/add/?location=${location}`
       );
+      setEmployeeId(location.toString());
+      /*
+      const userId = response.data.userId; // 서버로부터 받은 userId 값
+      setEmployeeId(userId); // userId를 setEmployeeId 함수를 사용하여 전달합니다.
+      */
       console.log(response.data);
     } catch (error) {
       console.error('지문 등록 오류:', error);
@@ -146,7 +157,7 @@ function Member() {
 
   const handleFingerprintRemoval = async (location) => {
     try {
-      const response = await axios.post(
+      const response = await axios.get(
         `${fingerprintApiBaseUrl}/fingerprint/rm/?location=${location}`
       );
       console.log(response.data);
@@ -168,14 +179,14 @@ function Member() {
 
   const handleSubmit = () => {
 
-    if (!name || !phoneNumber || !position || !age || !gender) {
+    if (!name || !phoneNumber || !position || !age || !gender || !employeeId) {
       alert("입력되지 않은 부분이 있습니다. 모든 필수 입력값을 입력해주세요.");
       return;
     }
 
     // 입력된 데이터를 새로운 객체로 만듭니다.
     const newData = {
-      id: membersData.length > 0 ? membersData[membersData.length - 1].id + 1 : 1, // 마지막 사원번호에서 +1을 해서 할당합니다. 
+      id: parseInt(employeeId),
       pos: position,
       name: name,
       age: age,
@@ -196,6 +207,7 @@ function Member() {
     setPhoneNumber('');
     setEmail('');
     setAddress('');
+    setEmployeeId('');
 
     // 모달 닫기
     setShowRegistrationModal(false);
@@ -230,7 +242,7 @@ function Member() {
     // 모달 닫기
     setShowDeleteModal(false);
   };
-
+  
   return (
     <div className="member-container">
       <header className="member-header">
@@ -239,12 +251,10 @@ function Member() {
             <img src="/img/capstone_title.png" alt="로고" className="member-logo" />
           </Link>
         </div>
-
         <div className="member-search-left">
           <button className="new-profile-button" onClick={toggleRegistrationModal}>직원 등록</button>
           <button className="delete-button" onClick={toggleDeleteModal}>직원 삭제</button>
         </div>
-
         <div className="member-search">
           <div className="member-search-container">
             <img src="/img/search.png" alt="icon" className="member-search-icon" />
@@ -258,7 +268,6 @@ function Member() {
             title="사원번호, 직위, 이름을 통해 직원을 검색할 수 있습니다."
           />
         </div>
-
         <div className="member-header-menu">
           <div className="member-menu-wrapper">
             <Link to="/statistics" className="member-menu-item">
@@ -273,7 +282,6 @@ function Member() {
           </div>
         </div>
       </header>
-
       <div className="member-main-content">
         <div className="member-table-wrapper">
           <table>
@@ -313,13 +321,22 @@ function Member() {
           </table>
         </div>
       </div>
-
       {/* 직원 등록 모달창 */}
       {showRegistrationModal && (
         <div className="modal">
           <div className="modal-content">
             <span className="close" onClick={toggleRegistrationModal}>&times;</span>
             <h2>직원 등록</h2>
+            <div className="form-group">
+              <label htmlFor="employeeId">*필수 사원번호:</label>
+              <input
+                type="text"
+                id="employeeId"
+                value={employeeId}
+                onChange={(e) => setEmployeeId(e.target.value)} // 입력이 가능하도록 변경
+                readOnly
+              />
+            </div>
             <div className="form-group">
               <label htmlFor="name">*필수 이름:</label>
               <input
