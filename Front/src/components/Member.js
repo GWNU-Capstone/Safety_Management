@@ -19,7 +19,7 @@ function Member() {
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [deleteId, setDeleteId] = useState('');
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -39,10 +39,10 @@ function Member() {
         console.error('Error fetching data:', error);
       }
     };
-  
+
     fetchData();
   }, []);
-  
+
   /*
   useEffect(() => {
     const fetchData = async () => {
@@ -168,7 +168,7 @@ function Member() {
 
   const handleSubmit = () => {
 
-    if (!name || !phoneNumber || !position || !age || gender === null || !email || !address) {
+    if (!name || !phoneNumber || !position || !age || !gender) {
       alert("입력되지 않은 부분이 있습니다. 모든 필수 입력값을 입력해주세요.");
       return;
     }
@@ -206,10 +206,10 @@ function Member() {
       alert("사원번호를 입력해주세요.");
       return;
     }
-  
+
     // 입력된 사원번호와 일치하는 행을 찾습니다.
     const indexToDelete = membersData.findIndex(member => member.id.toString() === deleteId);
-  
+
     // 사원번호와 일치하는 행이 없으면 알림을 표시하고 종료합니다.
     if (indexToDelete === -1) {
       alert("일치하는 사원번호가 없습니다.");
@@ -218,15 +218,15 @@ function Member() {
 
     handleFingerprintRemoval(deleteId);
     employeeRemoval(deleteId);
-  
+
     // 사원번호와 일치하는 행을 삭제하고 업데이트된 데이터를 설정합니다.
     const updatedData = [...membersData];
     updatedData.splice(indexToDelete, 1);
     setMembersData(updatedData);
-  
+
     // 입력 필드 초기화
     setDeleteId('');
-  
+
     // 모달 닫기
     setShowDeleteModal(false);
   };
@@ -314,14 +314,14 @@ function Member() {
         </div>
       </div>
 
-      {/* 모달 */}
+      {/* 직원 등록 모달창 */}
       {showRegistrationModal && (
         <div className="modal">
           <div className="modal-content">
             <span className="close" onClick={toggleRegistrationModal}>&times;</span>
             <h2>직원 등록</h2>
             <div className="form-group">
-              <label htmlFor="name">이름:</label>
+              <label htmlFor="name">*필수 이름:</label>
               <input
                 type="text"
                 id="name"
@@ -330,7 +330,7 @@ function Member() {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="phoneNumber">전화번호:</label>
+              <label htmlFor="phoneNumber">*필수 전화번호:</label>
               <input
                 type="text"
                 id="phoneNumber"
@@ -339,25 +339,35 @@ function Member() {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="position">직위:</label>
-              <input
-                type="text"
+              <label htmlFor="position">*필수 직위:</label>
+              <select
                 id="position"
                 value={position}
                 onChange={(e) => setPosition(e.target.value)}
-              />
+              >
+                <option value="">직위를 선택하세요.</option>
+                <option value="현장 관리자">현장 관리자</option>
+                <option value="기술자">기술자</option>
+                <option value="일용직">일용직</option>
+                <option value="사무원">사무원</option>
+                <option value="안전 감독관">안전 감독관</option>
+              </select>
             </div>
             <div className="form-group">
-              <label htmlFor="age">나이:</label>
-              <input
-                type="text"
+              <label htmlFor="age">*필수 나이:</label>
+              <select
                 id="age"
                 value={age}
                 onChange={(e) => setAge(e.target.value)}
-              />
+              >
+                <option value="">나이를 선택하세요.</option>
+                {[...Array(100)].map((_, index) => (
+                  <option key={index + 1} value={index + 1}>{index + 1}세</option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
-              <label htmlFor="gender">성별:</label>
+              <label htmlFor="gender">*필수 성별:</label>
               <select
                 id="gender"
                 value={gender}
@@ -391,6 +401,7 @@ function Member() {
           </div>
         </div>
       )}
+      {/* 직원 삭제 모달창 */}
       {showDeleteModal && (
         <div className="modal">
           <div className="modal-content">
