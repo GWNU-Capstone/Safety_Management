@@ -58,10 +58,10 @@ function Detail() {
       }));
   
       // 프로필 정보 업데이트 요청 보내기
-      axios.put(`${userApiBaseUrl}/update/${inputFields.id}`, {
+      axios.patch(`${userApiBaseUrl}/update/${inputFields.id}`, {
         userNo: inputFields.id,
         userName: inputFields.name,
-        userImage: inputFields.name, // 이미지 정보는 여기서 추가해야 할 수도 있습니다.
+        userImage: inputFields.name, // 이미지 정보는 여기서 추가해야 할 듯
         userResidentNum: inputFields.ssn,
         userAge: inputFields.age,
         userTelNo: inputFields.phone,
