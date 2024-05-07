@@ -87,5 +87,4 @@ public class UserProfileService {
 
         return responseData;
     }
-
 }

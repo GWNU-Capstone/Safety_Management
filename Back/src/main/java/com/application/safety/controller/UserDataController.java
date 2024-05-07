@@ -21,7 +21,7 @@ public class UserDataController {
     @PostMapping("/user/go")
     public ResponseEntity<UserData> userGoToWork(@RequestBody UserDataDTO userDataDTO) {
 
-        UserData userData = userDataService.userDataStart(userDataDTO);
+        UserData userData = userDataService.addUserData(userDataDTO);
         messageService.sendSMS("출근", userDataDTO.getUserNo());
 
         return ResponseEntity.ok(userData);
