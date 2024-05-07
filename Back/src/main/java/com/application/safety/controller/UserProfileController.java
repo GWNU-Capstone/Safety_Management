@@ -17,7 +17,6 @@ public class UserProfileController {
     // 지문 인식 요청 API
     @GetMapping("/user/fingerprint/{user_no}")
     public ResponseEntity<Map<String, Object>> getUserFinger(@PathVariable("user_no") int user_no) {
-
         return ResponseEntity.ok().body(userProfileService.getWorkState(user_no));
     }
 }
