@@ -25,19 +25,8 @@ public class UserProfileService {
     private final UserInfoService userInfoService;
     private final MessageService messageService;
 
-    // UserProfile DTO
-    public UserProfileDTO getProfile(int user_no) {
-        UserProfile userProfile = userProfileRepository.findById(user_no).orElseThrow();
-
-        UserProfileDTO userProfileDTO = new UserProfileDTO();
-        userProfileDTO.setUserNo(userProfile.getUserNo());
-        userProfileDTO.setUserName(userProfile.getUserName());
-
-        return userProfileDTO;
-    }
-
     // 출퇴근 검사
-    public Map<String, Object> getWorkState(int user_no) {
+    public Map<String, Object> getUserProfile(int user_no) {
 
         // 사원 번호, 사용자 이름 DTO
         UserProfileDTO userProfileDTO = getProfile(user_no);
@@ -86,5 +75,16 @@ public class UserProfileService {
         responseData.put("UserInfo", userInfoDTO);
 
         return responseData;
+    }
+
+    // UserProfile DTO
+    public UserProfileDTO getProfile(int user_no) {
+        UserProfile userProfile = userProfileRepository.findById(user_no).orElseThrow();
+
+        UserProfileDTO userProfileDTO = new UserProfileDTO();
+        userProfileDTO.setUserNo(userProfile.getUserNo());
+        userProfileDTO.setUserName(userProfile.getUserName());
+
+        return userProfileDTO;
     }
 }

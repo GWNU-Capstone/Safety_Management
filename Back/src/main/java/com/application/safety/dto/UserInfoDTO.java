@@ -23,5 +23,4 @@ public class UserInfoDTO {
     private LocalDate userJoinDate;
     private LocalDate userWorkDate;
     private String userNote;
-
 }
