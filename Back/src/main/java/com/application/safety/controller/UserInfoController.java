@@ -1,6 +1,5 @@
 package com.application.safety.controller;
-
-import com.application.safety.dto.UserAllDTO;
+import com.application.safety.dto.UserDTO;
 import com.application.safety.dto.UserInfoDTO;
 import com.application.safety.entity.UserInfo;
 import com.application.safety.service.UserInfoService;
@@ -15,20 +14,26 @@ import java.util.List;
 public class UserInfoController {
     private final UserInfoService userInfoService;
 
-    // 사원 정보 전체 조회
+    // 근로자 등록 Crate
+    @PostMapping("/user/join")
+    public ResponseEntity<UserDTO.Request> addUser(@RequestBody UserDTO.Request userDTO) {
+        return ResponseEntity.ok(userDTO);
+    }
+
+    // 근로자 정보 전체 조회 Read
     @GetMapping("/user/all")
-    public List<UserAllDTO> getUserInfoAll() {
+    public List<UserDTO.Response> getUserInfoAll() {
         return userInfoService.getUserInfoAll();
     }
 
-    // 사원정보(상세) 조회
+    // 근로자 정보(상세) 조회 Read
     @GetMapping("/detail/{user_no}")
     public ResponseEntity<UserInfoDTO> getUserInfo(@PathVariable("user_no") int user_no) {
         UserInfoDTO userInfoResponseDTO = userInfoService.getUserInfo(user_no);
         return ResponseEntity.ok(userInfoResponseDTO);
     }
 
-    // 사원정보(상세) 수정
+    // 근로자 정보(상세) 수정 Update
     @PatchMapping("/update/{user_no}")
     public ResponseEntity<UserInfo> updateUserInfo(@PathVariable("user_no") int user_no, @RequestBody UserInfoDTO userInfoDTO) {
         userInfoDTO.setUserNo(user_no);
@@ -36,7 +41,7 @@ public class UserInfoController {
         return ResponseEntity.ok(updatedUserInfo);
     }
 
-    // 사원 삭제
+    // 근로자 정보 삭제 Delete
     @DeleteMapping("/delete/{user_no}")
     public ResponseEntity<Void> deleteUser(@PathVariable("user_no") int user_no) {
         userInfoService.deleteUser(user_no);
