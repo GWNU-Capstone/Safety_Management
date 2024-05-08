@@ -1,6 +1,6 @@
 package com.application.safety.service;
 
-import com.application.safety.dto.UserAllDTO;
+import com.application.safety.dto.UserDTO;
 import com.application.safety.dto.UserInfoDTO;
 import com.application.safety.entity.UserInfo;
 import com.application.safety.entity.UserProfile;
@@ -97,20 +97,20 @@ public class UserInfoService {
     }
 
     // 사원 정보 전체 조회
-    public List<UserAllDTO> getUserInfoAll() {
+    public List<UserDTO.Response> getUserInfoAll() {
         List<UserInfo> userInfoList = userInfoRepository.findAll();
 
         return userInfoList.stream().map(userInfo -> {
-            UserAllDTO userAllDTO = new UserAllDTO();
-            userAllDTO.setUserNo(userInfo.getUserNo());
-            userAllDTO.setUserPosition(userInfo.getUserPosition());
-            userAllDTO.setUserName(userInfo.getUserProfile().getUserName());
-            userAllDTO.setUserAge(userInfo.getUserAge());
-            userAllDTO.setUserGender(userInfo.getUserGender());
-            userAllDTO.setUserTelNo(userInfo.getUserTelNo());
-            userAllDTO.setUserEmail(userInfo.getUserEmail());
-            userAllDTO.setUserAddress(userInfo.getUserAddress());
-            return userAllDTO;
+            UserDTO.Response dto = new UserDTO.Response();
+            dto.setUserNo(userInfo.getUserNo());
+            dto.setUserPosition(userInfo.getUserPosition());
+            dto.setUserName(userInfo.getUserProfile().getUserName());
+            dto.setUserAge(userInfo.getUserAge());
+            dto.setUserGender(userInfo.getUserGender());
+            dto.setUserTelNo(userInfo.getUserTelNo());
+            dto.setUserEmail(userInfo.getUserEmail());
+            dto.setUserAddress(userInfo.getUserAddress());
+            return dto;
         }).collect(Collectors.toList());
     }
 
