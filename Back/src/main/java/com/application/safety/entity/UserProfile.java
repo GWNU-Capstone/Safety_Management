@@ -17,8 +17,8 @@ import lombok.NoArgsConstructor;
 public class UserProfile {
     @Id
     @Column(name = "USER_NO")
-    private int UserNo;
+    private int UserNo; // 사원 번호
 
     @Column(name = "USER_NAME")
-    private String UserName;
+    private String UserName; // 이름
 }
