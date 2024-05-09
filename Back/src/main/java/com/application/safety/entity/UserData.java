@@ -22,7 +22,7 @@ public class UserData {
     @Column(name="USER_DATA_NO")
     private int UserDataNo; // 데이터 번호
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "USER_NO")
     private UserProfile userProfile;
 

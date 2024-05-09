@@ -55,8 +55,8 @@ public class UserInfo {
     @Column(name="MEMO")
     private String memo; // 메모
 
-    @OneToOne
     @MapsId
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "USER_NO")
     private UserProfile UserProfile;
 }

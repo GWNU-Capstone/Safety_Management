@@ -127,9 +127,6 @@ public class UserInfoService {
     public void deleteUser(int userNo) {
         UserInfo userInfo = getUserInfoEntity(userNo);
 
-        // 테이블 참조관계에 따라 데이터 삭제
-        userDataRepository.deleteByUserProfile(userInfo.getUserProfile());
-        userInfoRepository.delete(userInfo);
         userProfileRepository.delete(userInfo.getUserProfile());
 
     }
