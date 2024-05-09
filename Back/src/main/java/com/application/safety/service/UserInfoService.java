@@ -10,6 +10,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +40,10 @@ public class UserInfoService {
         userInfo.setUserEmail(dto.getUserEmail());
         userInfo.setUserAddress(dto.getUserAddress());
 
-        // 값 저장
+        // 가입 일자 = 요청 일자
+        LocalDate localDate = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        userInfo.setUserJoinDate(localDate);
+
         userInfoRepository.save(userInfo);
     }
 
