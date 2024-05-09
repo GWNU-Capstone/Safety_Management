@@ -61,9 +61,8 @@ public class UserInfo {
     @Column(name="USER_NOTE")
     private String UserNote;
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "USER_NO")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "USER_NO", referencedColumnName = "USER_NO")
     private UserProfile UserProfile;
 
 }

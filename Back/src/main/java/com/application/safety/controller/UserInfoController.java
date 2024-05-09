@@ -17,6 +17,7 @@ public class UserInfoController {
     // 근로자 등록 Crate
     @PostMapping("/user/join")
     public ResponseEntity<UserDTO.Request> addUser(@RequestBody UserDTO.Request userDTO) {
+        userInfoService.addUser(userDTO);
         return ResponseEntity.ok(userDTO);
     }
 

@@ -19,6 +19,47 @@ public class UserInfoService {
     private final UserInfoRepository userInfoRepository;
     private final UserProfileRepository userProfileRepository;
 
+    // 근로자 등록 Create Service
+    public void addUser(UserDTO.Request dto) {
+        // UserProfile 새로운 객체 생성 후 값 삽입
+        UserProfile userProfile = new UserProfile();
+        userProfile.setUserNo(dto.getUserNo());
+        userProfile.setUserName(dto.getUserName());
+
+        UserProfile saveUserProfile = userProfileRepository.save(userProfile);
+
+        // UserInfo 새로운 객체 생성 후 값 삽입
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserNo(saveUserProfile.getUserNo());
+        userInfo.setUserPosition(dto.getUserPosition());
+        userInfo.setUserAge(dto.getUserAge());
+        userInfo.setUserGender(dto.getUserGender());
+        userInfo.setUserTelNo(dto.getUserTelNo());
+        userInfo.setUserEmail(dto.getUserEmail());
+        userInfo.setUserAddress(dto.getUserAddress());
+
+        // 값 저장
+        userInfoRepository.save(userInfo);
+    }
+
+    // 근로자 정보 전체 조회 Read Service
+    public List<UserDTO.Response> getUserInfoAll() {
+        List<UserInfo> userInfoList = userInfoRepository.findAll();
+
+        return userInfoList.stream().map(userInfo -> {
+            UserDTO.Response dto = new UserDTO.Response();
+            dto.setUserNo(userInfo.getUserNo());
+            dto.setUserPosition(userInfo.getUserPosition());
+            dto.setUserName(userInfo.getUserProfile().getUserName());
+            dto.setUserAge(userInfo.getUserAge());
+            dto.setUserGender(userInfo.getUserGender());
+            dto.setUserTelNo(userInfo.getUserTelNo());
+            dto.setUserEmail(userInfo.getUserEmail());
+            dto.setUserAddress(userInfo.getUserAddress());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
     // UserInfo DTO
     public UserInfoDTO getInfo(int user_no) {
         UserInfo userInfo = userInfoRepository.findById(user_no).orElseThrow();
@@ -94,24 +135,6 @@ public class UserInfoService {
 
             userProfileRepository.delete(userInfo.getUserProfile());
             userInfoRepository.delete(userInfo);
-    }
-
-    // 사원 정보 전체 조회
-    public List<UserDTO.Response> getUserInfoAll() {
-        List<UserInfo> userInfoList = userInfoRepository.findAll();
-
-        return userInfoList.stream().map(userInfo -> {
-            UserDTO.Response dto = new UserDTO.Response();
-            dto.setUserNo(userInfo.getUserNo());
-            dto.setUserPosition(userInfo.getUserPosition());
-            dto.setUserName(userInfo.getUserProfile().getUserName());
-            dto.setUserAge(userInfo.getUserAge());
-            dto.setUserGender(userInfo.getUserGender());
-            dto.setUserTelNo(userInfo.getUserTelNo());
-            dto.setUserEmail(userInfo.getUserEmail());
-            dto.setUserAddress(userInfo.getUserAddress());
-            return dto;
-        }).collect(Collectors.toList());
     }
 
 }
