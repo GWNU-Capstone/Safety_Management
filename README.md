@@ -42,11 +42,9 @@
     ```
   - **출근 X / 퇴근 X**:
     ```json
-    "code": 103,
-    "UserInfo": {
+    {
+      "code": 103,
       "userImage": "1.png" (사진)
-    },
-    "userProfile": {
       "userNo": 1, (사원 번호)
       "userName": "홍길동" (이름)
     }
@@ -94,8 +92,7 @@
       "userBank": "우리은행", (은행)
       "userAccount": "1002-123-456789", (계좌 번호)
       "userJoinDate": "2024-03-01", (입사 일자)
-      "userWorkDate": "2024-04-30", (마지막 근무 일자)
-      "userNote": "비고1" (비고)
+      "memo": "메모" (메모)
     }
     ```
 
@@ -145,6 +142,7 @@
       "userDrink" : 0.05, (음주 측정)
       "userHeartRate": 69, (심박수)
       "userTemp": 29.8, (체온)
+      "userOxygen" : 89 (산소포화도)
     }
     ```  
 - **성공 응답**:
@@ -160,6 +158,7 @@
       "userDrink": 0.05, 
       "userTemp": 29.8,
       "userHeartRate": 69,
+      "userOxygen": 89,
       "userDataNo": 14, (데이터 번호)
       "userStart": "18:30:00"
     }
@@ -174,40 +173,45 @@
   - **Params**
     ```json
     {
-      "UserNo": 1,
-      "UserAge": 60,
-      "UserTelNo": "01099999999",
-      "UserGender": "남성",
-      "UserAddress": "서울시 강남구",
-      "UserBank": "국민은행",
-      "UserAccount": "123-456-7890",
-      "UserJoinDate": "2023-03-03"
+      "userNo" : 3,
+      "userName" : "홍길동",
+      "userImage" : "11.png",
+      "userResidentNum" : "123456-1234567",
+      "userAge" : 60,
+      "userTelNo" : "01044444441",
+      "userGender" : "남성",
+      "userPosition": "사장",
+      "userEmail": "1abc@naver.com",
+      "userAddress": "강원도",
+      "userBank" : "국민은행",
+      "userAccount": "123-4567-1234",
+      "userJoinDate": "2024-04-28"
+      "memo" : "example"
     }
     ```
-
+    
 - **성공 응답**:
   - **Content**:
     ```json
     {
-      "userNo": 1,
-      "userProfile": {
-          "userNo": 1,
-          "userName": null
-    },
-      "userTelNo": "01099999999",
-      "userPosition": null,
-      "userEmail": null,
-      "userAddress": "서울시 강남구",
-      "userGender": "남성",
+      "userNo": 3,
+      "userImage": "11.png",
+      "userResidentNum": "123456-1234567",
       "userAge": 60,
-      "userJoinDate": "2023-03-03",
-      "userAccount": "123-456-7890",
-      "userImage": "4.png",
-      "userResidentNum": null,
+      "userTelNo": "01044444441",
+      "userGender": "남성",
+      "userPosition": "사장",
+      "userEmail": "1abc@naver.com",
+      "userAddress": "강원도",
       "userBank": "국민은행",
-      "userNote": "비고1",
-      "userWorkDate": "2023-03-05"
+      "userAccount": "123-4567-1234",
+      "userJoinDate": "2024-04-28",
+      "memo": "example",
+      "userProfile": {
+        "userName": "홍길동",
+        "userNo": 3
     }
+}
     ```
 
 * * *
@@ -220,5 +224,3 @@
   성공 시 204 No Content
   
   오류발생 시 500 Internal Server Error 등
-
-
