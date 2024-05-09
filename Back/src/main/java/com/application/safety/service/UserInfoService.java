@@ -65,17 +65,19 @@ public class UserInfoService {
         }).collect(Collectors.toList());
     }
 
-
-    // 사원정보(상세) 조회
+    // 근로자 정보(상세) 조회
     // 이름, 연령, 성별, 주민등록번호, 전화번호, 이메일, 주소, 직위, 입사일자, 은행명, 계좌번호
     public UserInfoDTO getUserInfo(int userNo) {
-        // userNo에 해당하는 UserInfo 엔티티 조회
-        UserInfo userInfo = userInfoRepository.findById(userNo)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        UserInfo userInfo = getUserInfoEntity(userNo);
+
+        UserProfile userProfile = userInfo.getUserProfile();
 
         UserInfoDTO userInfoDTO = new UserInfoDTO();
 
+        // userProfile 조회 및 이름 설정
         userInfoDTO.setUserNo(userInfo.getUserNo());
+        userInfoDTO.setUserName(userProfile.getUserName());
+
         userInfoDTO.setUserAge(userInfo.getUserAge());
         userInfoDTO.setUserGender(userInfo.getUserGender());
         userInfoDTO.setUserResidentNum(userInfo.getUserResidentNum());
@@ -87,22 +89,15 @@ public class UserInfoService {
         userInfoDTO.setUserBank(userInfo.getUserBank());
         userInfoDTO.setUserAccount(userInfo.getUserAccount());
 
-
-        // UserName은 UserProfile 에서 가져옴
-        UserProfile userProfile = userInfo.getUserProfile();
-        userInfoDTO.setUserName(userProfile.getUserName());
         return userInfoDTO;
     }
 
-
-    // 사원정보(상세) 수정
+    // 근로자 정보(상세) 수정
     // 연령, 성별, 주민등록번호, 전화번호, 이메일, 주소, 직위, 입사일자, 은행명, 계좌번호
     public UserInfo updateUserInfo(UserInfoDTO userInfoDTO) {
-        // 회원 id로 UserInfo 찾기
-        UserInfo userInfo = userInfoRepository.findById(userInfoDTO.getUserNo())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        UserInfo userInfo = getUserInfoEntity(userInfoDTO.getUserNo());
 
-        // 이름
+        // userProfile 조회 및 이름 설정
         UserProfile userProfile = userInfo.getUserProfile();
         userProfile.setUserName(userInfoDTO.getUserName());
 
@@ -124,14 +119,17 @@ public class UserInfoService {
 
     // 사원 삭제
     public void deleteUser(int userNo) {
-            // userNo에 해당하는 UserInfo 엔티티 찾기
-        UserInfo userInfo = userInfoRepository.findById(userNo)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        UserInfo userInfo = getUserInfoEntity(userNo);
 
             userProfileRepository.delete(userInfo.getUserProfile());
             userInfoRepository.delete(userInfo);
     }
 
+    // 사원 번호 기반 Entity 조회
+    public UserInfo getUserInfoEntity(int userNo) {
+        return userInfoRepository.findById(userNo)
+                .orElseThrow(() -> new EntityNotFoundException("[UserInfoService] UserInfo Not Found : " + userNo));
+    }
 }
 
 
