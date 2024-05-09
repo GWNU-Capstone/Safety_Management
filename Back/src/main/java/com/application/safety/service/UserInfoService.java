@@ -127,6 +127,8 @@ public class UserInfoService {
     public void deleteUser(int userNo) {
         UserInfo userInfo = getUserInfoEntity(userNo);
 
+        userDataRepository.deleteByUserProfile(userInfo.getUserProfile());
+        userInfoRepository.delete(userInfo);
         userProfileRepository.delete(userInfo.getUserProfile());
 
     }

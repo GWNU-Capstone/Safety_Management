@@ -11,4 +11,6 @@ import java.util.Optional;
 @Repository
 public interface UserDataRepository extends JpaRepository<UserData, Integer> {
     Optional<UserData> findByUserProfileAndDate(UserProfile userProfile, LocalDate date);
+
+    void deleteByUserProfile(UserProfile userProfile);
 }
