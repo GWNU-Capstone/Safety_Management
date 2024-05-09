@@ -92,7 +92,7 @@
     {
       "UserNo": 1,
       "UserAge": 60,
-      "UserTelNo": "010-9999-9999",
+      "UserTelNo": "01099999999",
       "UserGender": "남성",
       "UserAddress": "서울시 강남구",
       "UserBank": "국민은행",
@@ -110,7 +110,7 @@
           "userNo": 1,
           "userName": null
     },
-      "userTelNo": "010-9999-9999",
+      "userTelNo": "01099999999",
       "userPosition": null,
       "userEmail": null,
       "userAddress": "서울시 강남구",
