@@ -87,14 +87,14 @@
   - **Params**
     ```json
     {
-    "UserNo": 1,
-    "UserAge": 60,
-    "UserTelNo": "010-9999-9999",
-    "UserGender": "남성",
-    "UserAddress": "서울시 강남구",
-    "UserBank": "국민은행",
-    "UserAccount": "123-456-7890",
-    "UserJoinDate": "2023-03-03"
+      "UserNo": 1,
+      "UserAge": 60,
+      "UserTelNo": "010-9999-9999",
+      "UserGender": "남성",
+      "UserAddress": "서울시 강남구",
+      "UserBank": "국민은행",
+      "UserAccount": "123-456-7890",
+      "UserJoinDate": "2023-03-03"
     }
     ```
 
@@ -102,24 +102,24 @@
   - **Content**:
     ```json
     {
-    "userNo": 1,
-    "userProfile": {
-        "userNo": 1,
-        "userName": null
+      "userNo": 1,
+      "userProfile": {
+          "userNo": 1,
+          "userName": null
     },
-    "userTelNo": "010-9999-9999",
-    "userPosition": null,
-    "userEmail": null,
-    "userAddress": "서울시 강남구",
-    "userGender": "남성",
-    "userAge": 60,
-    "userJoinDate": "2023-03-03",
-    "userAccount": "123-456-7890",
-    "userImage": "4.png",
-    "userResidentNum": null,
-    "userBank": "국민은행",
-    "userNote": "비고1",
-    "userWorkDate": "2023-03-05"
+      "userTelNo": "010-9999-9999",
+      "userPosition": null,
+      "userEmail": null,
+      "userAddress": "서울시 강남구",
+      "userGender": "남성",
+      "userAge": 60,
+      "userJoinDate": "2023-03-03",
+      "userAccount": "123-456-7890",
+      "userImage": "4.png",
+      "userResidentNum": null,
+      "userBank": "국민은행",
+      "userNote": "비고1",
+      "userWorkDate": "2023-03-05"
     }
     ```
     
