@@ -65,16 +65,6 @@ public class UserInfoService {
         }).collect(Collectors.toList());
     }
 
-    // UserInfo DTO
-    public UserInfoDTO getInfo(int user_no) {
-        UserInfo userInfo = userInfoRepository.findById(user_no).orElseThrow();
-
-        UserInfoDTO userInfoDTO = new UserInfoDTO();
-        userInfoDTO.setUserImage(userInfo.getUserImage());
-
-        return userInfoDTO;
-    }
-
 
     // 사원정보(상세) 조회
     // 이름, 연령, 성별, 주민등록번호, 전화번호, 이메일, 주소, 직위, 입사일자, 은행명, 계좌번호
