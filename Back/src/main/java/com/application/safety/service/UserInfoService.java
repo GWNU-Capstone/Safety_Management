@@ -32,7 +32,7 @@ public class UserInfoService {
 
         // UserInfo 새로운 객체 생성 후 값 삽입
         UserInfo userInfo = new UserInfo();
-        userInfo.setUserNo(saveUserProfile.getUserNo());
+        userInfo.setUserProfile(saveUserProfile);
         userInfo.setUserPosition(dto.getUserPosition());
         userInfo.setUserAge(dto.getUserAge());
         userInfo.setUserGender(dto.getUserGender());
