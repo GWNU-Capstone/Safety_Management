@@ -8,8 +8,11 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class UserInfoDTO {
+    // UserProfile
     private int userNo;
-    private String userName; // UserProfile
+    private String userName;
+
+    // UserInfo
     private String userImage;
     private String userResidentNum;
     private int userAge;
@@ -21,6 +24,5 @@ public class UserInfoDTO {
     private String userBank;
     private String userAccount;
     private LocalDate userJoinDate;
-    private LocalDate userWorkDate;
-    private String userNote;
+    private String memo;
 }
