@@ -82,12 +82,14 @@ public class UserInfoService {
         userInfoDTO.setUserGender(userInfo.getUserGender());
         userInfoDTO.setUserResidentNum(userInfo.getUserResidentNum());
         userInfoDTO.setUserTelNo(userInfo.getUserTelNo());
+        userInfoDTO.setUserImage(userInfo.getUserImage());
         userInfoDTO.setUserEmail(userInfo.getUserEmail());
         userInfoDTO.setUserAddress(userInfo.getUserAddress());
         userInfoDTO.setUserPosition(userInfo.getUserPosition());
         userInfoDTO.setUserJoinDate(userInfo.getUserJoinDate());
         userInfoDTO.setUserBank(userInfo.getUserBank());
         userInfoDTO.setUserAccount(userInfo.getUserAccount());
+        userInfoDTO.setMemo(userInfo.getMemo());
 
         return userInfoDTO;
     }
