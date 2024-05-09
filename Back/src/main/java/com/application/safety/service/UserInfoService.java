@@ -4,11 +4,13 @@ import com.application.safety.dto.UserDTO;
 import com.application.safety.dto.UserInfoDTO;
 import com.application.safety.entity.UserInfo;
 import com.application.safety.entity.UserProfile;
+import com.application.safety.repository.UserDataRepository;
 import com.application.safety.repository.UserInfoRepository;
 import com.application.safety.repository.UserProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 public class UserInfoService {
     private final UserInfoRepository userInfoRepository;
     private final UserProfileRepository userProfileRepository;
+    private final UserDataRepository userDataRepository;
 
     // 근로자 등록 Create Service
     public void addUser(UserDTO.Request dto) {
@@ -120,11 +123,15 @@ public class UserInfoService {
     }
 
     // 사원 삭제
+    @Transactional
     public void deleteUser(int userNo) {
         UserInfo userInfo = getUserInfoEntity(userNo);
 
-            userProfileRepository.delete(userInfo.getUserProfile());
-            userInfoRepository.delete(userInfo);
+        // 테이블 참조관계에 따라 데이터 삭제
+        userDataRepository.deleteByUserProfile(userInfo.getUserProfile());
+        userInfoRepository.delete(userInfo);
+        userProfileRepository.delete(userInfo.getUserProfile());
+
     }
 
     // 사원 번호 기반 Entity 조회
