@@ -44,9 +44,8 @@ public class UserInfoController {
 
     // 근로자 정보 삭제 Delete
     @DeleteMapping("/delete/{user_no}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("user_no") int user_no) {
+    public void deleteUser(@PathVariable("user_no") int user_no) {
         userInfoService.deleteUser(user_no);
-        return ResponseEntity.noContent().build();
     }
 }
 

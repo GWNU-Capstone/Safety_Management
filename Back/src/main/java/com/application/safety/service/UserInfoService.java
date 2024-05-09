@@ -125,12 +125,11 @@ public class UserInfoService {
     // 사원 삭제
     @Transactional
     public void deleteUser(int userNo) {
-        UserInfo userInfo = getUserInfoEntity(userNo);
+        UserProfile userProfile = userProfileRepository.findById(userNo).orElseThrow();
 
-        userDataRepository.deleteByUserProfile(userInfo.getUserProfile());
-        userInfoRepository.delete(userInfo);
-        userProfileRepository.delete(userInfo.getUserProfile());
-
+        userDataRepository.deleteByUserProfile(userProfile);
+        userInfoRepository.deleteById(userNo);
+        userProfileRepository.deleteById(userNo);
     }
 
     // 사원 번호 기반 Entity 조회
