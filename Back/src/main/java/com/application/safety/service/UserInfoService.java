@@ -106,6 +106,7 @@ public class UserInfoService {
         UserProfile userProfile = userInfo.getUserProfile();
         userProfile.setUserName(userInfoDTO.getUserName());
 
+        userInfo.setUserImage(userInfoDTO.getUserImage());
         userInfo.setUserAge(userInfoDTO.getUserAge());
         userInfo.setUserGender(userInfoDTO.getUserGender());
         userInfo.setUserResidentNum(userInfoDTO.getUserResidentNum());
@@ -116,6 +117,7 @@ public class UserInfoService {
         userInfo.setUserJoinDate(userInfoDTO.getUserJoinDate());
         userInfo.setUserBank(userInfoDTO.getUserBank());
         userInfo.setUserAccount(userInfoDTO.getUserAccount());
+        userInfo.setMemo(userInfoDTO.getMemo());
 
         userInfoRepository.save(userInfo);
 
