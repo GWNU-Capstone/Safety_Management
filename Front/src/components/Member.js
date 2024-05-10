@@ -48,7 +48,6 @@ function Member() {
 
     fetchData();
   }, []);
-
   /*
   useEffect(() => {
     const fetchData = async () => {
@@ -87,7 +86,6 @@ function Member() {
     fetchData();
   }, []);
   */
-
   const columns = React.useMemo(
     () => [
       {
@@ -177,41 +175,58 @@ function Member() {
     }
   };
 
-  const handleSubmit = () => {
-
+  const handleSubmit = async () => {
     if (!name || !phoneNumber || !position || !age || !gender || !employeeId) {
       alert("입력되지 않은 부분이 있습니다. 모든 필수 입력값을 입력해주세요.");
       return;
     }
-
-    // 입력된 데이터를 새로운 객체로 만듭니다.
-    const newData = {
-      id: parseInt(employeeId),
-      pos: position,
-      name: name,
-      age: age,
-      gender: gender,
-      pNumber: phoneNumber,
-      email: email,
-      address: address
-    };
-
-    // 기존 데이터에 새로운 데이터를 추가합니다.
-    setMembersData([...membersData, newData]);
-
-    // 입력 필드 초기화
-    setPosition('');
-    setName('');
-    setAge('');
-    setGender('');
-    setPhoneNumber('');
-    setEmail('');
-    setAddress('');
-    setEmployeeId('');
-
-    // 모달 닫기
-    setShowRegistrationModal(false);
-  };
+  
+    try {
+      const response = await axios.post(`${userApiBaseUrl}/user/create`, {
+        userNo: parseInt(employeeId),
+        userPosition: position,
+        userName: name,
+        userAge: age,
+        userGender: gender,
+        userTelNo: phoneNumber,
+        userEmail: email,
+        userAddress: address
+      });
+  
+      // 성공적으로 등록되면 서버에서 받은 데이터를 콘솔에 출력합니다.
+      console.log("직원 등록 성공:", response.data);
+  
+      // 입력된 데이터를 새로운 객체로 만듭니다.
+      const newData = {
+        id: parseInt(employeeId),
+        pos: position,
+        name: name,
+        age: age,
+        gender: gender,
+        pNumber: phoneNumber,
+        email: email,
+        address: address
+      };
+  
+      // 기존 데이터에 새로운 데이터를 추가합니다.
+      setMembersData([...membersData, newData]);
+  
+      // 입력 필드 초기화
+      setPosition('');
+      setName('');
+      setAge('');
+      setGender('');
+      setPhoneNumber('');
+      setEmail('');
+      setAddress('');
+      setEmployeeId('');
+  
+      // 모달 닫기
+      setShowRegistrationModal(false);
+    } catch (error) {
+      console.error('직원 등록 오류:', error);
+    }
+  };  
 
   const handleDelete = () => {
     if (!deleteId) {
@@ -333,8 +348,8 @@ function Member() {
                 type="text"
                 id="employeeId"
                 value={employeeId}
-                onChange={(e) => setEmployeeId(e.target.value)} // 입력이 가능하도록 변경
-                readOnly
+                onChange={(e) => setEmployeeId(e.target.value)}
+                //readOnly
               />
             </div>
             <div className="form-group">
