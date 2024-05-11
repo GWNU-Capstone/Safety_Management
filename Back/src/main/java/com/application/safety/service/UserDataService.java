@@ -7,6 +7,7 @@ import com.application.safety.repository.UserDataRepository;
 import com.application.safety.repository.UserProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,12 +15,48 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserDataService {
     private final UserDataRepository userDataRepository;
     private final UserProfileRepository userProfileRepository;
+
+    // 출력할 데이터 날짜, 출근 시간, 퇴근 시간, 알콜올 농도, 체온, 심박수, 산소포화도, 상태
+    public List<Map<String, Object>> getUserDataList() {
+        List<Map> userDataList = new ArrayList<>();
+
+        List<UserData> userDataAll = userDataRepository.findAll();
+
+        userDataAll.stream().map(userData -> {
+            Map<String, Object> response = new HashMap<>();
+
+            UserDataDTO dto = new UserDataDTO();
+            dto.setDate(userData.getDate());
+            dto.setUserStart(userData.getUserStart());
+            dto.setUserEnd(userData.getUserEnd());
+            dto.setUserDrink(userData.getUserDrink());
+            dto.setUserTemp(userData.getUserTemp());
+            dto.setUserHeartRate(userData.getUserHeartRate());
+            dto.setUserOxygen(userData.getUserOxygen());
+
+            response.put("userData", dto);
+
+            if(userData.getUserEnd() == null)
+                response.put("state", "출근");
+            else
+                response.put("state", "퇴근");
+
+            userDataList.add(response);
+        });
+
+        return userDataList;
+    }
 
     @Transactional
     public UserData addUserData(UserDataDTO userDataDTO) {
