@@ -138,18 +138,21 @@ function Member() {
 
   const handleFingerprintRegistration = async () => {
     try {
-      const location = membersData.length > 0 ? membersData.length + 1 : ''; // 마지막 사원번호에서 +1을 해서 할당합니다.
       const response = await axios.get(
-        `${fingerprintApiBaseUrl}/fingerprint/add/?location=${location}`
+        `${fingerprintApiBaseUrl}/fingerprint/add/?location=`
       );
-      setEmployeeId(location.toString());
-      /*
-      const userId = response.data.userId; // 서버로부터 받은 userId 값
-      setEmployeeId(userId); // userId를 setEmployeeId 함수를 사용하여 전달합니다.
-      */
+      if (response.data.fingerprint_addresults.startsWith("Stored model at")) {
+        const storedEmployeeId = response.data.fingerprint_addresults.match(/\d+/)[0];
+        setEmployeeId(storedEmployeeId); // # 뒤에 있는 값을 추출하여 사원번호로 설정
+      } else if (response.data.fingerprint_addresults === "False") {
+        alert('지문 센서에 손을 올려주세요.');
+      } else {
+        // 다른 예외 상황에 대한 처리
+      }
       console.log(response.data);
     } catch (error) {
       console.error('지문 등록 오류:', error);
+      alert('지문 센서에 손을 올려주세요.');
     }
   };
 
