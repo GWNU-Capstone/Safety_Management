@@ -98,34 +98,35 @@
 
 * * *
 
-### 📕(Back) 근로자 등록 // 수정해야함
+### 📕(Back) 근로자 등록
 - **URL**: `/user/crate`
 - **Method**: POST
 - **전송 데이터**:
   - **Params**
     ```json
     {
-      "userNo": 1, (사원 번호)
-      "userDrink" : 0.05, (음주 측정)
-      "userHeartRate": 69, (심박수)
-      "userTemp": 29.8, (체온)
+        "userNo" : 7, 
+        "userPosition" : "사장",
+        "userName" : "홍길동", 
+        "userAge" : 33,
+        "userGender" : "남성",
+        "userTelNo" : "01012345678",
+        "userEmail" : "1abc@naver.com",
+        "userAddress" : "강원도"
     }
     ```  
 - **성공 응답**:
   - **Content**:
     ```json
     {
-      "userProfile": {
-        "userName": "홍길동",
-        "userNo": 1
-      },
-      "date": "2024-04-13", (출근 날짜)
-      "userEnd": null, (퇴근 시간)
-      "userDrink": 0.05, 
-      "userTemp": 29.8,
-      "userHeartRate": 69,
-      "userDataNo": 14, (데이터 번호)
-      "userStart": "18:30:00"
+        "userNo" : 7, 
+        "userPosition" : "사장",
+        "userName" : "홍길동", 
+        "userAge" : 33,
+        "userGender" : "남성",
+        "userTelNo" : "01012345678",
+        "userEmail" : "1abc@naver.com",
+        "userAddress" : "강원도"
     }
     ```
 
