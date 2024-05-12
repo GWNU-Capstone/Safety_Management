@@ -20,32 +20,32 @@ public class UserData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="USER_DATA_NO")
-    private int UserDataNo;
+    private int UserDataNo; // 데이터 번호
 
     @ManyToOne
     @JoinColumn(name = "USER_NO")
     private UserProfile userProfile;
 
     @Column(name="USER_DRINK")
-    private float UserDrink;
+    private float UserDrink; // 음주
 
     @Column(name="USER_HEARTRATE")
-    private int UserHeartRate;
+    private int UserHeartRate; // 심박수
 
     @Column(name="USER_TEMP")
-    private float UserTemp;
+    private float UserTemp; // 온도
 
     @Column(name="USER_OXYGEN")
-    private int UserOxygen;
+    private int UserOxygen; // 산소포화도
 
     @Column(name = "DATE")
-    private LocalDate date;
+    private LocalDate date; // 날짜
 
     @Column(name="USER_START")
-    private LocalTime UserStart;
+    private LocalTime UserStart; // 출근 시간
 
     @Column(name="USER_END")
-    private LocalTime UserEnd;
+    private LocalTime UserEnd; // 퇴근 시간
 
     @Builder
     public UserData(float userDrink, int userHeartRate, float userTemp, int userOxygen, LocalDate date, LocalTime userStart, LocalTime userEnd) {
