@@ -48,7 +48,7 @@ function Member() {
 
     fetchData();
   }, []);
-  /*
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -85,7 +85,7 @@ function Member() {
 
     fetchData();
   }, []);
-  */
+  
   const columns = React.useMemo(
     () => [
       {
@@ -346,7 +346,7 @@ function Member() {
             <span className="close" onClick={toggleRegistrationModal}>&times;</span>
             <h2>직원 등록</h2>
             <div className="form-group">
-              <label htmlFor="employeeId">*필수 사원번호:</label>
+              <label htmlFor="employeeId">*사원번호:</label>
               <input
                 type="text"
                 id="employeeId"
@@ -356,7 +356,7 @@ function Member() {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="name">*필수 이름:</label>
+              <label htmlFor="name">*이름:</label>
               <input
                 type="text"
                 id="name"
@@ -365,7 +365,7 @@ function Member() {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="phoneNumber">*필수 전화번호:</label>
+              <label htmlFor="phoneNumber">*전화번호:</label>
               <input
                 type="text"
                 id="phoneNumber"
@@ -374,7 +374,8 @@ function Member() {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="position">*필수 직위:</label>
+              <label htmlFor="position">*직위:</label>
+              <br></br>
               <select
                 id="position"
                 value={position}
@@ -389,20 +390,17 @@ function Member() {
               </select>
             </div>
             <div className="form-group">
-              <label htmlFor="age">*필수 나이:</label>
-              <select
+              <label htmlFor="age">*나이:</label>
+              <input
+                type="text"
                 id="age"
                 value={age}
                 onChange={(e) => setAge(e.target.value)}
-              >
-                <option value="">나이를 선택하세요.</option>
-                {[...Array(100)].map((_, index) => (
-                  <option key={index + 1} value={index + 1}>{index + 1}세</option>
-                ))}
-              </select>
+              />
             </div>
             <div className="form-group">
-              <label htmlFor="gender">*필수 성별:</label>
+              <label htmlFor="gender">*성별:</label>
+              <br></br>
               <select
                 id="gender"
                 value={gender}
@@ -431,8 +429,11 @@ function Member() {
                 onChange={(e) => setAddress(e.target.value)}
               />
             </div>
-            <button className="fingerprint-button" onClick={handleFingerprintRegistration}>지문 측정 시작</button>
-            <button className="new-profile-button" onClick={handleSubmit}>등록</button>
+            <div className="modalButton">
+              <button className="fingerprint-button" onClick={handleFingerprintRegistration}>지문 측정 시작</button>
+              <br></br>
+              <button className="new-profile-button" onClick={handleSubmit}>등록</button>
+            </div>
           </div>
         </div>
       )}
@@ -443,7 +444,7 @@ function Member() {
             <span className="close" onClick={toggleDeleteModal}>&times;</span>
             <h2>직원 삭제</h2>
             <div className="form-group">
-              <label htmlFor="deleteId">사원번호:</label>
+              <label htmlFor="deleteId">*사원번호:</label>
               <input
                 type="text"
                 id="deleteId"
@@ -451,7 +452,9 @@ function Member() {
                 onChange={(e) => setDeleteId(e.target.value)}
               />
             </div>
-            <button className="delete-button" onClick={handleDelete}>삭제</button>
+            <div className="modalButton">
+              <button className="delete-button" onClick={handleDelete}>삭제</button>
+            </div>
           </div>
         </div>
       )}

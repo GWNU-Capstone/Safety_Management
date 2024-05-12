@@ -7,6 +7,21 @@ import axios from 'axios';
 function Detail() {
   const [editMode, setEditMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeSection, setActiveSection] = useState('main');
+  const [activeSection2, setActiveSection2] = useState('main');
+  const [filterMode, setFilterMode] = useState(true); 
+  const [memo, setMemo] = useState(''); // 메모 내용을 저장할 상태
+  const [isMemoEditing, setIsMemoEditing] = useState(false);
+
+  const handleSectionClick = (section) => {
+    setActiveSection(section);
+  };
+  
+  const toggleFilterMode = () => {
+    setFilterMode(!filterMode);
+    setActiveSection2(filterMode ? 'filtering' : 'main');  // 조건에 따라 섹션 설정
+  };
+
   const [inputFields, setInputFields] = useState({
     name: '',
     age: '',
@@ -46,22 +61,28 @@ function Detail() {
       .catch(error => console.error('Error fetching user data:', error));
   }, [id]);  
 
+  const handleMemoChange = (e) => {
+    setMemo(e.target.value);
+  };
+
   const handleEditProfile = () => {
-    // editMode가 true에서 false로 바뀔 때 상태를 업데이트합니다.
-    if (editMode) {
-      // profile-name 클래스를 가진 h2 요소의 현재 텍스트 내용을 가져와서
-      // inputFields의 name에 저장합니다.
+    // 편집 모드가 비활성화된 경우 (편집 시작)
+    if (!editMode) {
+      setEditMode(true);
+      setIsMemoEditing(true);  // 메모 편집도 활성화
+    } else {
+      // 편집 모드가 활성화된 경우 (저장 로직)
       const newName = document.querySelector('.profile-name').textContent;
       setInputFields(prevFields => ({
         ...prevFields,
         name: newName
       }));
-  
-      // 프로필 정보 업데이트 요청 보내기
+
+      // 프로필 정보와 메모 데이터 업데이트 요청
       axios.patch(`${userApiBaseUrl}/update/${inputFields.id}`, {
         userNo: inputFields.id,
         userName: inputFields.name,
-        userImage: inputFields.name, // 이미지 정보는 여기서 추가해야 할 듯
+        userImage: inputFields.name,  // 이미지 정보 업데이트
         userResidentNum: inputFields.ssn,
         userAge: inputFields.age,
         userTelNo: inputFields.phone,
@@ -72,19 +93,22 @@ function Detail() {
         userBank: inputFields.bank,
         userAccount: inputFields.account,
         userJoinDate: inputFields.empDate,
-        // 기타 필요한 필드들도 추가해야 합니다.
+        memo: memo  // 메모 데이터 추가
       })
       .then(response => {
         console.log('프로필 업데이트 요청 성공:', response.data);
-        // 서버로부터 성공적인 응답을 받았을 때 추가적인 작업 수행 가능
       })
       .catch(error => {
         console.error('프로필 업데이트 요청 실패:', error);
-        // 서버로부터 오류 응답을 받았을 때 추가적인 처리 가능
       });
+
+      // 편집 모드와 메모 편집 상태 해제
+      setEditMode(false);
+      setIsMemoEditing(false);
     }
-    setEditMode(!editMode);
   };
+
+
 
   const handleInputChange = (key, value) => {
     setInputFields({
@@ -200,75 +224,157 @@ function Detail() {
           </div>
 
           <div className="personal-info">
-            <h2>Personal Information</h2>
-            <div className="info">
-              <table>
-                <tbody>
-                  {Object.entries(inputFields).map(([key, value]) => (
-                    key !== "name" && ( // name 키를 제외하고 나머지를 매핑합니다.
-                      <tr key={key}>
-                        <th>{fixedLabels[key]}</th>
-                        <td>
-                          {editMode ? (
-                            <input
-                              type="text"
-                              value={value}
-                              onChange={(e) => handleInputChange(key, e.target.value)}
-                              placeholder="데이터를 입력하세요"
-                            />
-                          ) : (
-                            <span>{value || "데이터를 입력하세요"}</span>
-                          )}
-                        </td>
-                      </tr>
-                    )
-                  ))}
-                </tbody>
-              </table>
+            <div className="personal-info-div">
+              <h2>Personal Information</h2>
+              <div className="personal-info-button">
+                <div className="personal-info-main" onClick={() => handleSectionClick('main')}>
+                  상세 정보
+                </div>
+                <div className="personal-info-memo" onClick={() => handleSectionClick('memo')}>
+                  메모
+                </div>
+              </div>
+            </div>
+            <div className="personal-info-container">
+              {activeSection === 'main' && (
+                <div className="info">
+                  <table>
+                    <tbody>
+                      {Object.entries(inputFields).map(([key, value]) => (
+                        key !== "name" && (
+                          <tr key={key}>
+                            <th>{fixedLabels[key]}</th>
+                            <td>
+                              {editMode ? (
+                                <input
+                                  type="text"
+                                  value={value}
+                                  onChange={(e) => handleInputChange(key, e.target.value)}
+                                  placeholder="데이터를 입력하세요"
+                                />
+                              ) : (
+                                <span>{value || "데이터를 입력하세요"}</span>
+                              )}
+                            </td>
+                          </tr>
+                        )
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              {activeSection === 'memo' && (
+                <div className="info">
+                  {isMemoEditing && editMode ? (
+                    <textarea
+                      value={memo}
+                      onChange={handleMemoChange}
+                      placeholder="메모를 입력하세요."
+                      style={{ backgroundColor: editMode ? '#e7f4ff' : 'transparent', border: editMode ? '1px dashed #007bff' : 'transparent'}}
+                    />
+                  ) : (
+                    <p>{memo || "메모가 없습니다."}</p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         <div className="attendance-records">
-          <h2>Attendance Records</h2>
-          <div className="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>날짜</th>
-                  <th>출근시간</th>
-                  <th>퇴근시간</th>
-                  <th>알코올 농도</th>
-                  <th>체온</th>
-                  <th>심박수</th>
-                  <th>산소포화도</th>
-                  <th>상태</th>
-                  <th>비고</th>
-                </tr>
-              </thead>
-              <tbody className="table-body">
-                {attendanceRecords.filter((record) => {
-                  return (
-                    record.date.includes(searchTerm) ||
-                    record.status.toLowerCase().includes(searchTerm.toLowerCase())
-                  );
-                }).map((record, index) => (
-                  <tr key={index}>
-                    <td>{record.date}</td>
-                    <td>{record.enter}</td>
-                    <td>{record.exit}</td>
-                    <td>{record.bac}%</td>
-                    <td>{record.temp}°C</td>
-                    <td>{record.hr} bpm</td>
-                    <td>{record.oxy}%</td>
-                    <td>{record.status}</td>
-                    <td>{record.note}</td>
-                  </tr>
-                ))}
-              </tbody>
-
-            </table>
+          <div className="personal-info-div">
+            <h2>Attendance Records</h2>
+            
+            <div className="personal-info-button">
+              <div className="attendance-button" onClick={toggleFilterMode}>
+                {filterMode ? '필터링' : '전체보기'}
+              </div>
+            </div>
           </div>
+          {activeSection2 === 'main' && (
+            <div className="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>날짜</th>
+                    <th>출근시간</th>
+                    <th>퇴근시간</th>
+                    <th>알코올 농도</th>
+                    <th>체온</th>
+                    <th>심박수</th>
+                    <th>산소포화도</th>
+                    <th>상태</th>
+                    <th>비고</th>
+                  </tr>
+                </thead>
+                <tbody className="table-body">
+                  {attendanceRecords.filter((record) => {
+                    return (
+                      record.date.includes(searchTerm) ||
+                      record.status.toLowerCase().includes(searchTerm.toLowerCase())
+                    );
+                  }).map((record, index) => (
+                    <tr key={index}>
+                      <td>{record.date}</td>
+                      <td>{record.enter}</td>
+                      <td>{record.exit}</td>
+                      <td>{record.bac}%</td>
+                      <td>{record.temp}°C</td>
+                      <td>{record.hr} bpm</td>
+                      <td>{record.oxy}%</td>
+                      <td>{record.status}</td>
+                      <td>{record.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+  
+              </table>
+            </div>
+          )}
+
+          {activeSection2 === 'filtering' && (
+            <div className="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>날짜</th>
+                    <th>출근시간</th>
+                    <th>퇴근시간</th>
+                    <th>알코올 농도</th>
+                    <th>체온</th>
+                    <th>심박수</th>
+                    <th>산소포화도</th>
+                    <th>상태</th>
+                    <th>비고</th>
+                  </tr>
+                </thead>
+                <tbody className="table-body">
+                  {attendanceRecords.filter((record) => {
+                    return (
+                      record.date.includes(searchTerm) ||
+                      record.status.toLowerCase().includes(searchTerm.toLowerCase())
+                    );
+                  }).map((record, index) => (
+                    <tr key={index} style={{ color: !filterMode ? 'red' : 'black' }}>
+                      <td>{record.date}</td>
+                      <td>{record.enter}</td>
+                      <td>{record.exit}</td>
+                      <td>{record.bac}%</td>
+                      <td>{record.temp}°C</td>
+                      <td>{record.hr} bpm</td>
+                      <td>{record.oxy}%</td>
+                      <td>{record.status}</td>
+                      <td>{record.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+
+  
+              </table>
+            </div>
+          )}
+
+          
         </div>
       </div>
 

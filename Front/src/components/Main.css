@@ -1,5 +1,6 @@
 body {
   overflow: hidden; /* 스크롤 바 숨기기 */
+  user-select: none;
 
 }
 .Main {

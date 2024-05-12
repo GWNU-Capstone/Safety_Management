@@ -5,6 +5,7 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: 'Arial', sans-serif;
+  user-select: none;
 }
 
 .member-header {
@@ -211,7 +212,7 @@ a:hover {
   align-items: center;
   justify-content: center;
   position: fixed;
-  z-index: 1;
+  z-index: 10;
   left: 0;
   top: 0;
   width: 100%;
@@ -220,11 +221,32 @@ a:hover {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
+.modalButton {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.modal-content > * {
+  margin-bottom: 5px; /* 모든 직속 자식 요소의 아래쪽에 5px 간격 추가 */
+}
+
+.modal-content > *:last-child {
+  margin-bottom: 0; /* 마지막 자식 요소는 간격을 0으로 설정하여 추가 여백 제거 */
+}
+
+.new-profile-button {
+  margin-top: 5px;
+}
+
 .modal-content {
   background-color: #fefefe;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal h2 {
+  text-align: center;
 }
 
 .close {
@@ -249,5 +271,6 @@ a:hover {
   border-radius: 5px;
   cursor: pointer;
   margin-left: 10px;
+  align-items: center;
 }
 /* 추가된 범위 끝 */

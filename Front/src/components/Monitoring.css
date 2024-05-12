@@ -3,6 +3,7 @@ body {
   margin: 0; /* 기본 마진 제거 */
   padding: 0; /* 기본 패딩 제거 */
   font-family: 'Arial', sans-serif; /* 전체 폰트 설정 */
+  user-select: none;
 }
 
 .monitoring-container {

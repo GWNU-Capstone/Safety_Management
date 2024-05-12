@@ -3,6 +3,7 @@
 body {
     margin: 0;
     overflow-y: hidden;
+    user-select: none;
 }
 
 

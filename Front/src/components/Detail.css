@@ -4,6 +4,7 @@ body {
   margin: 0; /* 기본 마진 제거 */
   padding: 0; /* 기본 패딩 제거 */
   font-family: 'Arial', sans-serif; /* 전체 폰트 설정 */
+  user-select: none;
 }
 
 /* Header와 Main Content 상위 컨테이너 스타일 */
@@ -170,6 +171,62 @@ body {
   width: 100%;
 }
 
+.personal-info-container {
+  overflow-y: auto; /* 필요할 때 스크롤바 표시 */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  border-top: 1px solid #dddddd;
+}
+
+.personal-info-div {
+  display: flex; /* Flexbox 사용 */
+  margin-bottom: 2px;
+  align-items: center; /* 모든 자식 요소를 세로 방향으로 중앙에 위치 */
+  justify-content: space-between; /* 자식 요소들을 양 끝으로 정렬 */
+}
+
+.personal-info-div h2 {
+  align-self: center; /* 세로 방향으로 중앙 정렬을 유지 */
+}
+
+.personal-info-button {
+  align-self: flex-end;
+  display: flex; /* Flexbox 모델 적용 */
+  flex-direction: row; /* 자식 요소들을 가로로 배치 */
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: space-between; /* 자식 요소들 사이에 공간 동일하게 배분 */
+}
+
+.personal-info-button > * {
+  margin-right: 5px;
+  width: 5vw;
+  height: 3vh;
+  text-align: center;
+  line-height: 3vh;
+  background-color: rgb(221, 253, 255);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  font-size: 15px;
+  font-weight: bold;
+  color: black;
+  cursor: pointer;
+  user-select: none;
+}
+
+.info {
+  height: 43.5vh;
+  min-height: 100%;
+}
+
+.info textarea {
+  width: 100%;    /* 너비를 info 영역의 100%로 설정 */
+  height: 100%;   /* 높이를 info 영역의 100%로 설정 */
+  box-sizing: border-box;  /* 패딩과 보더가 너비와 높이에 포함되도록 설정 */
+  padding: 10px;  /* 내부 패딩 */
+  border: 1px solid #ccc; /* 테두리 설정 */
+  resize: none;   /* 크기 조절 기능 비활성화 */
+}
+
 .attendance-records {
   flex-grow: 1;
   overflow: hidden;
@@ -251,8 +308,8 @@ input[type="text"]:disabled {
 
 .table-wrapper {
   max-height: 600px; /* 원하는 최대 높이로 조정 */
-  overflow-y: auto; /* 필요할 때 스크롤바 표시 */
   border-radius: 10px;
+  overflow-y: auto; /* 필요할 때 스크롤바 표시 */
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
