@@ -48,7 +48,7 @@ function Member() {
 
     fetchData();
   }, []);
-  
+  /*
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -85,7 +85,7 @@ function Member() {
 
     fetchData();
   }, []);
-  
+  */
   const columns = React.useMemo(
     () => [
       {
@@ -352,7 +352,7 @@ function Member() {
                 id="employeeId"
                 value={employeeId}
                 onChange={(e) => setEmployeeId(e.target.value)}
-                //readOnly
+                readOnly
               />
             </div>
             <div className="form-group">
