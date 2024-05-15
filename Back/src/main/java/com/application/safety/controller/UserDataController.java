@@ -28,13 +28,6 @@ public class UserDataController {
         return ResponseEntity.ok().body(userDataService.getUserDataList(userProfile));
     }
 
-    // 근로자 이상 데이터 조회
-    @GetMapping("/user/abnormal/data/{user_no}")
-    public ResponseEntity<Map<Integer, Object>> getUserAbnormalDataList(@PathVariable("user_no") int user_no) {
-        Optional<UserProfile> userProfile = userProfileService.getUserProfile(user_no);
-        return ResponseEntity.ok().body(userDataService.getUserDataList(userProfile));
-    }
-
     // 출근 기록 요청
     @PostMapping("/user/go")
     public ResponseEntity<UserData> userGoToWork(@RequestBody UserDataDTO userDataDTO) {
