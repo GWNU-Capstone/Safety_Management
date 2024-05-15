@@ -29,7 +29,6 @@ public class MessageService {
     private final UserDataRepository userDataRepository;
     private final UserProfileRepository userProfileRepository;
     private final UserInfoRepository userInfoRepository;
-    private static final Logger logger = LoggerFactory.getLogger(MessageService.class);
 
     @Value("${coolsms.api.key}")
     private String apiKey;
@@ -50,23 +49,20 @@ public class MessageService {
         Optional<UserData> optionalUserData = userDataRepository.findByUserProfileAndDate(userProfile, nowDate);
         UserData userData = optionalUserData.get();
 
-        // 문자 메시지 전송
+        // 수신번호, 발신번호
         Message coolSms = new Message();
-        // 수신번호
         coolSms.setTo(userInfo.getUserTelNo());
-        // 발신번호
         coolSms.setFrom(from);
-        // 문자 제목
+
+        // 문자 제목, 내용
         coolSms.setSubject("[안전하죠(조)]");
-        // 문자 내용
-        coolSms.setText(smsText(category, userProfile, userData));
+        coolSms.setText(getSmsText(category, userProfile, userData));
 
         // 문자 전송 및 로그
-        SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(coolSms));
-        logger.info(String.valueOf(response));
+        messageService.sendOne(new SingleMessageSendingRequest(coolSms));
     }
 
-    public String smsText(String category, UserProfile userProfile, UserData userData) {
+    public String getSmsText(String category, UserProfile userProfile, UserData userData) {
         String text = "";
         if(category.equals("출근")) {
             text = "*출근 완료*" +

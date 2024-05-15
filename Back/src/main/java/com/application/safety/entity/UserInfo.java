@@ -17,53 +17,46 @@ import java.time.LocalDate;
 public class UserInfo {
     @Id
     @Column(name="USER_NO")
-    private int UserNo;
+    private int userNo; // 사원 번호
 
     @Column(name = "USER_IMAGE")
-    private String UserImage;
+    private String userImage; // 사진
 
-    // 주민등록번호 추가
     @Column(name = "USER_RESIDENT_NUM")
-    private String UserResidentNum;
+    private String userResidentNum; // 주민등록번호
 
     @Column(name="USER_AGE")
-    private int UserAge;
+    private int userAge; // 나이
 
     @Column(name="USER_TELNO")
-    private String UserTelNo;
-
-    // 추가 (성별, 직위, 이메일, 주소, 은행명, 계좌번호, 입사일자, 근무날짜, 비고)
+    private String userTelNo; // 전화번호
 
     @Column(name="USER_GENDER")
-    private String UserGender;
+    private String userGender; // 성별
 
     @Column(name="USER_POSITION")
-    private String UserPosition;
+    private String userPosition; // 직위
 
     @Column(name="USER_EMAIL")
-    private String UserEmail;
+    private String userEmail; // 이메일
 
     @Column(name="USER_ADDRESS")
-    private String UserAddress;
+    private String userAddress; // 주소
 
     @Column(name="USER_BANK")
-    private String UserBank;
+    private String userBank; // 은행
 
     @Column(name="USER_ACCOUNT")
-    private String UserAccount;
+    private String userAccount; // 계좌번호
 
     @Column(name="USER_JOIN_DATE")
-    private LocalDate UserJoinDate;
+    private LocalDate userJoinDate; // 입사 일자
 
-    @Column(name="USER_WORK_DATE")
-    private LocalDate UserWorkDate;
+    @Column(name="MEMO")
+    private String memo; // 메모
 
-    @Column(name="USER_NOTE")
-    private String UserNote;
-
-    @OneToOne
     @MapsId
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "USER_NO")
     private UserProfile UserProfile;
-
 }
