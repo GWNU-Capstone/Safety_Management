@@ -12,6 +12,8 @@ function Detail() {
   const [filterMode, setFilterMode] = useState(true); 
   const [memo, setMemo] = useState(''); // 메모 내용을 저장할 상태
   const [isMemoEditing, setIsMemoEditing] = useState(false);
+  const [attendanceRecords, setAttendanceRecords] = useState([]);
+
 
   const handleSectionClick = (section) => {
     setActiveSection(section);
@@ -131,6 +133,29 @@ function Detail() {
     empDate: '입사일자'
   };
 
+  useEffect(() => {
+    axios.get(`http://localhost:8080/user/data/${inputFields.id}`)
+      .then(response => {
+        const userData = response.data;
+        const newData = Object.values(userData).map(item => {
+          return {
+            date: item.userData.date,
+            enter: item.userData.userStart,
+            exit: item.userData.userEnd,
+            bac: `${item.userData.userDrink}`,
+            temp: `${item.userData.userTemp}`,
+            hr: `${item.userData.userHeartRate}`,
+            oxy: `${item.userData.userOxygen}`,
+            status: item.state,
+            note: ''
+          };
+        });
+        setAttendanceRecords(prevRecords => [...prevRecords, ...newData]);
+      })
+      .catch(error => console.error('Error fetching user data:', error));
+  }, [inputFields.id]);
+
+  /*
   const attendanceRecords = [
     { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
     { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
@@ -153,6 +178,7 @@ function Detail() {
     { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
     { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''}
   ];
+  */
 
   return (
     <div className="detail-container">
