@@ -28,7 +28,7 @@ public class UserProfileService {
 
     // 출퇴근 검사
     @Transactional
-    public Map<String, Object> getUserProfile(int user_no) {
+    public Map<String, Object> getUserProfileInfo(int user_no) {
 
         // 사원 번호, 사용자 이름 DTO
         UserProfile userProfile = userProfileRepository.findById(user_no)
@@ -79,5 +79,9 @@ public class UserProfileService {
         responseData.put("userImage", userInfo.getUserImage());
 
         return responseData;
+    }
+
+    public Optional<UserProfile> getUserProfile(int user_no) {
+        return userProfileRepository.findById(user_no);
     }
 }
