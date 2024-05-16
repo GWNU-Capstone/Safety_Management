@@ -17,8 +17,9 @@ import lombok.NoArgsConstructor;
 public class UserProfile {
     @Id
     @Column(name = "USER_NO")
-    private int UserNo;
+    private int UserNoPk;
 
     @Column(name = "USER_NAME")
     private String UserName;
+
 }

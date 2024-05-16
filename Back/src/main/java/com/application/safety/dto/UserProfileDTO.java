@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserProfileDTO {
-    private int userNo;
-    private String userName;
+    private int UserNoPk;
+    private String UserName;
 }

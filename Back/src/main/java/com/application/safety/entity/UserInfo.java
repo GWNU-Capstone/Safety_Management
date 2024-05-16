@@ -12,23 +12,25 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class UserInfo {
     @Id
     @Column(name="USER_NO")
-    private int UserNo;
+    private int UserNoPk;
 
-    @Column(name = "USER_IMAGE")
-    private String UserImage;
+    // 얼굴 사진 경로 -> 지문 변경
+    @Column(name="USER_FINGER_PRINT")
+    private String UserFingerPrint;
 
     @Column(name="USER_AGE")
     private int UserAge;
 
     @Column(name="USER_TELNO")
-    private String UserTelNo;
+    private String UserTelno;
 
     @OneToOne
     @MapsId
     @JoinColumn(name = "USER_NO")
-    private UserProfile UserProfile;
+    private UserProfile userProfile;
 
 }

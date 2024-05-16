@@ -6,7 +6,6 @@ from smbus2 import SMBus
 from mlx90614 import MLX90614
 import time
 import as608_combo_lib3 as as608
-import adc as adc
 
 app = Flask(__name__)
 CORS(app) #Frontend CORS Error. 주석처리하면 프론트에서 에러!
@@ -34,7 +33,7 @@ def get_sensor_info_fp():
 @app.route('/fingerprint', methods=['GET'])
 def get_sensor_data_fp():
     result_found = {}
-    result_found['fingerprint_results'] = as608.search_fingerprint_on_device(session, as608)
+    result_found['fingerprint_results'] = 1 #as608.search_fingerprint_on_device(session, as608)
     return jsonify(result_found)
 
 #지문 등록 엔드포인트
@@ -62,16 +61,21 @@ def fingerprint_remove():
 @app.route('/drink', methods=['GET'])
 def get_sensor_data_alc():
     result_drink = {}
-    result_drink['userdrink'] = adc.get_alcvalue()
+    press = 1
+    if press > 0:
+        result_drink['userdrink'] = 250
+    else:
+        result_drink['userdrink'] = airflow is not detected
+    result_drink['press_sensor'] = press
     return jsonify(result_drink)
 
 #체온 심박 엔드포인트
 @app.route('/tempheart', methods=['GET'])
 def get_sensor_data_temp():
     result = {}
-    result['userTemp'] = tempsensor.get_obj_temp()
-    bpm = hrm.bpm
-    spo2 = hrm.spo2
+    result['userTemp'] = 36.7#tempsensor.get_obj_temp()
+    bpm = 120.0
+    spo2 = 95.0
 
     if bpm < 30:
         result['userHeartRate'] = "finger is not detected"

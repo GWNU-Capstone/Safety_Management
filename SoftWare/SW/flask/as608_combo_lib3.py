@@ -503,12 +503,14 @@ def connect_serial_session(comName):
 def get_templates_list(session):
     '''a list of used templates number store in device'''
     session.read_templates()
+    print("Fingerprint templates: ", session.templates)
     return session.templates  # list
 
 
 def get_templates_count(session):
     '''number of print that stored in the device'''
     session.count_templates()
+    print("Number of templates found: ", session.template_count)
     return session.template_count  # integer
 
 
@@ -524,19 +526,6 @@ def get_device_size(session):
 # def find_next_location(session):
 # 	return min(list(set(list(range(0, get_device_size(session) + 1))).difference(get_templates_list(session))))
 
-def search_fingerprint_on_device(session, as608_lib):
-    """Get a finger print image, template it, and see if it matches!"""
-    print("Waiting for image...")
-    while session.get_image() != as608_lib.OK:
-        pass
-    print("Templating...")
-    if session.image_2_tz(1) != as608_lib.OK:
-        return False
-    print("Searching...")
-    if session.finger_search() != as608_lib.OK:
-        return False
-    return session.finger_id
-    
 def enroll_finger_to_device(session, as608_lib, location=None):
     """Take a 2 finger images and template it, then store in 'location'"""
 
@@ -545,54 +534,223 @@ def enroll_finger_to_device(session, as608_lib, location=None):
         location = min(list(set(list(range(0, get_device_size(session) + 1))).difference(get_templates_list(session))))
 
     for fingerimg in range(1, 3):
+        if fingerimg == 1:
+            print("Place finger on sensor...", end="", flush=True)
+        else:
+            print("Place same finger again...", end="", flush=True)
+
         while True:
             i = session.get_image()
-            if i == as608_lib.IMAGEFAIL:
-                return("Imaging error")
+            if i == as608_lib.OK:
+                print("Image taken")
+                break
+            if i == as608_lib.NOFINGER:
+                print(".", end="", flush=True)
+            elif i == as608_lib.IMAGEFAIL:
+                print("Imaging error")
+                return False
             else:
-                return("Other error_1")
+                print("Other error")
+                return False
+
+        print("Templating...", end="", flush=True)
         i = session.image_2_tz(fingerimg)
         if i == as608_lib.OK:
-            break;
+            print("Templated")
         else:
             if i == as608_lib.IMAGEMESS:
-                return("Image too messy")
+                print("Image too messy")
             elif i == as608_lib.FEATUREFAIL:
-                return("Could not identify features")
+                print("Could not identify features")
             elif i == as608_lib.INVALIDIMAGE:
-                return("Image invalid")
+                print("Image invalid")
             else:
-                return("Other error_2")
+                print("Other error")
+            return False
 
         if fingerimg == 1:
+            print("Remove finger")
             time.sleep(1)
             while i != as608_lib.NOFINGER:
                 i = session.get_image()
 
+    print("Creating model...", end="", flush=True)
     i = session.create_model()
     if i == as608_lib.OK:
-        pass
+        print("Created")
     else:
         if i == as608_lib.ENROLLMISMATCH:
-            return("Prints did not match")
+            print("Prints did not match")
         else:
-            return("Other error_3")
+            print("Other error")
         return False
 
-    #print("Storing model #%d..." % location, end="", flush=True)
+    print("Storing model #%d..." % location, end="", flush=True)
     i = session.store_model(location)
     if i == as608_lib.OK:
-        return("Stored at #%d" %location)
+        print("Stored")
+        return("Stored model at #%d" % location)
     else:
         if i == as608_lib.BADLOCATION:
-            return("Bad storage location")
+            print("Bad storage location")
         elif i == as608_lib.FLASHERR:
-            return("Flash storage error")
+            print("Flash storage error")
         else:
-            return("Other error_4")
-        return("error")
+            print("Other error")
+        return False
 
-    return("error")
+    return True
+
+
+def search_fingerprint_on_device(session, as608_lib):
+    """Get a finger print image, template it, and see if it matches!"""
+    print("Waiting for image...")
+    while session.get_image() != as608_lib.OK:
+        pass
+    print("Templating...")
+    if session.image_2_tz(1) != as608_lib.OK:
+        return("Not Found")
+    print("Searching...")
+    if session.finger_search() != as608_lib.OK:
+        return("Not Found")
+    return session.finger_id
+
+
+def enroll_save_to_file(session, as608_lib, save_location, file_name):
+    """Take a 2 finger images and template it, then store it in a file"""
+    saved_directory_file_name = save_location + "/" + file_name + ".dat"
+    for fingerimg in range(1, 3):
+        if fingerimg == 1:
+            print("Place finger on sensor...", end="", flush=True)
+        else:
+            print("Place same finger again...", end="", flush=True)
+
+        while True:
+            i = session.get_image()
+            if i == as608_lib.OK:
+                print("Image taken")
+                break
+            if i == as608_lib.NOFINGER:
+                print(".", end="", flush=True)
+            elif i == as608_lib.IMAGEFAIL:
+                print("Imaging error")
+                return False
+            else:
+                print("Other error")
+                return False
+
+        print("Templating...", end="", flush=True)
+        i = session.image_2_tz(fingerimg)
+        if i == as608_lib.OK:
+            print("Templated")
+        else:
+            if i == as608_lib.IMAGEMESS:
+                print("Image too messy")
+            elif i == as608_lib.FEATUREFAIL:
+                print("Could not identify features")
+            elif i == as608_lib.INVALIDIMAGE:
+                print("Image invalid")
+            else:
+                print("Other error")
+            return False
+
+        if fingerimg == 1:
+            print("Remove finger")
+            while i != as608_lib.NOFINGER:
+                i = session.get_image()
+
+    print("Creating model...", end="", flush=True)
+    i = session.create_model()
+    if i == as608_lib.OK:
+        print("Created")
+    else:
+        if i == as608_lib.ENROLLMISMATCH:
+            print("Prints did not match")
+        else:
+            print("Other error")
+        return False
+
+    print("Downloading template...")
+    data = session.get_fpdata("char", 1)
+    try:
+        file = open(saved_directory_file_name, "wb")
+    except FileNotFoundError as e:
+        os.makedirs(save_location)
+        file = open(saved_directory_file_name, "wb")
+    file.write(bytearray(data))
+    file.close()
+    print("Template is saved in", saved_directory_file_name, "file.")
+
+    return True
+
+
+def fingerprint_check_one_file(session, as608_lib, save_location, file_name):
+    """Compares a new fingerprint template to an existing template stored in a file
+    This is useful when templates are stored centrally (i.e. in a database)"""
+    search_directory_file_name = save_location + "/" + file_name + ".dat"
+    print("Waiting for finger print...")
+    while session.get_image() != as608_lib.OK:
+        pass
+    print("Templating...")
+    if session.image_2_tz(1) != as608_lib.OK:
+        return False
+
+    print("Loading file template...", end="", flush=True)
+    try:
+        with open(search_directory_file_name, "rb") as file:
+            data = file.read()
+    except FileNotFoundError as e:
+        print("Could not find file.")
+    else:
+        with open(search_directory_file_name, "rb") as file:
+            data = file.read()
+    session.send_fpdata(list(data), "char", 2)
+
+    i = session.compare_templates()
+    if i == as608_lib.OK:
+        print("Fingerprint match template in file.")
+        return True
+    if i == as608_lib.NOMATCH:
+        print("Templates do not match!")
+    else:
+        print("Other error!")
+    return False
+
+
+def fingerprint_check_all_file(session, as608_lib, save_location):
+    """Compares a new fingerprint template to an existing template stored in a file
+    This is useful when templates are stored centrally (i.e. in a database)"""
+    file_check_res = False
+    print("Waiting for finger print...")
+    while session.get_image() != as608_lib.OK:
+        pass
+    print("Templating...")
+    if session.image_2_tz(1) != as608_lib.OK:
+        return False
+
+    print("Loading file template...", end="", flush=True)
+
+    if os.path.exists(save_location):
+        # print(os.listdir(save_location))
+        for each_file in os.listdir(save_location):
+            # print("=-=-=-ENtering file-=-=-=-=--=",each_file)
+            with open(save_location + "/" + each_file, "rb") as file:
+                data = file.read()
+            session.send_fpdata(list(data), "char", 2)
+
+            i = session.compare_templates()
+            if i == as608_lib.OK:
+                print("Fingerprint match template in file.")
+                return True
+            if i == as608_lib.NOMATCH:
+                print("Templates do not match!")
+            # else:
+            # 	print("Other error!")
+            file_check_res = False
+        return file_check_res
+    else:
+        print("NO")
+        return False
 
 def delete_all_templates(session):
     """Deletes all templates stored in the device"""
@@ -616,3 +774,4 @@ def delete_templates(session, location=None):
         #    return(f"Failed to delete template at location {location}.")
     else:
         return("Invalid location. Please provide a location between 0 and 127.")
+
