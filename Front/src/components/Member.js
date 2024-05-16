@@ -21,6 +21,14 @@ function Member() {
   const [deleteId, setDeleteId] = useState('');
   const [employeeId, setEmployeeId] = useState(''); // 사원번호 상태 추가
 
+  const sortMembersData = (data) => {
+    return data.slice().sort((a, b) => a.id - b.id);
+  };
+  
+  useEffect(() => {
+    setMembersData(prevData => sortMembersData(prevData));
+  }, [membersData]);  
+
   // 사원번호 상태 초기화
   useEffect(() => {
     setEmployeeId('');
@@ -212,7 +220,7 @@ function Member() {
       };
   
       // 기존 데이터에 새로운 데이터를 추가합니다.
-      setMembersData([...membersData, newData]);
+      setMembersData(prevData => sortMembersData([...prevData, newData]));
   
       // 입력 필드 초기화
       setPosition('');
@@ -252,7 +260,7 @@ function Member() {
     // 사원번호와 일치하는 행을 삭제하고 업데이트된 데이터를 설정합니다.
     const updatedData = [...membersData];
     updatedData.splice(indexToDelete, 1);
-    setMembersData(updatedData);
+    setMembersData(sortMembersData(updatedData));
 
     // 입력 필드 초기화
     setDeleteId('');
@@ -352,7 +360,7 @@ function Member() {
                 id="employeeId"
                 value={employeeId}
                 onChange={(e) => setEmployeeId(e.target.value)}
-                readOnly
+                //readOnly
               />
             </div>
             <div className="form-group">

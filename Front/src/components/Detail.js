@@ -9,7 +9,7 @@ function Detail() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeSection, setActiveSection] = useState('main');
   const [activeSection2, setActiveSection2] = useState('main');
-  const [filterMode, setFilterMode] = useState(true); 
+  const [filterMode, setFilterMode] = useState(true);
   const [memo, setMemo] = useState(''); // 메모 내용을 저장할 상태
   const [isMemoEditing, setIsMemoEditing] = useState(false);
   const [attendanceRecords, setAttendanceRecords] = useState([]);
@@ -18,7 +18,7 @@ function Detail() {
   const handleSectionClick = (section) => {
     setActiveSection(section);
   };
-  
+
   const toggleFilterMode = () => {
     setFilterMode(!filterMode);
     setActiveSection2(filterMode ? 'filtering' : 'main');  // 조건에 따라 섹션 설정
@@ -61,7 +61,7 @@ function Detail() {
         });
       })
       .catch(error => console.error('Error fetching user data:', error));
-  }, [id]);  
+  }, [id]);
 
   const handleMemoChange = (e) => {
     setMemo(e.target.value);
@@ -97,12 +97,12 @@ function Detail() {
         userJoinDate: inputFields.empDate,
         memo: memo  // 메모 데이터 추가
       })
-      .then(response => {
-        console.log('프로필 업데이트 요청 성공:', response.data);
-      })
-      .catch(error => {
-        console.error('프로필 업데이트 요청 실패:', error);
-      });
+        .then(response => {
+          console.log('프로필 업데이트 요청 성공:', response.data);
+        })
+        .catch(error => {
+          console.error('프로필 업데이트 요청 실패:', error);
+        });
 
       // 편집 모드와 메모 편집 상태 해제
       setEditMode(false);
@@ -188,7 +188,7 @@ function Detail() {
             <img src="/img/capstone_title.png" alt="logo" className="detail-logo" />
           </Link>
         </div>
-        
+
 
         <div className="detail-rightSection">
           <div className="edit-profile-section">
@@ -202,10 +202,10 @@ function Detail() {
               <img src="/img/search.png" alt="icon" className="detail-search-icon" />
               <h> 데이터 검색</h>
             </div>
-            <input 
-              type="text" 
-              placeholder="데이터를 입력하세요." 
-              value={searchTerm} 
+            <input
+              type="text"
+              placeholder="데이터를 입력하세요."
+              value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               title="날짜 또는 상태를 입력하세요."
             />
@@ -271,7 +271,7 @@ function Detail() {
                           <tr key={key}>
                             <th>{fixedLabels[key]}</th>
                             <td>
-                              {editMode ? (
+                              {editMode && key !== 'id' ? (
                                 <input
                                   type="text"
                                   value={value}
@@ -296,7 +296,7 @@ function Detail() {
                       value={memo}
                       onChange={handleMemoChange}
                       placeholder="메모를 입력하세요."
-                      style={{ backgroundColor: editMode ? '#e7f4ff' : 'transparent', border: editMode ? '1px dashed #007bff' : 'transparent'}}
+                      style={{ backgroundColor: editMode ? '#e7f4ff' : 'transparent', border: editMode ? '1px dashed #007bff' : 'transparent' }}
                     />
                   ) : (
                     <p>{memo || "메모가 없습니다."}</p>
@@ -310,7 +310,7 @@ function Detail() {
         <div className="attendance-records">
           <div className="personal-info-div">
             <h2>Attendance Records</h2>
-            
+
             <div className="personal-info-button">
               <div className="attendance-button" onClick={toggleFilterMode}>
                 {filterMode ? '필터링' : '전체보기'}
@@ -353,7 +353,7 @@ function Detail() {
                     </tr>
                   ))}
                 </tbody>
-  
+
               </table>
             </div>
           )}
@@ -394,13 +394,9 @@ function Detail() {
                     </tr>
                   ))}
                 </tbody>
-
-  
               </table>
             </div>
           )}
-
-          
         </div>
       </div>
 
