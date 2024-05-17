@@ -146,8 +146,7 @@ function Detail() {
             temp: `${item.userData.userTemp}`,
             hr: `${item.userData.userHeartRate}`,
             oxy: `${item.userData.userOxygen}`,
-            status: item.state,
-            note: ''
+            status: item.state
           };
         });
         setAttendanceRecords(prevRecords => [...prevRecords, ...newData]);
@@ -330,7 +329,6 @@ function Detail() {
                     <th>심박수</th>
                     <th>산소포화도</th>
                     <th>상태</th>
-                    <th>비고</th>
                   </tr>
                 </thead>
                 <tbody className="table-body">
@@ -349,7 +347,6 @@ function Detail() {
                       <td>{record.hr} bpm</td>
                       <td>{record.oxy}%</td>
                       <td>{record.status}</td>
-                      <td>{record.note}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -371,7 +368,6 @@ function Detail() {
                     <th>심박수</th>
                     <th>산소포화도</th>
                     <th>상태</th>
-                    <th>비고</th>
                   </tr>
                 </thead>
                 <tbody className="table-body">
@@ -390,7 +386,6 @@ function Detail() {
                       <td>{record.hr} bpm</td>
                       <td>{record.oxy}%</td>
                       <td>{record.status}</td>
-                      <td>{record.note}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -5,6 +5,7 @@ import './Member.css';
 import { fingerprintApiBaseUrl, userApiBaseUrl } from './Api';
 import axios from 'axios';
 
+
 function Member() {
   // 데이터와 컬럼 정의
   const [membersData, setMembersData] = useState([]);
@@ -12,7 +13,6 @@ function Member() {
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [name, setName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
   const [position, setPosition] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
@@ -20,14 +20,17 @@ function Member() {
   const [address, setAddress] = useState('');
   const [deleteId, setDeleteId] = useState('');
   const [employeeId, setEmployeeId] = useState(''); // 사원번호 상태 추가
+  const [phonePart1, setPhonePart1] = useState('');
+  const [phonePart2, setPhonePart2] = useState('');
+  const [phonePart3, setPhonePart3] = useState('');
 
   const sortMembersData = (data) => {
     return data.slice().sort((a, b) => a.id - b.id);
   };
-  
+
   useEffect(() => {
     setMembersData(prevData => sortMembersData(prevData));
-  }, [membersData]);  
+  }, [membersData]);
 
   // 사원번호 상태 초기화
   useEffect(() => {
@@ -187,10 +190,12 @@ function Member() {
   };
 
   const handleSubmit = async () => {
-    if (!name || !phoneNumber || !position || !age || !gender || !employeeId) {
+    if (!name || !phonePart1 || !phonePart2 || !phonePart3 || !position || !age || !gender || !employeeId) {
       alert("입력되지 않은 부분이 있습니다. 모든 필수 입력값을 입력해주세요.");
       return;
     }
+  
+    const fullPhoneNumber = `${phonePart1}-${phonePart2}-${phonePart3}`;
   
     try {
       const response = await axios.post(`${userApiBaseUrl}/user/create`, {
@@ -199,7 +204,7 @@ function Member() {
         userName: name,
         userAge: age,
         userGender: gender,
-        userTelNo: phoneNumber,
+        userTelNo: fullPhoneNumber,
         userEmail: email,
         userAddress: address
       });
@@ -214,7 +219,7 @@ function Member() {
         name: name,
         age: age,
         gender: gender,
-        pNumber: phoneNumber,
+        pNumber: fullPhoneNumber,
         email: email,
         address: address
       };
@@ -227,7 +232,9 @@ function Member() {
       setName('');
       setAge('');
       setGender('');
-      setPhoneNumber('');
+      setPhonePart1('');
+      setPhonePart2('');
+      setPhonePart3('');
       setEmail('');
       setAddress('');
       setEmployeeId('');
@@ -268,7 +275,7 @@ function Member() {
     // 모달 닫기
     setShowDeleteModal(false);
   };
-  
+
   return (
     <div className="member-container">
       <header className="member-header">
@@ -300,7 +307,6 @@ function Member() {
               <img src="/img/statistics.png" alt="statistics" className="member-menu-icon" />
               <span>통계</span>
             </Link>
-
             <Link to="/monitoring" className="member-menu-item">
               <img src="/img/monitoring.png" alt="monitoring" className="member-menu-icon" />
               <span>모니터링</span>
@@ -360,7 +366,7 @@ function Member() {
                 id="employeeId"
                 value={employeeId}
                 onChange={(e) => setEmployeeId(e.target.value)}
-                //readOnly
+              //readOnly
               />
             </div>
             <div className="form-group">
@@ -374,12 +380,34 @@ function Member() {
             </div>
             <div className="form-group">
               <label htmlFor="phoneNumber">*전화번호:</label>
-              <input
-                type="text"
-                id="phoneNumber"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-              />
+              <div className="phone-number-inputs">
+                <input
+                  type="text"
+                  id="phonePart1"
+                  value={phonePart1}
+                  onChange={(e) => setPhonePart1(e.target.value)}
+                  maxLength={3}
+                  placeholder="010"
+                />
+                -
+                <input
+                  type="text"
+                  id="phonePart2"
+                  value={phonePart2}
+                  onChange={(e) => setPhonePart2(e.target.value)}
+                  maxLength={4}
+                  placeholder="XXXX"
+                />
+                -
+                <input
+                  type="text"
+                  id="phonePart3"
+                  value={phonePart3}
+                  onChange={(e) => setPhonePart3(e.target.value)}
+                  maxLength={4}
+                  placeholder="XXXX"
+                />
+              </div>
             </div>
             <div className="form-group">
               <label htmlFor="position">*직위:</label>
