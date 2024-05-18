@@ -226,14 +226,6 @@ function Detail() {
           <div className="personal-info">
             <div className="personal-info-div">
               <h2>Personal Information</h2>
-              <div className="personal-info-button">
-                <div className="personal-info-main" onClick={() => handleSectionClick('main')}>
-                  상세 정보
-                </div>
-                <div className="personal-info-memo" onClick={() => handleSectionClick('memo')}>
-                  메모
-                </div>
-              </div>
             </div>
             <div className="personal-info-container">
               {activeSection === 'main' && (
@@ -261,10 +253,6 @@ function Detail() {
                       ))}
                     </tbody>
                   </table>
-                </div>
-              )}
-              {activeSection === 'memo' && (
-                <div className="info">
                   {isMemoEditing && editMode ? (
                     <textarea
                       value={memo}
@@ -279,6 +267,7 @@ function Detail() {
               )}
             </div>
           </div>
+          
         </div>
 
         <div className="attendance-records">

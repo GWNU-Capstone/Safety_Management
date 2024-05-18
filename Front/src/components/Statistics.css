@@ -1,106 +1,214 @@
 /* Statistics.css */
 
 body {
-    margin: 0;
-    overflow-y: hidden;
-    user-select: none;
+	background-color: #f8f8f8;
+	margin: 0; /* 기본 마진 제거 */
+	padding: 0; /* 기본 패딩 제거 */
+	font-family: 'Arial', sans-serif; /* 전체 폰트 설정 */
+	user-select: none;
+}
+
+.statistic-container-main {
+	display: flex;
+	flex-direction: column;
+	height: 100vh; /* 전체 화면의 높이와 같게 설정 */
+	margin: 20px;
+	overflow: hidden; /* 컨테이너 외부로 내용이 넘칠 경우 숨김 처리 */
+}
+
+.statistic-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between; /* 헤더 좌우 정렬 유지 */
+	height: 70px;
+	margin-bottom: 20px;
+}
+
+.statistic-rightSection {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end; /* 우측 정렬 */
+	flex-direction: row; /* 자식들을 가로로 배치 */
+}
+
+.statistic-header-menu {
+	display: flex;
+	flex: 0 0 50px;
+	margin-left: auto; /* 우측 정렬 */
+	align-items: center;
+	background-color: #ffffff;
+	padding: 20px;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	max-height: calc(100vh - 160px);
+}
+
+.logo-section .statistic-logo {
+	width: 15vw;
+	height: auto;
+}
+
+.statistic-menu-wrapper {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	white-space: nowrap; /* 아이템이 줄바꿈되지 않도록 설정 */
+}
+  
+.statistic-menu-item {
+	display: inline-flex;
+	align-items: center;
+	margin-right: 20px; /* 아이템 간 간격 */
+}
+
+.statistic-menu-item:last-child {
+	margin-right: 0;
+}
+
+.statistic-menu-icon {
+	vertical-align: middle; /* 아이콘을 텍스트 중앙에 정렬 */
+	width: 30px;
+	height: auto;
+	margin-right: 10px;
+}
+
+.statistic-container {
+  display: flex;
+	flex-direction: column;
+  flex-grow: 1; /* 남은 공간을 모두 채움 */
+  overflow: hidden; /* main-content 내 스크롤바 비활성화 */
+  flex-wrap: wrap;
+  border-radius: 5px; /* 경계선 둥글게 처리 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 약간의 그림자 효과 */
+
+}
+
+.statistic-container-top {
+  display: flex;
+  flex: 1;
+  overflow: hidden; /* main-content 내 스크롤바 비활성화 */
+  flex-wrap: nowrap; /* 요소들이 줄바꿈되지 않도록 설정 */
+  gap: 20px;
+  padding: 2px;
+  height: 25vh;
+  max-height: calc(100vh - 160px); /* 헤더, 푸터, 마진을 고려한 높이 */
+}
+
+.statistic-container-top-content {
+  flex: 1 1 0; /* 각 요소가 동일한 크기를 갖도록 설정 */
+  background-color: #ffffff; /* 배경색을 흰색으로 설정 */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* 내부 요소들을 좌측 정렬 */
+  gap: 20px;
+  padding: 20px; /* 패딩 추가 */
+  border-radius: 5px; /* 경계선 둥글게 처리 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 약간의 그림자 효과 */
+}
+
+.statistic-container-top-content-item {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	border-top: 1px solid #ddd;
+	justify-content: center;
+  font-size: 10px;
+  text-align: left; /* 텍스트를 좌측 정렬 */
+}
+
+.statistic-container-top-content-item-content {
+	display: flex;
+	margin-bottom: 20px;
+}
+
+.statistic-container-top-content-item-content-center {
+	text-align: center;
+}
+
+.statistic-container-top-content-title {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 가로 중앙 정렬 */
+  width: 100%; /* 부모 요소의 전체 너비 사용 */
+  font-size: 10px;
+  text-align: center;
+}
+
+.statistic-container-top-content-icon {
+	width: 2vw;
+	margin-right: 10px;
+}
+
+.statistic-container-bottom {
+  display: flex;
+  flex: 1;
+  overflow: hidden; /* main-content 내 스크롤바 비활성화 */
+  flex-wrap: nowrap; /* 요소들이 줄바꿈되지 않도록 설정 */
+  margin-top: 20px;
+  gap: 20px;
+  padding: 2px;
+  max-height: calc(100vh - 160px); /* 헤더, 푸터, 마진을 고려한 높이 */
+}
+
+.statistic-container-bottom-content {
+  flex: 1 1 0; /* 각 요소가 동일한 크기를 갖도록 설정 */
+  background-color: #ffffff; /* 배경색을 흰색으로 설정 */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* 내부 요소들을 좌측 정렬 */
+  gap: 20px;
+  padding: 20px; /* 패딩 추가 */
+  border-radius: 5px; /* 경계선 둥글게 처리 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 약간의 그림자 효과 */
+  overflow: hidden; /* 내용이 넘치지 않도록 설정 */
 }
 
 
-
-.Logo {
-    width: 20vw;
+.statistic-container-bottom-content-title {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 가로 중앙 정렬 */
+  width: 100%; /* 부모 요소의 전체 너비 사용 */
+  font-size: 10px;
+  text-align: center;
+	
 }
 
-.container {
-    display: grid;
-    width: 100%;
-    height: 100vh;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 0px;
-    margin: 10px
+.statistic-container-bottom-content-icon {
+	width: 2vw;
+	margin-right: 10px;
 }
 
-.calendar-container {
-    position: relative; /* 캘린더를 포함하는 부모 요소에 상대적 위치 설정 */
+.statistic-container-bottom-content-item {
+  border-top: 1px solid #ddd;
+  width: 100%;
+  height: 100%;
+  position: relative; /* 그래프 컨테이너를 상대적으로 위치 지정 */
 }
 
-.calendar-wrapper {
-    position: absolute; /* 캘린더의 위치를 상대적으로 조정하기 위해 절대 위치 설정 */
-    top: calc(100% + 10px); /* 버튼 바로 아래에 위치하도록 설정 (10px는 여유 공간) */
-    left: 0;
-    z-index: 1;
+.line-chart {
+  width: 100%;
+  height: 100%;
 }
 
-.item1 {
-    grid-column: 1 / span 1;
-    grid-row: 1 / span 1;
-    height: 200px;
-    margin-right: 15px;
-}
-
-.item1 table {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-.item1 th, .item1 td {
-    border: 2px solid #ffffff;
-    text-align: left;
-    padding: 8px;
-}
-
-.item1 th {
-    background-color: #3d66b3;
-    color: #ffffff;
+.line {
+  stroke: #007bff; /* 라인 색상 */
+  stroke-width: 2; /* 라인 두께 */
+  fill: none; /* 채우기 색상 없음 */
 }
 
 
-.item1 tr:nth-child(even) {
-    background-color: #ced2e7;
-}
-
-.item2 {
-    grid-column: 1 / span 1;
-    grid-row: 2 / span 1;
-    background-color: #92d5ff;
-    height: calc(100vh - 200px);
-    margin-right: 15px;
-
-}
-
-.item3 {
-    grid-column: 2 / span 1;
-    grid-row: 1 / span 2;
-    border: 1px solid #000000;
-    margin-right: 30px;
-}
-
-.item3 table {
-    border-collapse: collapse;
-    width: 100%;
-
-}
-
-.item3 th, .item3 td {
-    border: 2px solid #ffffff;
-    text-align: left;
-    padding: 8px;
-}
-
-.item3 th {
-    background-color: #3d66b3;
-    color: #ffffff;
-}
-
-.item3 tr:nth-child(even) {
-    background-color: #f1f1f1;
-}
-
-.item3 tr:first-child {
-    background-color:  #ced2e7;
-}
-.item3 tr:nth-child(3) {
-    background-color:  #ced2e7;
+.footer {
+	flex-shrink: 0; /* 크기 유지 */
+	text-align: center;
+	height: 20px;
+	padding: 10px 0;
+	background-color: white;
+	color: #ddd;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	padding: 20px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	border-radius: 5px;
 }
