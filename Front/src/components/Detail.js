@@ -7,16 +7,15 @@ import axios from 'axios';
 function Detail() {
   const [editMode, setEditMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeSection, setActiveSection] = useState('main');
   const [activeSection2, setActiveSection2] = useState('main');
-  const [filterMode, setFilterMode] = useState(true); 
+  const [filterMode, setFilterMode] = useState(true);
   const [memo, setMemo] = useState(''); // 메모 내용을 저장할 상태
   const [isMemoEditing, setIsMemoEditing] = useState(false);
+  const [attendanceRecords, setAttendanceRecords] = useState([]);
 
-  const handleSectionClick = (section) => {
-    setActiveSection(section);
-  };
-  
+
+
+
   const toggleFilterMode = () => {
     setFilterMode(!filterMode);
     setActiveSection2(filterMode ? 'filtering' : 'main');  // 조건에 따라 섹션 설정
@@ -59,7 +58,7 @@ function Detail() {
         });
       })
       .catch(error => console.error('Error fetching user data:', error));
-  }, [id]);  
+  }, [id]);
 
   const handleMemoChange = (e) => {
     setMemo(e.target.value);
@@ -95,12 +94,12 @@ function Detail() {
         userJoinDate: inputFields.empDate,
         memo: memo  // 메모 데이터 추가
       })
-      .then(response => {
-        console.log('프로필 업데이트 요청 성공:', response.data);
-      })
-      .catch(error => {
-        console.error('프로필 업데이트 요청 실패:', error);
-      });
+        .then(response => {
+          console.log('프로필 업데이트 요청 성공:', response.data);
+        })
+        .catch(error => {
+          console.error('프로필 업데이트 요청 실패:', error);
+        });
 
       // 편집 모드와 메모 편집 상태 해제
       setEditMode(false);
@@ -131,6 +130,28 @@ function Detail() {
     empDate: '입사일자'
   };
 
+  useEffect(() => {
+    axios.get(`http://localhost:8080/user/data/${inputFields.id}`)
+      .then(response => {
+        const userData = response.data;
+        const newData = Object.values(userData).map(item => {
+          return {
+            date: item.userData.date,
+            enter: item.userData.userStart,
+            exit: item.userData.userEnd,
+            bac: `${item.userData.userDrink}`,
+            temp: `${item.userData.userTemp}`,
+            hr: `${item.userData.userHeartRate}`,
+            oxy: `${item.userData.userOxygen}`,
+            status: item.state
+          };
+        });
+        setAttendanceRecords(prevRecords => [...prevRecords, ...newData]);
+      })
+      .catch(error => console.error('Error fetching user data:', error));
+  }, [inputFields.id]);
+
+  /*
   const attendanceRecords = [
     { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
     { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
@@ -153,6 +174,7 @@ function Detail() {
     { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
     { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''}
   ];
+  */
 
   return (
     <div className="detail-container">
@@ -162,7 +184,7 @@ function Detail() {
             <img src="/img/capstone_title.png" alt="logo" className="detail-logo" />
           </Link>
         </div>
-        
+
 
         <div className="detail-rightSection">
           <div className="edit-profile-section">
@@ -176,10 +198,10 @@ function Detail() {
               <img src="/img/search.png" alt="icon" className="detail-search-icon" />
               <h> 데이터 검색</h>
             </div>
-            <input 
-              type="text" 
-              placeholder="데이터를 입력하세요." 
-              value={searchTerm} 
+            <input
+              type="text"
+              placeholder="데이터를 입력하세요."
+              value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               title="날짜 또는 상태를 입력하세요."
             />
@@ -228,43 +250,41 @@ function Detail() {
               <h2>Personal Information</h2>
             </div>
             <div className="personal-info-container">
-              {activeSection === 'main' && (
-                <div className="info">
-                  <table>
-                    <tbody>
-                      {Object.entries(inputFields).map(([key, value]) => (
-                        key !== "name" && (
-                          <tr key={key}>
-                            <th>{fixedLabels[key]}</th>
-                            <td>
-                              {editMode ? (
-                                <input
-                                  type="text"
-                                  value={value}
-                                  onChange={(e) => handleInputChange(key, e.target.value)}
-                                  placeholder="데이터를 입력하세요"
-                                />
-                              ) : (
-                                <span>{value || "데이터를 입력하세요"}</span>
-                              )}
-                            </td>
-                          </tr>
-                        )
-                      ))}
-                    </tbody>
-                  </table>
-                  {isMemoEditing && editMode ? (
-                    <textarea
-                      value={memo}
-                      onChange={handleMemoChange}
-                      placeholder="메모를 입력하세요."
-                      style={{ backgroundColor: editMode ? '#e7f4ff' : 'transparent', border: editMode ? '1px dashed #007bff' : 'transparent'}}
-                    />
-                  ) : (
-                    <p>{memo || "메모가 없습니다."}</p>
-                  )}
-                </div>
-              )}
+              <div className="info">
+                <table>
+                  <tbody>
+                    {Object.entries(inputFields).map(([key, value]) => (
+                      key !== "name" && (
+                        <tr key={key}>
+                          <th>{fixedLabels[key]}</th>
+                          <td>
+                            {editMode && key !== 'id' ? (
+                              <input
+                                type="text"
+                                value={value}
+                                onChange={(e) => handleInputChange(key, e.target.value)}
+                                placeholder="데이터를 입력하세요"
+                              />
+                            ) : (
+                              <span>{value || "데이터를 입력하세요"}</span>
+                            )}
+                          </td>
+                        </tr>
+                      )
+                    ))}
+                  </tbody>
+                </table>
+                {isMemoEditing && editMode ? (
+                  <textarea
+                    value={memo}
+                    onChange={handleMemoChange}
+                    placeholder="메모를 입력하세요."
+                    style={{ backgroundColor: editMode ? '#e7f4ff' : 'transparent', border: editMode ? '1px dashed #007bff' : 'transparent' }}
+                  />
+                ) : (
+                  <p>{memo || "메모가 없습니다."}</p>
+                )}
+              </div>
             </div>
           </div>
           
@@ -273,7 +293,7 @@ function Detail() {
         <div className="attendance-records">
           <div className="personal-info-div">
             <h2>Attendance Records</h2>
-            
+
             <div className="personal-info-button">
               <div className="attendance-button" onClick={toggleFilterMode}>
                 {filterMode ? '필터링' : '전체보기'}
@@ -293,7 +313,6 @@ function Detail() {
                     <th>심박수</th>
                     <th>산소포화도</th>
                     <th>상태</th>
-                    <th>비고</th>
                   </tr>
                 </thead>
                 <tbody className="table-body">
@@ -312,11 +331,10 @@ function Detail() {
                       <td>{record.hr} bpm</td>
                       <td>{record.oxy}%</td>
                       <td>{record.status}</td>
-                      <td>{record.note}</td>
                     </tr>
                   ))}
                 </tbody>
-  
+
               </table>
             </div>
           )}
@@ -334,7 +352,6 @@ function Detail() {
                     <th>심박수</th>
                     <th>산소포화도</th>
                     <th>상태</th>
-                    <th>비고</th>
                   </tr>
                 </thead>
                 <tbody className="table-body">
@@ -353,17 +370,12 @@ function Detail() {
                       <td>{record.hr} bpm</td>
                       <td>{record.oxy}%</td>
                       <td>{record.status}</td>
-                      <td>{record.note}</td>
                     </tr>
                   ))}
                 </tbody>
-
-  
               </table>
             </div>
           )}
-
-          
         </div>
       </div>
 

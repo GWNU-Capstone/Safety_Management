@@ -23,12 +23,12 @@ const MonitoringScreen = () => {
     if (!userId && step === 1) {
       const fetchUserId = async () => {
         try {
-          const url = `${fingerprintApiBaseUrl}/fingerprint`;
-          const response = await axios.get(url);
+          const response = await axios.get(`${fingerprintApiBaseUrl}/fingerprint`);
           if (response.status === 200) {
             const data = response.data;
-            setUserId(data);
-            console.log('Fetched user ID:', data);
+            const userIdFromResponse = data["fingerprint_results"];
+            setUserId(userIdFromResponse);
+            console.log('Fetched user ID:', userIdFromResponse);
           } else {
             console.error('Failed to fetch user ID');
           }
@@ -83,16 +83,16 @@ const MonitoringScreen = () => {
       }, 2500);
       return () => clearTimeout(timer);
     }
-    else if(step === 2) {
+    else if (step === 2) {
       setTimeout(() => {
         measureAlcoholLevel();
       }, 5000);
     }
-    else if(step === 3) {
+    else if (step === 3) {
       setTimeout(() => {
         measureTemperatureAndBloodPressure();
       }, 5000);
-    }    
+    }
   }, [step]);
 
   const startGuidance = () => {
@@ -111,24 +111,22 @@ const MonitoringScreen = () => {
 
   const scanFingerprint = () => {
     if (userId) {
-      setFingerprintScanComplete(true);
       axios.get(`${userApiBaseUrl}/user/fingerprint/${userId}`)
         .then(response => {
-          const { code, UserInfo, userProfile } = response.data; 
-          setCode(code); 
-          if (UserInfo && UserInfo.userImage) { 
-            const { userImage } = UserInfo;
-            const { userName, userNo } = userProfile;
-            setEmployeeID(userNo);
-            setEmployeeName(userName);
-            setEmployeeImage(userImage); 
-          } else {
-            // Handle case where UserInfo object or userImage property does not exist
-          }
+          console.log('API 응답 전체:', response); // API 응답 전체를 로그로 출력
+          const { data } = response;
+          const { code, userImage, userNo, userName } = data;
+          console.log('API에서 받은 값:', code, userImage, userNo, userName); // 받은 값들을 로그로 출력
+          setCode(code);
+          setEmployeeImage(userImage);
+          setEmployeeID(userNo);
+          setEmployeeName(userName);
+          setFingerprintScanComplete(true);
+          console.log('변수에 지정된 값:', fingerprintScanComplete, code, employeeID, employeeImage, employeeName);
           if (code === 102) {
-            resetStatesAndScan();
             setStep(6);
-          } else if(code === 101) {
+            resetStatesAndScan();
+          } else if (code === 101) {
             setStep(4);
           } else if (code === 103) {
             setStep(2);
@@ -138,7 +136,7 @@ const MonitoringScreen = () => {
     } else {
       console.error('User ID is null. Cannot fetch fingerprint data.');
     }
-  };     
+  };  
 
   const handleError = (error) => {
     console.error('Error fetching employee data:', error);
@@ -150,10 +148,11 @@ const MonitoringScreen = () => {
     setAlcoholLevel(null);
     setTemperature(null);
     setBloodPressure(null);
-    setEmployeeID(''); 
-    setEmployeeName(''); 
-    setEmployeeImage(''); 
-    setCode(null); 
+    setSpo2(null);
+    setEmployeeID('');
+    setEmployeeName('');
+    setEmployeeImage('');
+    setCode(null);
     setStep(1);
   };
 
@@ -219,49 +218,54 @@ const MonitoringScreen = () => {
         );
     }
   };
-  
+
   const measureAlcoholLevel = async () => {
     try {
-      const alcoholLevel = await fetchAlcoholLevel(employeeID);
+      const alcoholLevel = await fetchAlcoholLevel();
       if (alcoholLevel !== null) {
         setAlcoholLevel(alcoholLevel);
-        setStep(3); 
+        setStep(3);
       }
     } catch (error) {
       console.error('Error measuring alcohol level:', error);
     }
   };
 
-  const measureTemperatureAndBloodPressure = async () => {
+  const registerAttendance = async (employeeID, alcoholLevel, heartRate, temperature, spo2) => {
     try {
-      const { temperature, heartRate } = await fetchTemperatureAndHeartRate(employeeID);
-      setTemperature(temperature);
-      setBloodPressure(heartRate);
-      setStep(5); 
-
-      axios.post(`${userApiBaseUrl}/user/go`, {
+      const response = await axios.post(`${userApiBaseUrl}/user/go`, {
         userNo: employeeID,
         userDrink: alcoholLevel,
         userHeartRate: heartRate,
-        userTemp: temperature
-      })
-      .then(response => {
-        console.log('출근 등록 성공:', response.data);
-      })
-      .catch(error => {
-        console.error('출근 등록 실패:', error);
+        userTemp: temperature,
+        userOxygen: spo2
       });
+      console.log('출근 등록 성공:', response.data);
+    } catch (error) {
+      console.error('출근 등록 실패:', error);
+    }
+  };
+  
+  const measureTemperatureAndBloodPressure = async () => {
+    try {
+      const { temperature, heartRate } = await fetchTemperatureAndHeartRate();
+      setTemperature(temperature);
+      setBloodPressure(heartRate);
+      setStep(5);
+  
+      await registerAttendance(employeeID, alcoholLevel, heartRate, temperature, spo2);
     } catch (error) {
       console.error('Error measuring temperature and blood pressure:', error);
     }
-  };
+  };  
 
-  const fetchAlcoholLevel = (id) => {
+  const fetchAlcoholLevel = () => {
     return axios.get(`${fingerprintApiBaseUrl}/drink`)
       .then(response => {
-        const alcoholLevel = response.data;
-        if (alcoholLevel !== null) {
-          return alcoholLevel;
+        const { userdrink } = response.data;
+        if (userdrink !== null) {
+          setAlcoholLevel(userdrink);
+          return userdrink;
         } else {
           return null;
         }
@@ -287,7 +291,7 @@ const MonitoringScreen = () => {
         setBloodPressure(null);
         setSpo2(null);
       });
-  };  
+  };
 
   const handleScanButtonClick = () => {
     setStep(1);
@@ -336,49 +340,48 @@ const MonitoringScreen = () => {
           <div className="monitoring-profile-info">
             <div className="monitoring-profile-img">
               {fingerprintScanComplete ? (
-                <img src="/img/1.png" alt="Employee"  className="monitoring-user-profile-img"/>
+                <img src={employeeImage ? employeeImage : "/img/1.png"} alt="Employee" className="monitoring-user-profile-img" />
               ) : (
                 <img src="/img/user.png" alt="" className="monitoring-user-profile-img" />
               )}
-              
             </div>
             {fingerprintScanComplete && employeeName ? (
               <p>{employeeName}</p>
             ) : (
               <p>지문을 스캔하세요.</p>
             )}
-            {fingerprintScanComplete && employeeID ? (
-              <p>사원번호<br></br>{employeeID}</p>
+            {fingerprintScanComplete && employeeID !== '' ? (
+              <p>사원번호<br/>{employeeID}</p>
             ) : (
-                <p></p>
+              <p>{employeeID}</p>
             )}
           </div>
         </div>
       </div>
       <div className="monitoring-content2">
         <div className="monitoring-content2-div">
-          <img src="/img/alcoholic.png" alt="alcoholic" className="monitoring-content2-icon"/>
+          <img src="/img/alcoholic.png" alt="alcoholic" className="monitoring-content2-icon" />
           <div className="monitoring-content2-text">
             <p>알코올 농도</p>
             {alcoholLevel !== null ? <p2>{alcoholLevel}%</p2> : <p2>측정 전</p2>}
           </div>
         </div>
         <div className="monitoring-content2-div">
-          <img src="/img/thermometer.png" alt="thermometer" className="monitoring-content2-icon"/>
+          <img src="/img/thermometer.png" alt="thermometer" className="monitoring-content2-icon" />
           <div className="monitoring-content2-text">
             <p>체온</p>
             {temperature !== null ? <p2>{temperature}°C</p2> : <p2>측정 전</p2>}
           </div>
         </div>
         <div className="monitoring-content2-div">
-          <img src="/img/heartrate.png" alt="heartrate" className="monitoring-content2-icon"/>
+          <img src="/img/heartrate.png" alt="heartrate" className="monitoring-content2-icon" />
           <div className="monitoring-content2-text">
             <p>심박수</p>
             {bloodPressure !== null ? <p2>{bloodPressure}bpm</p2> : <p2>측정 전</p2>}
           </div>
         </div>
         <div className="monitoring-content2-div">
-          <img src="/img/oximeter.png" alt="oximeter" className="monitoring-content2-icon"/>
+          <img src="/img/oximeter.png" alt="oximeter" className="monitoring-content2-icon" />
           <div className="monitoring-content2-text">
             <p>산소 포화도</p>
             {spo2 !== null ? <p2>{spo2}%</p2> : <p2>측정 전</p2>}

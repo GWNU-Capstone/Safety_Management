@@ -273,4 +273,10 @@ a:hover {
   margin-left: 10px;
   align-items: center;
 }
+
+.phone-number-inputs input {
+  width: 60px;
+  text-align: center;
+  margin: 0 5px;
+}
 /* 추가된 범위 끝 */
