@@ -3,10 +3,12 @@
   grid-template-columns: 50vw 50vw;
   grid-template-rows: 30vh 70vh;
   height: 100vh;
+
   background-image: url('../../public/img/member-background.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  
   overflow-y: hidden;
 }
 
@@ -14,14 +16,17 @@
   grid-column: 1;
   grid-row: 1;
   display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .logo-container img {
-  max-width: 70%;
-  max-height: 70%;
+  max-width: 100%;
+  max-height: 100%;
   width: auto;
   height: auto;
 }
+
 
 .info-container {
   grid-column: 2;
@@ -33,183 +38,34 @@
 }
 
 .square {
-  width: 90%;
-  height: 90%;
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
   position: absolute;
+  border: 2px dashed white;
+  top: 20px;
+  left: 20px;
   display: grid;
-  grid-template-areas:
-    "one two two"
-    "three four five";
-  gap: 20px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  grid-template-columns: repeat(3, 1fr); /* 3개의 열 설정 */
+  grid-template-rows: repeat(2, 1fr); /* 2개의 행 설정 */
+  gap: 10px; /* 그리드 간격 설정 */
 }
-
-.square > div:nth-child(1) { grid-area: one; }
-.square > div:nth-child(2) { grid-area: two; }
-.square > div:nth-child(3) { grid-area: three; }
-.square > div:nth-child(4) { grid-area: four; }
-.square > div:nth-child(5) { grid-area: five; }
 
 .square > div {
-  width: 100%;
-  height: 100%;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.6);
-  border: 3px dashed white;
-}
-
-
-.square img {
-  max-width: 80%;
-  max-height: 80%;
-  width: auto;
-  height: auto;
-}
-
-.info-box-1 {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  overflow: hidden; /* 이미지가 영역을 벗어나는 것을 방지하기 위해 overflow 속성 추가 */
-}
-
-.info-box-1 img {
-  position: absolute;
-  width: 100%; /* 부모 요소에 맞게 이미지 크기 조정 */
-  height: 100%; /* 부모 요소에 맞게 이미지 크기 조정 */
-  object-fit: cover; /* 이미지가 영역을 가득 채우도록 설정 */
-  top: 50%; /* 이미지를 세로 중앙에 위치시키기 위해 top 속성 추가 */
-  left: 50%; /* 이미지를 가로 중앙에 위치시키기 위해 left 속성 추가 */
-  transform: translate(-50%, -50%); /* 이미지를 가로 및 세로 중앙에 정렬하기 위해 transform 속성 추가 */
-}
-
-
-
-
-
-.info-box-1 .placeholder {
-  width: 100%;
-  height: 100%;
-  background-color: #000;
-}
-
-.info-box-2 {
-  grid-area: two;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.info-box-3,
-.info-box-4,
-.info-box-5 {
-  grid-area: three;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.info-box-3 img,
-.info-box-4 img,
-.info-box-5 img {
-  max-width: 80%;
-  max-height: 50%;
-  width: auto;
-  height: auto;
-}
-
-.info-box-1 p,
-.info-box-2 p {
-  margin: 25px;
-  color: #ffffff;
-  font-size: 30px;
-  font-family: 'Jalnan2', sans-serif;
-  text-align: center;
-}
-
-.info-box-3 p,
-.info-box-4 p,
-.info-box-5 p {
-  margin: 5px;
-  text-align: center;
-  color: #ffffff;
-  font-size: 30px;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-}
-
-.info-box-3 p2,
-.info-box-4 p2,
-.info-box-5 p2 {
-  margin: 5px;
-  text-align: center;
-  color: #ff0000;
-  font-size: 25px;
-  font-family: 'Jalnan2', sans-serif;
+  background-color: lightblue; /* 배경색 설정 */
 }
 
 .help-container {
-  padding: 20px;
-}
-
-.help-square {
-  display: grid;
-  width: calc(100% - 40px);
-  height: calc(100% - 20px);
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  grid-column-gap: 20px;
-  grid-row-gap: 20px;
-}
-
-.help-square > div {
-  width: 100%;
-  height: 100%;
-}
-
-.help-1 {
-  grid-column: 1 / span 2;
-  grid-row: 1;
-  overflow: hidden;
-  text-align: center;
-}
-
-.help-1 > p {
-  animation: moveUpDown 2s ease-in-out infinite alternate;
-  font-family: 'Jalnan2', sans-serif;
-  font-size: 2.3vw;
-  color: rgb(255, 255, 84);
-}
-
-.help-2 {
-  grid-column:  1 / span 2;
+  grid-column: 1;
   grid-row: 2;
-  background-color: rgba(0, 0, 0, 0.7);
-  border-radius: 10px;
-  overflow: hidden;
-  color: white;
-  font-size: 30px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
 }
 
-.help-2 p {
-  margin-left: 10px;
-  text-align: center;
-  font-weight: bold;
-}
-
-.help-2 p2 {
-  font-size: 3.5vw;
-  text-align: center;
-  align-self: center;
-  font-weight: bold;
+.help-container p {
+  animation: moveUpDown 2s ease-in-out infinite alternate;
+  
+  font-family: 'Jalnan2', sans-serif;
+  font-size: 3vw;
+  color: rgb(255, 255, 84);
 }

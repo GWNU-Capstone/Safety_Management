@@ -14,9 +14,17 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class UserInfo {
     @Id
     @Column(name="USER_NO")
+<<<<<<< HEAD
+    private int UserNoPk;
+
+    // 얼굴 사진 경로 -> 지문 변경
+    @Column(name="USER_FINGER_PRINT")
+    private String UserFingerPrint;
+=======
     private int userNo; // 사원 번호
 
     @Column(name = "USER_IMAGE")
@@ -24,11 +32,15 @@ public class UserInfo {
 
     @Column(name = "USER_RESIDENT_NUM")
     private String userResidentNum; // 주민등록번호
+>>>>>>> c4ad9b752471d9e2712faeea09d239ecde3a3be3
 
     @Column(name="USER_AGE")
     private int userAge; // 나이
 
     @Column(name="USER_TELNO")
+<<<<<<< HEAD
+    private String UserTelno;
+=======
     private String userTelNo; // 전화번호
 
     @Column(name="USER_GENDER")
@@ -54,9 +66,15 @@ public class UserInfo {
 
     @Column(name="MEMO")
     private String memo; // 메모
+>>>>>>> c4ad9b752471d9e2712faeea09d239ecde3a3be3
 
     @MapsId
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "USER_NO")
+<<<<<<< HEAD
+    private UserProfile userProfile;
+
+=======
     private UserProfile UserProfile;
+>>>>>>> c4ad9b752471d9e2712faeea09d239ecde3a3be3
 }

@@ -6,25 +6,48 @@ import apiClient from "api";
 
 function Member() {
   // 데이터와 컬럼 정의
-  const [membersData, setMembersData] = useState([]);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 여기서 데이터를 가져와서 membersData 상태에 설정
-        const dummyData = [
-          { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "0.000" },
-          { id: 2, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "0.001" }
-        ];
-        setMembersData(dummyData);
+        const response = await apiClient.get(`/members/1`);
+        setData(response.data);
       } catch (error) {
         console.log("네트워크 오류 [Join]", error);
+      } finally {
       }
     };
 
     fetchData();
   }, []);
 
+  console.log(data);
+
+  /*const data = React.useMemo(
+    () => [
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 1, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" },
+      { id: 2, name: '테스트', age: 25, pNumber: '010-1234-5678', tmp: 36, alcohol: "O" }
+    ],
+    []
+  );*/
+  
   const columns = React.useMemo(
     () => [
       {
@@ -55,8 +78,25 @@ function Member() {
     []
   );
 
+  // eslint-disable-next-line no-unused-vars
+  const [showTemperature, setShowTemperature] = useState(true);
+  // eslint-disable-next-line no-unused-vars
+  const [showAlcohol, setShowAlcohol] = useState(true);
+
+
+  // 열을 필터링하는 함수
+  const filteredColumns = React.useMemo(() => columns.filter(column => {
+    if (column.accessor === 'tmp') {
+      return showTemperature;
+    }
+    if (column.accessor === 'alcohol') {
+      return showAlcohol;
+    }
+    return true;
+  }), [columns, showTemperature, showAlcohol]);
+
   // useTable 훅을 사용하여 테이블 생성
-  const table = useTable({ columns, data: membersData });
+  const table = useTable({ columns: filteredColumns, data });
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
