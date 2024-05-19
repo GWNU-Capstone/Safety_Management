@@ -1,13 +1,16 @@
 package com.application.safety.dto;
 
+import com.application.safety.entity.UserData;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Getter
 @Setter
 public class UserDataDTO {
-<<<<<<< HEAD
-=======
     private int userNo;
     private float userDrink;
     private int userHeartRate;
@@ -16,15 +19,13 @@ public class UserDataDTO {
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
->>>>>>> c4ad9b752471d9e2712faeea09d239ecde3a3be3
 
+    @JsonFormat(pattern = "HH:mm:ss")
+    private LocalTime userStart;
 
-    private float UserDrink;
-    private float UserTemp;
-    private int UserHeartRate;
+    @JsonFormat(pattern = "HH:mm:ss")
+    private LocalTime userEnd;
 
-<<<<<<< HEAD
-=======
     public UserData toEntity() {
         return UserData.builder()
                 .userDrink(userDrink)
@@ -36,5 +37,4 @@ public class UserDataDTO {
                 .userEnd(userEnd)
                 .build();
     }
->>>>>>> c4ad9b752471d9e2712faeea09d239ecde3a3be3
 }

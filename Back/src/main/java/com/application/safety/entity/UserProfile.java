@@ -17,16 +17,8 @@ import lombok.NoArgsConstructor;
 public class UserProfile {
     @Id
     @Column(name = "USER_NO")
-<<<<<<< HEAD
-    private int UserNoPk;
-
-    @Column(name = "USER_NAME")
-    private String UserName;
-
-=======
     private int UserNo; // 사원 번호
 
     @Column(name = "USER_NAME")
     private String UserName; // 이름
->>>>>>> c4ad9b752471d9e2712faeea09d239ecde3a3be3
 }

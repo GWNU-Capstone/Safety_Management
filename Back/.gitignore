@@ -176,3 +176,6 @@ target
 .gradle
 README.html
 .exercism
+
+### Spring boot ###
+application.properties
