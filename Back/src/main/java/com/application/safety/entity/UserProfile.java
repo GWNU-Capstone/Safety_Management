@@ -1,12 +1,11 @@
 package com.application.safety.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "user_profile")
@@ -21,4 +20,12 @@ public class UserProfile {
 
     @Column(name = "USER_NAME")
     private String UserName; // 이름
+
+    // cascade 추가
+    @OneToOne(mappedBy = "UserProfile", cascade = CascadeType.ALL)
+    private UserInfo userInfo;
+
+    // cascade 추가
+    @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL)
+    private List<UserData> userDataList;
 }

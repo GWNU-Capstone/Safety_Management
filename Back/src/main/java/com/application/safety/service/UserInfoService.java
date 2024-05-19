@@ -129,9 +129,11 @@ public class UserInfoService {
     public void deleteUser(int userNo) {
         UserProfile userProfile = userProfileRepository.findById(userNo).orElseThrow();
 
+        /*cascade 적용 -> Data, Info 데이터 자동 삭제
         userDataRepository.deleteByUserProfile(userProfile);
-        userInfoRepository.deleteById(userNo);
+        userInfoRepository.deleteById(userNo); */
         userProfileRepository.deleteById(userNo);
+
     }
 
     // 사원 번호 기반 Entity 조회
@@ -139,6 +141,9 @@ public class UserInfoService {
         return userInfoRepository.findById(userNo)
                 .orElseThrow(() -> new EntityNotFoundException("[UserInfoService] UserInfo Not Found : " + userNo));
     }
+
+
+    //
 }
 
 
