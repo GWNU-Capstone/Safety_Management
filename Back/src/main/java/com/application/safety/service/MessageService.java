@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -39,6 +40,7 @@ public class MessageService {
     @Value("${coolsms.from}")
     private String from;
 
+    @Transactional(readOnly = true)
     public void sendSMS(String category, int userNo) {
         DefaultMessageService messageService = NurigoApp.INSTANCE.initialize(apiKey, apiSecret, "https://api.coolsms.co.kr");
         UserProfile userProfile = userProfileRepository.findById(userNo).orElseThrow();

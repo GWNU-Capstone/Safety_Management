@@ -7,6 +7,7 @@ import com.application.safety.repository.UserDataRepository;
 import com.application.safety.repository.UserInfoRepository;
 import com.application.safety.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,6 +82,8 @@ public class UserProfileService {
         return responseData;
     }
 
+    @Cacheable(value = "userProfiles", key = "#user_no")
+    @Transactional(readOnly = true)
     public Optional<UserProfile> getUserProfile(int user_no) {
         return userProfileRepository.findById(user_no);
     }
