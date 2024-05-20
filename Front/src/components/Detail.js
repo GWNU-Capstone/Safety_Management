@@ -151,31 +151,6 @@ function Detail() {
       .catch(error => console.error('Error fetching user data:', error));
   }, [inputFields.id]);
 
-  /*
-  const attendanceRecords = [
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''}
-  ];
-  */
-
   return (
     <div className="detail-container">
       <header className="detail-header">
