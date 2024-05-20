@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './Monitoring.css';
+import { fingerprintApiBaseUrl, userApiBaseUrl } from './Api';
 
 const MonitoringScreen = () => {
   const [step, setStep] = useState(0);
@@ -16,21 +17,18 @@ const MonitoringScreen = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [code, setCode] = useState(null);
   const [userId, setUserId] = useState(null);
-
-  const fingerprintApiBaseUrl = 'http://hj020711.iptime.org:5050';
-  const userApiBaseUrl = 'http://localhost:8080';
+  const [spo2, setSpo2] = useState(null);
 
   useEffect(() => {
-    // 페이지가 처음 렌더링될 때만 사용자 ID를 가져옴
     if (!userId && step === 1) {
       const fetchUserId = async () => {
         try {
-          const url = `${fingerprintApiBaseUrl}/fingerprint`;
-          const response = await axios.get(url);
+          const response = await axios.get(`${fingerprintApiBaseUrl}/fingerprint`);
           if (response.status === 200) {
             const data = response.data;
-            setUserId(data);
-            console.log('Fetched user ID:', data);
+            const userIdFromResponse = data["fingerprint_results"];
+            setUserId(userIdFromResponse);
+            console.log('Fetched user ID:', userIdFromResponse);
           } else {
             console.error('Failed to fetch user ID');
           }
@@ -85,16 +83,16 @@ const MonitoringScreen = () => {
       }, 2500);
       return () => clearTimeout(timer);
     }
-    else if(step === 2) {
+    else if (step === 2) {
       setTimeout(() => {
         measureAlcoholLevel();
-      }, 2000);
+      }, 7000);
     }
-    else if(step === 3) {
+    else if (step === 3) {
       setTimeout(() => {
         measureTemperatureAndBloodPressure();
-      }, 2000);
-    }    
+      }, 7000);
+    }
   }, [step]);
 
   const startGuidance = () => {
@@ -107,31 +105,28 @@ const MonitoringScreen = () => {
 
   useEffect(() => {
     return () => {
-      // 페이지가 언마운트될 때 모든 진행 상태를 초기화
       resetStatesAndScan();
     };
   }, []);
 
   const scanFingerprint = () => {
     if (userId) {
-      setFingerprintScanComplete(true);
       axios.get(`${userApiBaseUrl}/user/fingerprint/${userId}`)
         .then(response => {
-          const { code, UserInfo, userProfile } = response.data; 
-          setCode(code); 
-          if (UserInfo && UserInfo.userImage) { 
-            const { userImage } = UserInfo;
-            const { userName, userNo } = userProfile;
-            setEmployeeID(userNo);
-            setEmployeeName(userName);
-            setEmployeeImage(userImage); 
-          } else {
-            // Handle case where UserInfo object or userImage property does not exist
-          }
+          console.log('API 응답 전체:', response); // API 응답 전체를 로그로 출력
+          const { data } = response;
+          const { code, userImage, userNo, userName } = data;
+          console.log('API에서 받은 값:', code, userImage, userNo, userName); // 받은 값들을 로그로 출력
+          setCode(code);
+          setEmployeeImage(userImage);
+          setEmployeeID(userNo);
+          setEmployeeName(userName);
+          setFingerprintScanComplete(true);
+          console.log('변수에 지정된 값:', fingerprintScanComplete, code, employeeID, employeeImage, employeeName);
           if (code === 102) {
-            resetStatesAndScan();
             setStep(6);
-          } else if(code === 101) {
+            resetStatesAndScan();
+          } else if (code === 101) {
             setStep(4);
           } else if (code === 103) {
             setStep(2);
@@ -141,7 +136,7 @@ const MonitoringScreen = () => {
     } else {
       console.error('User ID is null. Cannot fetch fingerprint data.');
     }
-  };     
+  };  
 
   const handleError = (error) => {
     console.error('Error fetching employee data:', error);
@@ -153,10 +148,11 @@ const MonitoringScreen = () => {
     setAlcoholLevel(null);
     setTemperature(null);
     setBloodPressure(null);
-    setEmployeeID(''); 
-    setEmployeeName(''); 
-    setEmployeeImage(''); 
-    setCode(null); 
+    setSpo2(null);
+    setEmployeeID('');
+    setEmployeeName('');
+    setEmployeeImage('');
+    setCode(null);
     setStep(1);
   };
 
@@ -171,29 +167,29 @@ const MonitoringScreen = () => {
       case 0:
         return (
           <div>
-            <p onClick={handleScanButtonClick}>이 부분을 누르면 지문 측정이 시작됩니다.</p>
+            <p>이곳을 눌러 지문 측정을 시작하세요.</p>
           </div>
         );
       case 1:
         return (
           <div>
-            <p>지문 스캔 중...</p>
-            <p>지문 센서에 가까이 와주시길 바랍니다.</p>
+            <p>지문을 스캔합니다.</p>
+            <p>센서에 손을 올려주세요.</p>
             <button onClick={scanFingerprint}>지문 스캔 시작</button>
           </div>
         );
       case 2:
         return (
           <div>
-            <p>알코올 농도 측정 중...</p>
-            <p>입에 붙어 주시길 바랍니다.</p>
+            <p>혈중 알코올 농도를 측정합니다.</p>
+            <p>센서에 입으로 공기를 불어주세요.</p>
           </div>
         );
       case 3:
         return (
           <div>
-            <p>체온 및 혈압 측정 중...</p>
-            <p>체온 센서, 혈압 측정기에 오시길 바랍니다.</p>
+            <p>체온과 혈압, 산소포화도를 측정합니다.</p>
+            <p>센서에 손을 올려주세요.</p>
           </div>
         );
       case 4:
@@ -211,7 +207,7 @@ const MonitoringScreen = () => {
       case 6:
         return (
           <div>
-            <p>오늘 출근과 퇴근절차가 완료되었습니다.</p>
+            <p>이미 퇴근 처리가 완료된 사용자입니다.</p>
           </div>
         );
       default:
@@ -222,49 +218,54 @@ const MonitoringScreen = () => {
         );
     }
   };
-  
+
   const measureAlcoholLevel = async () => {
     try {
-      const alcoholLevel = await fetchAlcoholLevel(employeeID);
+      const alcoholLevel = await fetchAlcoholLevel();
       if (alcoholLevel !== null) {
         setAlcoholLevel(alcoholLevel);
-        setStep(3); 
+        setStep(3);
       }
     } catch (error) {
       console.error('Error measuring alcohol level:', error);
     }
   };
 
-  const measureTemperatureAndBloodPressure = async () => {
+  const registerAttendance = async (employeeID, alcoholLevel, heartRate, temperature, spo2) => {
     try {
-      const { temperature, heartRate } = await fetchTemperatureAndHeartRate(employeeID);
-      setTemperature(temperature);
-      setBloodPressure(heartRate);
-      setStep(5); 
-
-      axios.post(`${userApiBaseUrl}/user/go`, {
+      const response = await axios.post(`${userApiBaseUrl}/user/go`, {
         userNo: employeeID,
         userDrink: alcoholLevel,
         userHeartRate: heartRate,
-        userTemp: temperature
-      })
-      .then(response => {
-        console.log('출근 등록 성공:', response.data);
-      })
-      .catch(error => {
-        console.error('출근 등록 실패:', error);
+        userTemp: temperature,
+        userOxygen: spo2
       });
+      console.log('출근 등록 성공:', response.data);
+    } catch (error) {
+      console.error('출근 등록 실패:', error);
+    }
+  };
+  
+  const measureTemperatureAndBloodPressure = async () => {
+    try {
+      const { temperature, heartRate } = await fetchTemperatureAndHeartRate();
+      setTemperature(temperature);
+      setBloodPressure(heartRate);
+      setStep(5);
+  
+      await registerAttendance(employeeID, alcoholLevel, heartRate, temperature, spo2);
     } catch (error) {
       console.error('Error measuring temperature and blood pressure:', error);
     }
-  };
+  };  
 
-  const fetchAlcoholLevel = (id) => {
+  const fetchAlcoholLevel = () => {
     return axios.get(`${fingerprintApiBaseUrl}/drink`)
       .then(response => {
-        const alcoholLevel = response.data;
-        if (alcoholLevel !== null) {
-          return alcoholLevel;
+        const { userdrink } = response.data;
+        if (userdrink !== null) {
+          setAlcoholLevel(userdrink);
+          return userdrink;
         } else {
           return null;
         }
@@ -279,12 +280,16 @@ const MonitoringScreen = () => {
     return axios.get(`${fingerprintApiBaseUrl}/tempheart`)
       .then(response => {
         console.log(response);
-        const { userTemp, userHeartRate } = response.data;
-        return { temperature: userTemp, heartRate: userHeartRate };
+        const { userTemp, userHeartRate, userSpo2 } = response.data;
+        setTemperature(userTemp);
+        setBloodPressure(userHeartRate);
+        setSpo2(userSpo2);
       })
       .catch(error => {
-        console.error('Error fetching temperature and heart rate:', error);
-        return { temperature: null, heartRate: null };
+        console.error('Error fetching temperature, heart rate, and spo2:', error);
+        setTemperature(null);
+        setBloodPressure(null);
+        setSpo2(null);
       });
   };
 
@@ -294,67 +299,98 @@ const MonitoringScreen = () => {
 
   return (
     <div className="monitoring-container">
-      <div className="logo-container">
-        <Link to="/main">
-          <img src="/img/capston_title.png" alt="로고"/>
-        </Link>
-      </div>
+      <header className="monitoring-header">
+        <div className="monitoring-logo-section">
+          <Link to="/main">
+            <img src="/img/capstone_title.png" alt="logo" className="monitoring-logo" />
+          </Link>
+        </div>
+        <div className="monitoring-rightSection">
+          <div className="monitoring-time">
+            <p>{currentDate}</p>
+            <p2>{formatTime(currentTime)}</p2>
+          </div>
+          <div className="monitoring-header-menu">
+            <div className="monitoring-menu-wrapper">
+              <Link to="/member" className="monitoring-menu-item">
+                <img src="/img/member.png" alt="member" className="monitoring-menu-icon" />
+                <span>직원 관리</span>
+              </Link>
 
-      <div className="info-container">
-        <div className="square">
-          <div className="info-box-1">
+              <Link to="/statistics" className="monitoring-menu-item">
+                <img src="/img/statistics.png" alt="statistics" className="monitoring-menu-icon" />
+                <span>통계</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </header>
+      <div className="monitoring-content">
+        <div className="monitoring-content-div" onClick={handleScanButtonClick}>
+          <p>{renderStep()}</p>
+        </div>
+        <div className="monitoring-content-div2">
+          <div className="monitoring-profile-img">
             {fingerprintScanComplete ? (
               <img src="/img/1.png" alt="Employee" />
             ) : (
               <div className="placeholder"></div>
             )}
           </div>
-
-          <div className="info-box-2">
-            {fingerprintScanComplete && employeeID ? (
-              <p>사원번호: {employeeID}</p>
-            ) : (
-              <p>사원번호: 측정 전</p>
-            )}
+          <div className="monitoring-profile-info">
+            <div className="monitoring-profile-img">
+              {fingerprintScanComplete ? (
+                <img src={employeeImage ? employeeImage : "/img/1.png"} alt="Employee" className="monitoring-user-profile-img" />
+              ) : (
+                <img src="/img/user.png" alt="" className="monitoring-user-profile-img" />
+              )}
+            </div>
             {fingerprintScanComplete && employeeName ? (
-              <p>이름: {employeeName}</p>
+              <p>{employeeName}</p>
             ) : (
-              <p>이름: 측정 전</p>
+              <p>지문을 스캔하세요.</p>
+            )}
+            {fingerprintScanComplete && employeeID !== '' ? (
+              <p>사원번호<br/>{employeeID}</p>
+            ) : (
+              <p>{employeeID}</p>
             )}
           </div>
-
-          <div className="info-box-3">
-            <img src="/img/alcoholic.png" alt="alcoholic"/>
-            <p>Blood Alcohol Content</p>
-            {alcoholLevel !== null ? <p2>알코올 농도: {alcoholLevel}</p2> : <p2>측정 전</p2>}
+        </div>
+      </div>
+      <div className="monitoring-content2">
+        <div className="monitoring-content2-div">
+          <img src="/img/alcoholic.png" alt="alcoholic" className="monitoring-content2-icon" />
+          <div className="monitoring-content2-text">
+            <p>알코올 농도</p>
+            {alcoholLevel !== null ? <p2>{alcoholLevel}%</p2> : <p2>측정 전</p2>}
           </div>
-
-          <div className="info-box-4">
-            <img src="/img/thermometer.png" alt="thermometer"/>
-            <p>Temperature</p>
-            {temperature !== null ? <p2>체온: {temperature}°C</p2> : <p2>측정 전</p2>}
+        </div>
+        <div className="monitoring-content2-div">
+          <img src="/img/thermometer.png" alt="thermometer" className="monitoring-content2-icon" />
+          <div className="monitoring-content2-text">
+            <p>체온</p>
+            {temperature !== null ? <p2>{temperature}°C</p2> : <p2>측정 전</p2>}
           </div>
-
-          <div className="info-box-5">
-            <img src="/img/heartrate.png" alt="heartrate"/>
-            <p>Heart Rate</p>
-            {bloodPressure !== null ? <p2>심박수: {bloodPressure}mmHg</p2> : <p2>측정 전</p2>}
+        </div>
+        <div className="monitoring-content2-div">
+          <img src="/img/heartrate.png" alt="heartrate" className="monitoring-content2-icon" />
+          <div className="monitoring-content2-text">
+            <p>심박수</p>
+            {bloodPressure !== null ? <p2>{bloodPressure}bpm</p2> : <p2>측정 전</p2>}
+          </div>
+        </div>
+        <div className="monitoring-content2-div">
+          <img src="/img/oximeter.png" alt="oximeter" className="monitoring-content2-icon" />
+          <div className="monitoring-content2-text">
+            <p>산소 포화도</p>
+            {spo2 !== null ? <p2>{spo2}%</p2> : <p2>측정 전</p2>}
           </div>
         </div>
       </div>
-
-      <div className="help-container">
-        <div className="help-square">
-          <div className="help-1">
-            <p>{renderStep()}</p>
-          </div>
-
-          <div className="help-2">
-            <p>{currentDate}</p>
-            <p2>{formatTime(currentTime)}</p2>
-          </div>
-        </div>
-      </div>
+      <footer className="monitoring-footer">
+        Ⓒ 안전하조. 캡스톤 디자인 프로젝트
+      </footer>
     </div>
   );
 };
