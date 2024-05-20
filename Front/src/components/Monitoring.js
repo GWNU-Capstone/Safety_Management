@@ -86,12 +86,12 @@ const MonitoringScreen = () => {
     else if (step === 2) {
       setTimeout(() => {
         measureAlcoholLevel();
-      }, 5000);
+      }, 7000);
     }
     else if (step === 3) {
       setTimeout(() => {
         measureTemperatureAndBloodPressure();
-      }, 5000);
+      }, 7000);
     }
   }, [step]);
 

@@ -185,7 +185,7 @@ function StatisticsPage() {
               <h2>일조량</h2>
             </div>
             <div className="statistic-container-bottom-content-item">
-              <Line data={lineChartData('Sunlight', [5, 10, 15, 20, 25, 30, 35])} options={lineChartOptions} className="line-chart" />
+              <Line data={lineChartData('Sunlight', [5, 10, 15, 20, 25, 30, 30])} options={lineChartOptions} className="line-chart" />
             </div>
           </div>
           
