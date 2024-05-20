@@ -3,8 +3,12 @@ import { Link, useParams } from 'react-router-dom';
 import './Detail.css';
 import { userApiBaseUrl } from './Api';
 import axios from 'axios';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 function Detail() {
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeSection2, setActiveSection2] = useState('main');
@@ -12,9 +16,6 @@ function Detail() {
   const [memo, setMemo] = useState(''); // 메모 내용을 저장할 상태
   const [isMemoEditing, setIsMemoEditing] = useState(false);
   const [attendanceRecords, setAttendanceRecords] = useState([]);
-
-
-
 
   const toggleFilterMode = () => {
     setFilterMode(!filterMode);
@@ -107,8 +108,6 @@ function Detail() {
     }
   };
 
-
-
   const handleInputChange = (key, value) => {
     setInputFields({
       ...inputFields,
@@ -146,6 +145,7 @@ function Detail() {
             status: item.state
           };
         });
+        setAttendanceRecords([]);
         setAttendanceRecords(prevRecords => [...prevRecords, ...newData]);
       })
       .catch(error => console.error('Error fetching user data:', error));
@@ -173,12 +173,24 @@ function Detail() {
               <img src="/img/search.png" alt="icon" className="detail-search-icon" />
               <h> 데이터 검색</h>
             </div>
-            <input
-              type="text"
-              placeholder="데이터를 입력하세요."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              title="날짜 또는 상태를 입력하세요."
+            <DatePicker
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              placeholderText="시작일"
+              dateFormat="yyyy-MM-dd"
+            />
+            <DatePicker
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate}
+              placeholderText="종료일"
+              dateFormat="yyyy-MM-dd"
             />
           </div>
 
@@ -204,7 +216,6 @@ function Detail() {
       </header>
 
       <div className="main-content">
-
         <div className="profile">
           <div className="profile-info">
             <div className="profile-img">
@@ -234,12 +245,35 @@ function Detail() {
                           <th>{fixedLabels[key]}</th>
                           <td>
                             {editMode && key !== 'id' ? (
-                              <input
-                                type="text"
-                                value={value}
-                                onChange={(e) => handleInputChange(key, e.target.value)}
-                                placeholder="데이터를 입력하세요"
-                              />
+                              key === 'gender' ? ( // Check if the current field is gender
+                                <select
+                                  value={inputFields.gender}
+                                  onChange={(e) => handleInputChange('gender', e.target.value)}
+                                >
+                                  <option value="">성별을 선택하시오.</option>
+                                  <option value="남자">남자</option>
+                                  <option value="여자">여자</option>
+                                </select>
+                              ) : key === 'pos' ? ( // Check if the current field is position
+                                <select
+                                  value={inputFields.pos}
+                                  onChange={(e) => handleInputChange('pos', e.target.value)}
+                                >
+                                  <option value="">직위를 선택하세요.</option>
+                                  <option value="현장 관리자">현장 관리자</option>
+                                  <option value="기술자">기술자</option>
+                                  <option value="일용직">일용직</option>
+                                  <option value="사무원">사무원</option>
+                                  <option value="안전 감독관">안전 감독관</option>
+                                </select>
+                              ) : (
+                                <input
+                                  type="text"
+                                  value={value}
+                                  onChange={(e) => handleInputChange(key, e.target.value)}
+                                  placeholder="데이터를 입력하세요"
+                                />
+                              )
                             ) : (
                               <span>{value || "데이터를 입력하세요"}</span>
                             )}
@@ -262,7 +296,6 @@ function Detail() {
               </div>
             </div>
           </div>
-          
         </div>
 
         <div className="attendance-records">
@@ -292,10 +325,18 @@ function Detail() {
                 </thead>
                 <tbody className="table-body">
                   {attendanceRecords.filter((record) => {
-                    return (
-                      record.date.includes(searchTerm) ||
-                      record.status.toLowerCase().includes(searchTerm.toLowerCase())
-                    );
+                    const recordDate = new Date(record.date);
+                    const adjustedStartDate = startDate ? new Date(startDate) : null;
+                    const adjustedEndDate = endDate ? new Date(endDate) : null;
+                    if (adjustedStartDate && adjustedEndDate) {
+                      recordDate.setHours(0, 0, 0, 0); // 시간을 자정으로 설정합니다
+                      adjustedStartDate.setHours(0, 0, 0, 0);
+                      adjustedEndDate.setHours(0, 0, 0, 0);
+                      return recordDate >= adjustedStartDate && recordDate <= adjustedEndDate;
+                    } else {
+                      // If either start date or end date is not set, show all records
+                      return true;
+                    }
                   }).map((record, index) => (
                     <tr key={index}>
                       <td>{record.date}</td>
@@ -309,7 +350,6 @@ function Detail() {
                     </tr>
                   ))}
                 </tbody>
-
               </table>
             </div>
           )}
@@ -331,10 +371,18 @@ function Detail() {
                 </thead>
                 <tbody className="table-body">
                   {attendanceRecords.filter((record) => {
-                    return (
-                      record.date.includes(searchTerm) ||
-                      record.status.toLowerCase().includes(searchTerm.toLowerCase())
-                    );
+                    const recordDate = new Date(record.date);
+                    const adjustedStartDate = startDate ? new Date(startDate) : null;
+                    const adjustedEndDate = endDate ? new Date(endDate) : null;
+                    if (adjustedStartDate && adjustedEndDate) {
+                      recordDate.setHours(0, 0, 0, 0); // 시간을 자정으로 설정합니다
+                      adjustedStartDate.setHours(0, 0, 0, 0);
+                      adjustedEndDate.setHours(0, 0, 0, 0);
+                      return recordDate >= adjustedStartDate && recordDate <= adjustedEndDate;
+                    } else {
+                      // If either start date or end date is not set, show all records
+                      return true;
+                    }
                   }).map((record, index) => (
                     <tr key={index} style={{ color: !filterMode ? 'red' : 'black' }}>
                       <td>{record.date}</td>
