@@ -23,6 +23,7 @@ public class UserDataService {
     private final UserProfileRepository userProfileRepository;
 
     // 출력할 데이터 날짜, 출근 시간, 퇴근 시간, 알콜올 농도, 체온, 심박수, 산소포화도, 상태
+    @Transactional(readOnly = true)
     public Map<Integer, Object> getUserDataList(Optional<UserProfile> userProfile) {
         Map<Integer, Object> userDataList = new HashMap<>();
 
