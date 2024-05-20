@@ -116,13 +116,11 @@ const MonitoringScreen = () => {
           console.log('API 응답 전체:', response); // API 응답 전체를 로그로 출력
           const { data } = response;
           const { code, userImage, userNo, userName } = data;
-          console.log('API에서 받은 값:', code, userImage, userNo, userName); // 받은 값들을 로그로 출력
           setCode(code);
           setEmployeeImage(userImage);
           setEmployeeID(userNo);
           setEmployeeName(userName);
           setFingerprintScanComplete(true);
-          console.log('변수에 지정된 값:', fingerprintScanComplete, code, employeeID, employeeImage, employeeName);
           if (code === 102) {
             setStep(6);
             resetStatesAndScan();
@@ -136,7 +134,7 @@ const MonitoringScreen = () => {
     } else {
       console.error('User ID is null. Cannot fetch fingerprint data.');
     }
-  };  
+  };
 
   const handleError = (error) => {
     console.error('Error fetching employee data:', error);
@@ -245,19 +243,19 @@ const MonitoringScreen = () => {
       console.error('출근 등록 실패:', error);
     }
   };
-  
+
   const measureTemperatureAndBloodPressure = async () => {
     try {
       const { temperature, heartRate } = await fetchTemperatureAndHeartRate();
       setTemperature(temperature);
       setBloodPressure(heartRate);
       setStep(5);
-  
+
       await registerAttendance(employeeID, alcoholLevel, heartRate, temperature, spo2);
     } catch (error) {
       console.error('Error measuring temperature and blood pressure:', error);
     }
-  };  
+  };
 
   const fetchAlcoholLevel = () => {
     return axios.get(`${fingerprintApiBaseUrl}/drink`)
@@ -330,20 +328,9 @@ const MonitoringScreen = () => {
           <p>{renderStep()}</p>
         </div>
         <div className="monitoring-content-div2">
-          <div className="monitoring-profile-img">
-            {fingerprintScanComplete ? (
-              <img src="/img/1.png" alt="Employee" />
-            ) : (
-              <div className="placeholder"></div>
-            )}
-          </div>
           <div className="monitoring-profile-info">
             <div className="monitoring-profile-img">
-              {fingerprintScanComplete ? (
-                <img src={employeeImage ? employeeImage : "/img/1.png"} alt="Employee" className="monitoring-user-profile-img" />
-              ) : (
-                <img src="/img/user.png" alt="" className="monitoring-user-profile-img" />
-              )}
+              <img src={"/img/user.png"} alt="Employee" className="monitoring-user-profile-img" />
             </div>
             {fingerprintScanComplete && employeeName ? (
               <p>{employeeName}</p>
@@ -351,7 +338,7 @@ const MonitoringScreen = () => {
               <p>지문을 스캔하세요.</p>
             )}
             {fingerprintScanComplete && employeeID !== '' ? (
-              <p>사원번호<br/>{employeeID}</p>
+              <p>사원번호<br />{employeeID}</p>
             ) : (
               <p>{employeeID}</p>
             )}
