@@ -220,8 +220,8 @@
       "userProfile": {
         "userName": "홍길동",
         "userNo": 3
+                    }
     }
-}
     ```
 
 * * *
