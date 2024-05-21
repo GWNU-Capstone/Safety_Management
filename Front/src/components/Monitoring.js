@@ -19,6 +19,7 @@ const MonitoringScreen = () => {
   const [userId, setUserId] = useState(null);
   const [spo2, setSpo2] = useState(null);
 
+  // 유저 아이디를 가져오는 useEffect
   useEffect(() => {
     if (!userId && step === 1) {
       const fetchUserId = async () => {
@@ -41,6 +42,7 @@ const MonitoringScreen = () => {
     }
   }, [userId, step]);
 
+  // 현재 날짜를 업데이트하는 useEffect
   useEffect(() => {
     const updateDate = () => {
       const now = new Date();
@@ -58,6 +60,7 @@ const MonitoringScreen = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+  // 현재 시간을 업데이트하는 useEffect
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentTime(new Date());
@@ -66,6 +69,7 @@ const MonitoringScreen = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+  // 타이머를 설정하여 일정 시간 후에 상태를 초기화하는 useEffect
   useEffect(() => {
     if (step === 1 || step === 2 || step === 3) {
       const timer = setTimeout(() => {
@@ -95,6 +99,7 @@ const MonitoringScreen = () => {
     }
   }, [step]);
 
+  // 안내를 시작하는 함수
   const startGuidance = () => {
     setStep(0);
   };
@@ -109,6 +114,7 @@ const MonitoringScreen = () => {
     };
   }, []);
 
+  // 지문을 스캔하는 함수
   const scanFingerprint = () => {
     if (userId) {
       axios.get(`${userApiBaseUrl}/user/fingerprint/${userId}`)
@@ -246,49 +252,59 @@ const MonitoringScreen = () => {
 
   const measureTemperatureAndBloodPressure = async () => {
     try {
-      const { temperature, heartRate } = await fetchTemperatureAndHeartRate();
-      setTemperature(temperature);
-      setBloodPressure(heartRate);
-      setStep(5);
-
-      await registerAttendance(employeeID, alcoholLevel, heartRate, temperature, spo2);
+      const { temperature, heartRate, spo2 } = await fetchTemperatureAndHeartRate();
+      if (temperature !== undefined && heartRate !== undefined && spo2 !== undefined) {
+        setTemperature(temperature);
+        setBloodPressure(heartRate);
+        setSpo2(spo2);
+        setStep(5);
+  
+        await registerAttendance(employeeID, alcoholLevel, heartRate, temperature, spo2);
+      } else {
+        throw new Error('Temperature, heart rate, or spo2 is undefined');
+      }
     } catch (error) {
       console.error('Error measuring temperature and blood pressure:', error);
+      setTemperature(null);
+      setBloodPressure(null);
+      setSpo2(null);
+      setStep(0);
     }
-  };
+  };  
 
   const fetchAlcoholLevel = () => {
-    return axios.get(`${fingerprintApiBaseUrl}/drink`)
-      .then(response => {
-        const { userdrink } = response.data;
-        if (userdrink !== null) {
-          setAlcoholLevel(userdrink);
-          return userdrink;
-        } else {
-          return null;
+    return new Promise((resolve, reject) => {
+      const checkInterval = setInterval(async () => {
+        try {
+          const response = await axios.get(`${fingerprintApiBaseUrl}/drink`);
+          const { userdrink } = response.data;
+          if (userdrink !== null) {
+            clearInterval(checkInterval);
+            setAlcoholLevel(userdrink);
+            resolve(userdrink);
+          }
+        } catch (error) {
+          console.error('Error fetching alcohol level:', error);
         }
-      })
-      .catch(error => {
-        console.error('Error fetching alcohol level:', error);
-        return null;
-      });
+      }, 2000); // 2초마다 데이터를 체크
+    });
   };
 
-  const fetchTemperatureAndHeartRate = (id) => {
-    return axios.get(`${fingerprintApiBaseUrl}/tempheart`)
-      .then(response => {
-        console.log(response);
-        const { userTemp, userHeartRate, userSpo2 } = response.data;
-        setTemperature(userTemp);
-        setBloodPressure(userHeartRate);
-        setSpo2(userSpo2);
-      })
-      .catch(error => {
-        console.error('Error fetching temperature, heart rate, and spo2:', error);
-        setTemperature(null);
-        setBloodPressure(null);
-        setSpo2(null);
-      });
+  const fetchTemperatureAndHeartRate = () => {
+    return new Promise((resolve, reject) => {
+      const checkInterval = setInterval(async () => {
+        try {
+          const response = await axios.get(`${fingerprintApiBaseUrl}/tempheart`);
+          const { userTemp, userHeartRate, userSpo2 } = response.data;
+          if (userTemp !== null && userHeartRate !== null && userSpo2 !== null) {
+            clearInterval(checkInterval);
+            resolve({ temperature: userTemp, heartRate: userHeartRate, spo2: userSpo2 });
+          }
+        } catch (error) {
+          console.error('Error fetching temperature, heart rate, and spo2:', error);
+        }
+      }, 2000); // 2초마다 데이터를 체크
+    });
   };
 
   const handleScanButtonClick = () => {
