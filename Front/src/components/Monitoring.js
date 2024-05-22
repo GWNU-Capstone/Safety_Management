@@ -18,29 +18,54 @@ const MonitoringScreen = () => {
   const [code, setCode] = useState(null);
   const [userId, setUserId] = useState(null);
   const [spo2, setSpo2] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const maxRetries = 5;
 
   // 유저 아이디를 가져오는 useEffect
   useEffect(() => {
-    if (!userId && step === 1) {
-      const fetchUserId = async () => {
-        try {
-          const response = await axios.get(`${fingerprintApiBaseUrl}/fingerprint`);
-          if (response.status === 200) {
-            const data = response.data;
-            const userIdFromResponse = data["fingerprint_results"];
+    const fetchUserId = async () => {
+      try {
+        const response = await axios.get(`${fingerprintApiBaseUrl}/fingerprint`);
+        if (response.status === 200) {
+          const data = response.data;
+          const userIdFromResponse = data["fingerprint_results"];
+          if (userIdFromResponse !== "Not Found" && userIdFromResponse !== "No Response") {
             setUserId(userIdFromResponse);
             console.log('Fetched user ID:', userIdFromResponse);
           } else {
-            console.error('Failed to fetch user ID');
+            console.log('User ID not found or no response.');
+            if (retryCount < maxRetries) {
+              setRetryCount(retryCount + 1);
+            } else {
+              console.error('Max retries reached. Stopping further attempts.');
+              setStep(0);
+            }
           }
-        } catch (error) {
-          console.error('Error fetching user ID:', error);
-          setUserId(null);
+        } else {
+          console.error('Failed to fetch user ID');
         }
-      };
-      fetchUserId();
+      } catch (error) {
+        console.error('Error fetching user ID:', error);
+        setUserId(null);
+      }
+    };
+
+    if (!userId && step === 1 && retryCount < maxRetries) {
+      const retryTimeout = setTimeout(() => {
+        fetchUserId();
+      }, 3000); // 3초 후에 다시 시도
+
+      return () => clearTimeout(retryTimeout);
     }
-  }, [userId, step]);
+  }, [userId, step, retryCount]);
+
+  // userId가 설정된 후에 지문을 스캔하는 useEffect
+  useEffect(() => {
+    if (userId) {
+      scanFingerprint();
+    }
+  }, [userId]);
 
   // 현재 날짜를 업데이트하는 useEffect
   useEffect(() => {
@@ -75,7 +100,7 @@ const MonitoringScreen = () => {
       const timer = setTimeout(() => {
         resetStatesAndScan();
         setStep(0);
-      }, 20000);
+      }, 30000);
       return () => clearTimeout(timer);
     }
   }, [step]);
@@ -90,12 +115,12 @@ const MonitoringScreen = () => {
     else if (step === 2) {
       setTimeout(() => {
         measureAlcoholLevel();
-      }, 7000);
+      }, 2000);
     }
     else if (step === 3) {
       setTimeout(() => {
         measureTemperatureAndBloodPressure();
-      }, 7000);
+      }, 2000);
     }
   }, [step]);
 
@@ -115,28 +140,28 @@ const MonitoringScreen = () => {
   }, []);
 
   // 지문을 스캔하는 함수
-  const scanFingerprint = () => {
+  const scanFingerprint = async () => {
     if (userId) {
-      axios.get(`${userApiBaseUrl}/user/fingerprint/${userId}`)
-        .then(response => {
-          console.log('API 응답 전체:', response); // API 응답 전체를 로그로 출력
-          const { data } = response;
-          const { code, userImage, userNo, userName } = data;
-          setCode(code);
-          setEmployeeImage(userImage);
-          setEmployeeID(userNo);
-          setEmployeeName(userName);
-          setFingerprintScanComplete(true);
-          if (code === 102) {
-            setStep(6);
-            resetStatesAndScan();
-          } else if (code === 101) {
-            setStep(4);
-          } else if (code === 103) {
-            setStep(2);
-          }
-        })
-        .catch(handleError);
+      try {
+        const response = await axios.get(`${userApiBaseUrl}/user/fingerprint/${userId}`);
+        console.log('API 응답 전체:', response); // API 응답 전체를 로그로 출력
+        const { data } = response;
+        const { code, userImage, userNo, userName } = data;
+        setCode(code);
+        setEmployeeImage(userImage);
+        setEmployeeID(userNo);
+        setEmployeeName(userName);
+        setFingerprintScanComplete(true);
+        if (code === 102) {
+          setStep(6);
+        } else if (code === 101) {
+          setStep(4);
+        } else if (code === 103) {
+          setStep(2);
+        }
+      } catch (error) {
+        handleError(error);
+      }
     } else {
       console.error('User ID is null. Cannot fetch fingerprint data.');
     }
@@ -151,12 +176,14 @@ const MonitoringScreen = () => {
     setFingerprintScanComplete(false);
     setAlcoholLevel(null);
     setTemperature(null);
+    setUserId(null);
     setBloodPressure(null);
     setSpo2(null);
     setEmployeeID('');
     setEmployeeName('');
     setEmployeeImage('');
     setCode(null);
+    setRetryCount(0); // 재시도 횟수 초기화
     setStep(1);
   };
 
@@ -179,7 +206,6 @@ const MonitoringScreen = () => {
           <div>
             <p>지문을 스캔합니다.</p>
             <p>센서에 손을 올려주세요.</p>
-            <button onClick={scanFingerprint}>지문 스캔 시작</button>
           </div>
         );
       case 2:
@@ -192,7 +218,7 @@ const MonitoringScreen = () => {
       case 3:
         return (
           <div>
-            <p>체온과 혈압, 산소포화도를 측정합니다.</p>
+            <p>체온과 심박수, 산소포화도를 측정합니다.</p>
             <p>센서에 손을 올려주세요.</p>
           </div>
         );
@@ -225,9 +251,10 @@ const MonitoringScreen = () => {
 
   const measureAlcoholLevel = async () => {
     try {
-      const alcoholLevel = await fetchAlcoholLevel();
-      if (alcoholLevel !== null) {
-        setAlcoholLevel(alcoholLevel);
+      const response = await axios.get(`${fingerprintApiBaseUrl}/drink`);
+      const { userdrink } = response.data;
+      if (userdrink !== null) {
+        setAlcoholLevel(userdrink);
         setStep(3);
       }
     } catch (error) {
@@ -252,14 +279,14 @@ const MonitoringScreen = () => {
 
   const measureTemperatureAndBloodPressure = async () => {
     try {
-      const { temperature, heartRate, spo2 } = await fetchTemperatureAndHeartRate();
-      if (temperature !== undefined && heartRate !== undefined && spo2 !== undefined) {
-        setTemperature(temperature);
-        setBloodPressure(heartRate);
-        setSpo2(spo2);
+      const response = await axios.get(`${fingerprintApiBaseUrl}/tempheart`);
+      const { userTemp, userHeartRate, userSpo2 } = response.data;
+      if (userTemp !== null && userHeartRate !== null && userSpo2 !== null) {
+        setTemperature(userTemp);
+        setBloodPressure(userHeartRate);
+        setSpo2(userSpo2);
         setStep(5);
-  
-        await registerAttendance(employeeID, alcoholLevel, heartRate, temperature, spo2);
+        await registerAttendance(employeeID, alcoholLevel, userHeartRate, userTemp, userSpo2);
       } else {
         throw new Error('Temperature, heart rate, or spo2 is undefined');
       }
@@ -270,41 +297,6 @@ const MonitoringScreen = () => {
       setSpo2(null);
       setStep(0);
     }
-  };  
-
-  const fetchAlcoholLevel = () => {
-    return new Promise((resolve, reject) => {
-      const checkInterval = setInterval(async () => {
-        try {
-          const response = await axios.get(`${fingerprintApiBaseUrl}/drink`);
-          const { userdrink } = response.data;
-          if (userdrink !== null) {
-            clearInterval(checkInterval);
-            setAlcoholLevel(userdrink);
-            resolve(userdrink);
-          }
-        } catch (error) {
-          console.error('Error fetching alcohol level:', error);
-        }
-      }, 2000); // 2초마다 데이터를 체크
-    });
-  };
-
-  const fetchTemperatureAndHeartRate = () => {
-    return new Promise((resolve, reject) => {
-      const checkInterval = setInterval(async () => {
-        try {
-          const response = await axios.get(`${fingerprintApiBaseUrl}/tempheart`);
-          const { userTemp, userHeartRate, userSpo2 } = response.data;
-          if (userTemp !== null && userHeartRate !== null && userSpo2 !== null) {
-            clearInterval(checkInterval);
-            resolve({ temperature: userTemp, heartRate: userHeartRate, spo2: userSpo2 });
-          }
-        } catch (error) {
-          console.error('Error fetching temperature, heart rate, and spo2:', error);
-        }
-      }, 2000); // 2초마다 데이터를 체크
-    });
   };
 
   const handleScanButtonClick = () => {
