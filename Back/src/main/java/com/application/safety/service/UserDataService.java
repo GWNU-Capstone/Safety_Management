@@ -15,6 +15,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -86,4 +87,94 @@ public class UserDataService {
 
         return userData;
     }
+
+    // Today 출근자 수, 결근자 수, 목록
+    public Map<String, Object> getTodayUserStatus() {
+        List<UserProfile> allUsers = userProfileRepository.findAll();
+        // 전체 사용자 수 totalUsers
+        int totalUsers = allUsers.size();
+
+        LocalDate today = LocalDate.now();
+
+        // 출근자 목록
+        List<UserProfile> presentUsers = userDataRepository.findAll().stream()
+                .filter(userData -> userData.getUserStart() != null && userData.getDate().isEqual(today))
+                .map(UserData::getUserProfile)
+                .distinct()
+                .collect(Collectors.toList());
+
+        // 출근자 수
+        int presentCount = presentUsers.size();
+        // 결근자 수 -> 전체 사용자 - 출근자 수
+        int absentCount = totalUsers - presentCount;
+
+        // 결근자 목록
+        List<UserProfile> absentUsers = allUsers.stream()
+                .filter(user -> presentUsers.stream()
+                        .noneMatch(presentUser -> presentUser.getUserNo() == user.getUserNo()))
+                .collect(Collectors.toList());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("presentCount", presentCount);
+        response.put("absentCount", absentCount);
+        response.put("presentUsers", presentUsers);
+        response.put("absentUsers", absentUsers);
+
+        return response;
+    }
+
+    // 알코올 이상자 수, 목록
+    public Map<String, Object> getAlcoholAbusers() {
+        // 알코올 이상자 목록
+        List<UserProfile> alcoholAbusers = userDataRepository.findAll().stream()
+                .filter(userData -> userData.getUserDrink() >= 0.03)
+                .map(UserData::getUserProfile)
+                .distinct()
+                .collect(Collectors.toList());
+
+        // 알코올 이상자 수
+        int alcoholAbuserCount = alcoholAbusers.size();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("alcoholAbuserCount", alcoholAbuserCount);
+        response.put("alcoholAbusers", alcoholAbusers);
+
+        return response;
+    }
+
+
+    // 근로자 측정값의 평균 수치 (체온, 심박수, 산소포화도)
+    public Map<String, Double> getTodayUserAverages() {
+        LocalDate today = LocalDate.now();
+
+        List<UserData> todayUserData = userDataRepository.findAll().stream()
+                .filter(userData -> userData.getDate().isEqual(today))
+                .toList();
+
+        OptionalDouble averageHeartRate = todayUserData.stream()
+                .mapToInt(UserData::getUserHeartRate)
+                .average();
+
+        OptionalDouble averageTemp = todayUserData.stream()
+                .mapToDouble(UserData::getUserTemp)
+                .average();
+
+        OptionalDouble averageOxygen = todayUserData.stream()
+                .mapToInt(UserData::getUserOxygen)
+                .average();
+
+        Map<String, Double> averages = new HashMap<>();
+        averages.put("averageHeartRate", FirstDecimal(averageHeartRate.isPresent() ? averageHeartRate.getAsDouble() : 0.0));
+        averages.put("averageTemp", FirstDecimal(averageTemp.isPresent() ? averageTemp.getAsDouble() : 0.0));
+        averages.put("averageOxygen", FirstDecimal(averageOxygen.isPresent() ? averageOxygen.getAsDouble() : 0.0));
+
+        return averages;
+    }
+
+    // 평균값 소수 첫째짜리까지만 출력
+    private double FirstDecimal(double value) {
+        return Math.round(value * 10) / 10.0;
+    }
+
+
 }

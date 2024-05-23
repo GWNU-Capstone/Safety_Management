@@ -37,4 +37,23 @@ public class UserDataController {
 
         return ResponseEntity.ok(userData);
     }
+
+    // Today 출근자,결근자 수, 목록
+    @GetMapping("/today/user-status")
+    public Map<String, Object> getTodayUserCountsAndList() {
+        return userDataService.getTodayUserStatus();
+    }
+
+    // 근로자 알코올 이상자 수, 목록
+    @GetMapping("/today/alcohol-abusers")
+    public Map<String, Object> getAlcoholAbusers() {
+        return userDataService.getAlcoholAbusers();
+    }
+
+    // 근로자 평균수치 (체온, 심박수, 산소포화도)
+    @GetMapping("/today/data-average")
+    public Map<String, Double> getTodayAverages() {
+        return userDataService.getTodayUserAverages();
+    }
+
 }
