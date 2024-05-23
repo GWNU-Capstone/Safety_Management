@@ -21,11 +21,15 @@ public class UserProfile {
     @Column(name = "USER_NAME")
     private String UserName; // 이름
 
-    // cascade 추가
+    /* cascade 보류
+
     @OneToOne(mappedBy = "UserProfile", cascade = CascadeType.ALL)
     private UserInfo userInfo;
 
     // cascade 추가
     @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL)
     private List<UserData> userDataList;
+
+    */
+
 }
