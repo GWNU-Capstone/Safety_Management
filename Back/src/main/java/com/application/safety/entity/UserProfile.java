@@ -21,7 +21,7 @@ public class UserProfile {
     @Column(name = "USER_NAME")
     private String UserName; // 이름
 
-    /* cascade 보류
+    /*cascade 보류
 
     @OneToOne(mappedBy = "UserProfile", cascade = CascadeType.ALL)
     private UserInfo userInfo;
