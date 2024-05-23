@@ -10,7 +10,6 @@ function Detail() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [editMode, setEditMode] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
   const [activeSection2, setActiveSection2] = useState('main');
   const [filterMode, setFilterMode] = useState(true);
   const [memo, setMemo] = useState(''); // 메모 내용을 저장할 상태

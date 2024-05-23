@@ -1,15 +1,40 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import './Statistics.css';
+import { userApiBaseUrl } from './Api';
 
 // 필요한 스케일 및 플러그인 수동 등록
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 function StatisticsPage() {
+  const [todayData, setTodayData] = useState({ presentCount: 0, absentCount: 0 });
+  const [alcoholData, setAlcoholData] = useState({ alcoholAbuserCount: 0 });
+  const [avgData, setavgData] = useState({ averageOxygen: 0, averageHeartRate: 0, averageTemp: 0 });
+
+  useEffect(() => {
+    //출근 현황
+    fetch(`${userApiBaseUrl}/today/user-status`)
+      .then(response => response.json())
+      .then(data => setTodayData(data))
+      .catch(error => console.error('Error fetching data:', error));
+    
+    //근로자 알코올 이상자
+    fetch(`${userApiBaseUrl}/today/alcohol-abusers`)
+      .then(response => response.json())
+      .then(data => setAlcoholData(data))
+      .catch(error => console.error('Error fetching data:', error));
+    
+    //근로자 평균 수치
+    fetch(`${userApiBaseUrl}/today/data-average`)
+      .then(response => response.json())
+      .then(data => setavgData(data))
+      .catch(error => console.error('Error fetching data:', error));
+  }, []);
+
   const lineChartData = (label, data) => ({
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
     datasets: [
@@ -72,10 +97,10 @@ function StatisticsPage() {
 
             <div className="statistic-container-top-content-item">
               <div className="statistic-container-top-content-item-content">
-                <h1>출근:</h1>
+                <h1>출근: {todayData.presentCount}</h1>
               </div>
               <div className="statistic-container-top-content-item-content">
-                <h1>결근:</h1>
+                <h1>결근: {todayData.absentCount}</h1>
               </div>
             </div>
           </div>
@@ -105,13 +130,13 @@ function StatisticsPage() {
             </div>
             <div className="statistic-container-top-content-item">
               <div className="statistic-container-top-content-item-content">
-                <h1>체온: </h1>
+                <h1>체온: {avgData.averageTemp}°C</h1>
               </div>
               <div className="statistic-container-top-content-item-content">
-                <h1>심박수:</h1>
+                <h1>심박수: {avgData.averageTemp}bpm</h1>
               </div>
               <div className="statistic-container-top-content-item-content">
-                <h1>산소포화도:</h1>
+                <h1>산소포화도: {avgData.averageOxygen}%</h1>
               </div>
             </div>
           </div>
@@ -123,7 +148,7 @@ function StatisticsPage() {
             </div>
             <div className="statistic-container-top-content-item">
               <div className="statistic-container-top-content-item-content-center">
-                <h1>0명</h1>
+                <h1>{alcoholData.alcoholAbuserCount}명</h1>
               </div>
             </div>
           </div>
