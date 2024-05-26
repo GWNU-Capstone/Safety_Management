@@ -19,8 +19,8 @@ function StatisticsPage() {
   const [workerData, setWorkerData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null); // 모달 내용 상태 추가
-  const [yesterdayWorkTime, setYesterdayWorkTime] = useState({ hours: 0, minutes: 0 }); // 전날 평균 근무 시간 상태 추가
-  const [yesterdayWorkTimeMessage, setYesterdayWorkTimeMessage] = useState(''); // 전날 평균 근무 시간 메시지 상태 추가
+  const [yesterdayWorkTime, setYesterdayWorkTime] = useState({ hours: 0, minutes: 0 }); 
+  const [yesterdayWorkTimeMessage, setYesterdayWorkTimeMessage] = useState('');
 
   useEffect(() => {
     // 출근 현황
