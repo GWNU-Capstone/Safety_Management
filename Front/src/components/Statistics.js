@@ -13,16 +13,26 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 function StatisticsPage() {
   const [todayData, setTodayData] = useState([]);
-  const [alcoholData, setAlcoholData] = useState({ alcoholAbuserCount: 0 });
-  const [avgData, setavgData] = useState({ averageOxygen: 0, averageHeartRate: 0, averageTemp: 0 });
+  const [alcoholData, setAlcoholData] = useState({ alcoholAbuserCount: 0, alcoholAbusers: [] });
+  const [avgData, setAvgData] = useState({ averageOxygen: 0, averageHeartRate: 0, averageTemp: 0 });
+  const [totalResultCount, setTotalResultCount] = useState({ 정상: 0, 주의: 0, 심각: 0 });
+  const [workerData, setWorkerData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null); // 모달 내용 상태 추가
+  const [yesterdayWorkTime, setYesterdayWorkTime] = useState({ hours: 0, minutes: 0 }); // 전날 평균 근무 시간 상태 추가
+  const [yesterdayWorkTimeMessage, setYesterdayWorkTimeMessage] = useState(''); // 전날 평균 근무 시간 메시지 상태 추가
 
   useEffect(() => {
     // 출근 현황
     fetch(`${userApiBaseUrl}/today/user-status`)
       .then(response => response.json())
-      .then(data => setTodayData(data.users || [])) // 배열 형태로 데이터 설정
+      .then(data => {
+        const combinedData = [
+          ...data.presentUsers.map(user => ({ ...user, status: '출근' })),
+          ...data.absentUsers.map(user => ({ ...user, status: '결근' }))
+        ];
+        setTodayData(combinedData);
+      })
       .catch(error => console.error('Error fetching data:', error));
     
     // 근로자 알코올 이상자
@@ -34,7 +44,28 @@ function StatisticsPage() {
     // 근로자 평균 수치
     fetch(`${userApiBaseUrl}/today/data-average`)
       .then(response => response.json())
-      .then(data => setavgData(data))
+      .then(data => setAvgData(data))
+      .catch(error => console.error('Error fetching data:', error));
+    
+    // 근로자 건강 상태
+    fetch(`${userApiBaseUrl}/today/user-health-status`)
+      .then(response => response.json())
+      .then(data => {
+        setTotalResultCount(data.totalResultCount);
+        setWorkerData(data.userStatusList);
+      })
+      .catch(error => console.error('Error fetching data:', error));
+
+    // 전날 평균 근무 시간
+    fetch('http://localhost:8080/yesterday/average-worktime')
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+          setYesterdayWorkTimeMessage(data.message);
+        } else {
+          setYesterdayWorkTime(data);
+        }
+      })
       .catch(error => console.error('Error fetching data:', error));
   }, []);
 
@@ -111,10 +142,10 @@ function StatisticsPage() {
 
             <div className="statistic-container-top-content-item">
               <div className="statistic-container-top-content-item-content">
-                <h1>출근: {todayData.filter(data => data.status === 'present').length}</h1>
+                <h1>출근: {todayData.filter(data => data.status === '출근').length}명</h1>
               </div>
               <div className="statistic-container-top-content-item-content">
-                <h1>결근: {todayData.filter(data => data.status === 'absent').length}</h1>
+                <h1>결근: {todayData.filter(data => data.status === '결근').length}명</h1>
               </div>
             </div>
           </div>
@@ -126,13 +157,13 @@ function StatisticsPage() {
             </div>
             <div className="statistic-container-top-content-item">
               <div className="statistic-container-top-content-item-content">
-                <h1>정상:</h1>
+                <h1>정상: {totalResultCount.정상}명</h1>
               </div>
               <div className="statistic-container-top-content-item-content">
-                <h1>주의:</h1>
+                <h1>주의: {totalResultCount.주의}명</h1>
               </div>
               <div className="statistic-container-top-content-item-content">
-                <h1>심각:</h1>
+                <h1>심각: {totalResultCount.심각}명</h1>
               </div>
             </div>
           </div>
@@ -174,7 +205,9 @@ function StatisticsPage() {
             </div>
             <div className="statistic-container-top-content-item">
               <div className="statistic-container-top-content-item-content-center">
-                <h1>0시간 0분</h1>
+                <h1>
+                  {yesterdayWorkTimeMessage ? yesterdayWorkTimeMessage : `${yesterdayWorkTime.hours}시간 ${yesterdayWorkTime.minutes}분`}
+                </h1>
               </div>
             </div>
           </div>
@@ -245,9 +278,9 @@ function StatisticsPage() {
               </thead>
               <tbody>
                 {todayData.map((employee) => (
-                  <tr key={employee.id}>
-                    <td>{employee.id}</td>
-                    <td>{employee.name}</td>
+                  <tr key={employee.userNo}>
+                    <td>{employee.userNo}</td>
+                    <td>{employee.userName}</td>
                     <td>{employee.status}</td>
                   </tr>
                 ))}
@@ -263,15 +296,13 @@ function StatisticsPage() {
                 <tr>
                   <th>사원번호</th>
                   <th>이름</th>
-                  <th>알코올</th>
                 </tr>
               </thead>
               <tbody>
-                {todayData.map((employee) => (
-                  <tr key={employee.id}>
-                    <td>{employee.id}</td>
-                    <td>{employee.name}</td>
-                    <td>{employee.status}</td>
+                {alcoholData.alcoholAbusers.map((employee) => (
+                  <tr key={employee.userNo}>
+                    <td>{employee.userNo}</td>
+                    <td>{employee.userName}</td>
                   </tr>
                 ))}
               </tbody>
@@ -286,15 +317,23 @@ function StatisticsPage() {
                 <tr>
                   <th>사원번호</th>
                   <th>이름</th>
-                  <th>상태</th>
+                  <th>알코올</th>
+                  <th>체온</th>
+                  <th>산소포화도</th>
+                  <th>심박수</th>
+                  <th>결과</th>
                 </tr>
               </thead>
               <tbody>
-                {todayData.map((employee) => (
-                  <tr key={employee.id}>
-                    <td>{employee.id}</td>
-                    <td>{employee.name}</td>
-                    <td>{employee.status}</td>
+                {workerData.map((employee) => (
+                  <tr key={employee.userNo}>
+                    <td>{employee.userNo}</td>
+                    <td>{employee.userName}</td>
+                    <td>{employee.userDrink}</td>
+                    <td>{employee.userTemp}</td>
+                    <td>{employee.userOxygen}</td>
+                    <td>{employee.userHeartRate}</td>
+                    <td>{employee.totalResult}</td>
                   </tr>
                 ))}
               </tbody>
