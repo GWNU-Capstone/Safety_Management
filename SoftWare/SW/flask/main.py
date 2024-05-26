@@ -31,8 +31,13 @@ hrm = HeartRateMonitor()
 hrm.start_sensor()
 
 #tempsensor
-#bus = SMBus(3)
-#tempsensor = MLX90614(bus,address=0x5A)
+bus = SMBus(3)
+tempsensor = MLX90614(bus,address=0x5A)
+
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(17,GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(27,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 #지문 센서 정보 확인 엔드포인트
 @app.route('/fingerprint/info', methods=['GET'])
@@ -57,11 +62,12 @@ def fingerprint_add():
     location = int(location_arg) if location_arg.strip() != '' else None
     result_add['fingerprint_addresults'] = str(as608.enroll_finger_to_device(session, as608, location))
     return jsonify(result_add)
-
-#지문 전체 삭제 엔드포인트
-#@app.route('/fingerprint/rmall/', methods=['GET'])
-#def fingerprint_remove_all():
-#    return as608.delete_all_templates(session)
+"""
+지문 전체 삭제 엔드포인트
+@app.route('/fingerprint/rmall/', methods=['GET'])
+def fingerprint_remove_all():
+    return as608.delete_all_templates(session)
+"""
 
 @app.route('/fingerprint/rm/', methods=['GET'])
 def fingerprint_remove():
@@ -103,42 +109,37 @@ def get_sensor_data_alc():
             consecutive_count = 0
             last_valid_value = None
     return jsonify(result_drink)
-"""
-@app.route('/tempheart', methods=['GET'])
-def get_sensor_data_temp():
-    result = {}
-    result['userTemp'] = 36.5#tempsensor.get_obj_temp()
-    bpm = hrm.bpm
-    spo2 = hrm.spo2
-
-    if bpm < 30:
-        result['userHeartRate'] = "finger is not detected"
-    else:
-        result['userHeartRate'] = round(bpm,3)
-    if spo2 < 90:
-        result['userSpo2'] = "finger is not detected"
-    else:
-        result['userSpo2'] = round(spo2,3)
-   # result['userHeartRate'] = "250.0" #임시값
-   # result['userSpo2'] = "98.0" #임시값
-    return jsonify(result) 
-"""
+    
+def read_temperature():
+    try:
+        data = bus.read_i2c_block_data(0x5A,0x07,3)
+        
+        temp = (data[1] << 8) | data[0]
+        
+        temp = temp * 0.02 - 273.15
+        return temp
+        
+    except Exception as e:
+        print(f"Error reading from sensor: {e}" )
+        return None
 #체온 심박 엔드포인트
 @app.route('/tempheart', methods=['GET'])
 def get_sensor_data_temp():
+    hrm.start_sensor()
     result = {}
-    usertemp = 36.5 #tempsensor.get_obj_temp()
     while True:
-        time.sleep(1)
+        time.sleep(0.5)
         bpm = hrm.bpm
         spo2 = hrm.spo2
-        print(bpm,spo2)
+        usertemp = read_temperature()
+        print(bpm,spo2, usertemp)
         if bpm < 30.0 or spo2 < 90.0 or usertemp < 30.0 or usertemp > 45.0 :
             pass
         else:
             result['userHeartRate'] = round(bpm,3)
             result['userSpo2'] = round(spo2,3)
             result['userTemp'] = usertemp
+            hrm.stop_sensor()
             return jsonify(result) 
 
 @app.route('/hrstart', methods=['GET'])
@@ -177,7 +178,8 @@ def post_sensor_data():
                 'PM2.5' : p_values[3],
                 'PM10' : p_values[5],
                 'Temperature' : p_values[7],
-                'Humidity' : p_values[9]
+                'Humidity' : p_values[9],
+                'bright' : adc.get_bright_sensor()
             }
             try:
                 response = requests.post(H2_SERVER_URL, data=json.dumps(postdata), headers={'Content-Type': 'application/json'})
@@ -191,4 +193,4 @@ def post_sensor_data():
    """     
 #threading.Thread(target=post_sensor_data, daemon=True).start()
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001)
+    app.run(host='0.0.0.0', port=5000)

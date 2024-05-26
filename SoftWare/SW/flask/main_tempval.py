@@ -1,5 +1,5 @@
 from flask_cors import CORS
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 import serial
 from heartrate_monitor import HeartRateMonitor
 from smbus2 import SMBus
@@ -41,6 +41,7 @@ def get_sensor_info_fp():
 def get_sensor_data_fp():
     result_found = {}
     result_found['fingerprint_results'] = 2 #as608.search_fingerprint_on_device(session, as608)
+    time.sleep(3)
     return jsonify(result_found)
 
 #지문 등록 엔드포인트
@@ -70,6 +71,7 @@ def get_sensor_data_alc():
     result_drink = {}
     time.sleep(1.5)
     result_drink['userdrink'] = 0.01
+    time.sleep(3)
     return jsonify(result_drink)
 """
 @app.route('/tempheart', methods=['GET'])
@@ -98,6 +100,7 @@ def get_sensor_data_temp():
     result['userHeartRate'] = 120.032
     result['userSpo2'] = 99.982
     result['userTemp'] = 37.0
+    time.sleep(3)
     return jsonify(result) 
 
 @app.route('/hrstart', methods=['GET'])
@@ -110,10 +113,11 @@ def stopsensor():
     hrm.stop_sensor()
     return "OK"
     
-
-@app.route('/press', methods=['GET'])
-def get_press_sensor():
-    return str(adc.get_press_sensor())
+@app.route('/camera', methods=['GET'])
+def take_a_picture():
+    file_name = "/home/capstone/Desktop/camera/temp.jpg"
+    return send_file(file_name,mimetype='image/jpeg')
+    
     
 #H2 Server
 H2_SERVER_URL = "http://192.168.0.3"

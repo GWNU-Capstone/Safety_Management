@@ -6,7 +6,7 @@ spi = spidev.SpiDev()
 spi.open(0,0)
 spi.max_speed_hz=1000000
 MQ3 = 0
-press = 1
+bright = 1
 
 R0 = 16000
 R2 = 2000
@@ -51,5 +51,5 @@ def get_alcvalue():
 def is_within_range(value,target,tolerance):
    return target * (1-tolerance) <= value <= target * (1 + tolerance)
       
-def get_press_sensor():
+def get_bright_sensor():
    return ReadVol(1)
