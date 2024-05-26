@@ -6,29 +6,32 @@ import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import './Statistics.css';
 import { userApiBaseUrl } from './Api';
+import Modal from './Modal'; // 모달 컴포넌트 임포트
 
 // 필요한 스케일 및 플러그인 수동 등록
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 function StatisticsPage() {
-  const [todayData, setTodayData] = useState({ presentCount: 0, absentCount: 0 });
+  const [todayData, setTodayData] = useState([]);
   const [alcoholData, setAlcoholData] = useState({ alcoholAbuserCount: 0 });
   const [avgData, setavgData] = useState({ averageOxygen: 0, averageHeartRate: 0, averageTemp: 0 });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState(null); // 모달 내용 상태 추가
 
   useEffect(() => {
-    //출근 현황
+    // 출근 현황
     fetch(`${userApiBaseUrl}/today/user-status`)
       .then(response => response.json())
-      .then(data => setTodayData(data))
+      .then(data => setTodayData(data.users || [])) // 배열 형태로 데이터 설정
       .catch(error => console.error('Error fetching data:', error));
     
-    //근로자 알코올 이상자
+    // 근로자 알코올 이상자
     fetch(`${userApiBaseUrl}/today/alcohol-abusers`)
       .then(response => response.json())
       .then(data => setAlcoholData(data))
       .catch(error => console.error('Error fetching data:', error));
     
-    //근로자 평균 수치
+    // 근로자 평균 수치
     fetch(`${userApiBaseUrl}/today/data-average`)
       .then(response => response.json())
       .then(data => setavgData(data))
@@ -36,7 +39,7 @@ function StatisticsPage() {
   }, []);
 
   const lineChartData = (label, data) => ({
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    labels: ['1m', '2m', '3m', '4m', '5m', '6m', '7m', '8m', '9m', '10m'],
     datasets: [
       {
         label: label,
@@ -59,6 +62,16 @@ function StatisticsPage() {
         display: false
       }
     }
+  };
+
+  const handleOpenModal = (content) => {
+    setModalContent(content);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setModalContent(null);
   };
 
   return (
@@ -89,7 +102,8 @@ function StatisticsPage() {
 
       <div className="statistic-container">
         <div className="statistic-container-top">
-          <div className="statistic-container-top-content">
+
+          <div className="statistic-container-top-content clickable" onClick={() => handleOpenModal('todayStatus')}>
             <div className="statistic-container-top-content-title">
               <img src="/img/today.png" alt="icon" className="statistic-container-top-content-icon" />
               <h2>Today 출근 현황</h2>
@@ -97,15 +111,15 @@ function StatisticsPage() {
 
             <div className="statistic-container-top-content-item">
               <div className="statistic-container-top-content-item-content">
-                <h1>출근: {todayData.presentCount}</h1>
+                <h1>출근: {todayData.filter(data => data.status === 'present').length}</h1>
               </div>
               <div className="statistic-container-top-content-item-content">
-                <h1>결근: {todayData.absentCount}</h1>
+                <h1>결근: {todayData.filter(data => data.status === 'absent').length}</h1>
               </div>
             </div>
           </div>
 
-          <div className="statistic-container-top-content">
+          <div className="statistic-container-top-content clickable" onClick={() => handleOpenModal('workerData')}>
             <div className="statistic-container-top-content-title">
               <img src="/img/total.png" alt="icon" className="statistic-container-top-content-icon" />
               <h2>근로자 종합 데이터</h2>
@@ -123,6 +137,18 @@ function StatisticsPage() {
             </div>
           </div>
 
+          <div className="statistic-container-top-content clickable" onClick={() => handleOpenModal('alcoholAbusers')}>
+            <div className="statistic-container-top-content-title">
+              <img src="/img/alcoholic.png" alt="icon" className="statistic-container-top-content-icon" />
+              <h2>근로자 알코올 이상자</h2>
+            </div>
+            <div className="statistic-container-top-content-item">
+              <div className="statistic-container-top-content-item-content-center">
+                <h1>{alcoholData.alcoholAbuserCount}명</h1>
+              </div>
+            </div>
+          </div>
+          
           <div className="statistic-container-top-content">
             <div className="statistic-container-top-content-title">
               <img src="/img/average.png" alt="icon" className="statistic-container-top-content-icon" />
@@ -133,22 +159,10 @@ function StatisticsPage() {
                 <h1>체온: {avgData.averageTemp}°C</h1>
               </div>
               <div className="statistic-container-top-content-item-content">
-                <h1>심박수: {avgData.averageTemp}bpm</h1>
+                <h1>심박수: {avgData.averageHeartRate}bpm</h1>
               </div>
               <div className="statistic-container-top-content-item-content">
                 <h1>산소포화도: {avgData.averageOxygen}%</h1>
-              </div>
-            </div>
-          </div>
-
-          <div className="statistic-container-top-content">
-            <div className="statistic-container-top-content-title">
-              <img src="/img/alcoholic.png" alt="icon" className="statistic-container-top-content-icon" />
-              <h2>근로자 알코올 이상자</h2>
-            </div>
-            <div className="statistic-container-top-content-item">
-              <div className="statistic-container-top-content-item-content-center">
-                <h1>{alcoholData.alcoholAbuserCount}명</h1>
               </div>
             </div>
           </div>
@@ -216,6 +230,78 @@ function StatisticsPage() {
           
         </div>
       </div>
+
+      <Modal show={isModalOpen} onClose={handleCloseModal}>
+        {modalContent === 'todayStatus' && (
+          <div className="statistics-modal">
+            <h2>Today 출근 현황</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>사원번호</th>
+                  <th>이름</th>
+                  <th>상태</th>
+                </tr>
+              </thead>
+              <tbody>
+                {todayData.map((employee) => (
+                  <tr key={employee.id}>
+                    <td>{employee.id}</td>
+                    <td>{employee.name}</td>
+                    <td>{employee.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {modalContent === 'alcoholAbusers' && (
+          <div className="statistics-modal">
+            <h2>근로자 알코올 이상자</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>사원번호</th>
+                  <th>이름</th>
+                  <th>알코올</th>
+                </tr>
+              </thead>
+              <tbody>
+                {todayData.map((employee) => (
+                  <tr key={employee.id}>
+                    <td>{employee.id}</td>
+                    <td>{employee.name}</td>
+                    <td>{employee.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {modalContent === 'workerData' && (
+          <div className="statistics-modal">
+            <h2>근로자 종합 데이터</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>사원번호</th>
+                  <th>이름</th>
+                  <th>상태</th>
+                </tr>
+              </thead>
+              <tbody>
+                {todayData.map((employee) => (
+                  <tr key={employee.id}>
+                    <td>{employee.id}</td>
+                    <td>{employee.name}</td>
+                    <td>{employee.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Modal>
 
       <footer>
         <div className="footer">

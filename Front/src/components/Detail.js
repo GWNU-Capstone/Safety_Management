@@ -236,62 +236,68 @@ function Detail() {
             </div>
             <div className="personal-info-container">
               <div className="info">
-                <table>
-                  <tbody>
-                    {Object.entries(inputFields).map(([key, value]) => (
-                      key !== "name" && (
-                        <tr key={key}>
-                          <th>{fixedLabels[key]}</th>
-                          <td>
-                            {editMode && key !== 'id' ? (
-                              key === 'gender' ? ( // Check if the current field is gender
-                                <select
-                                  value={inputFields.gender}
-                                  onChange={(e) => handleInputChange('gender', e.target.value)}
-                                >
-                                  <option value="">성별을 선택하시오.</option>
-                                  <option value="남자">남자</option>
-                                  <option value="여자">여자</option>
-                                </select>
-                              ) : key === 'pos' ? ( // Check if the current field is position
-                                <select
-                                  value={inputFields.pos}
-                                  onChange={(e) => handleInputChange('pos', e.target.value)}
-                                >
-                                  <option value="">직위를 선택하세요.</option>
-                                  <option value="현장 관리자">현장 관리자</option>
-                                  <option value="기술자">기술자</option>
-                                  <option value="일용직">일용직</option>
-                                  <option value="사무원">사무원</option>
-                                  <option value="안전 감독관">안전 감독관</option>
-                                </select>
-                              ) : (
-                                <input
-                                  type="text"
-                                  value={value}
-                                  onChange={(e) => handleInputChange(key, e.target.value)}
-                                  placeholder="데이터를 입력하세요"
-                                />
-                              )
+              <table>
+                <tbody>
+                  {Object.entries(inputFields).map(([key, value]) => (
+                    key !== "name" && (
+                      <tr key={key}>
+                        <th>{fixedLabels[key]}</th>
+                        <td>
+                          {editMode && key !== 'id' ? (
+                            key === 'gender' ? ( // Check if the current field is gender
+                              <select
+                                value={inputFields.gender}
+                                onChange={(e) => handleInputChange('gender', e.target.value)}
+                              >
+                                <option value="">성별을 선택하시오.</option>
+                                <option value="남자">남자</option>
+                                <option value="여자">여자</option>
+                              </select>
+                            ) : key === 'pos' ? ( // Check if the current field is position
+                              <select
+                                value={inputFields.pos}
+                                onChange={(e) => handleInputChange('pos', e.target.value)}
+                              >
+                                <option value="">직위를 선택하세요.</option>
+                                <option value="현장 관리자">현장 관리자</option>
+                                <option value="기술자">기술자</option>
+                                <option value="일용직">일용직</option>
+                                <option value="사무원">사무원</option>
+                                <option value="안전 감독관">안전 감독관</option>
+                              </select>
                             ) : (
-                              <span>{value || "데이터를 입력하세요"}</span>
-                            )}
-                          </td>
-                        </tr>
-                      )
-                    ))}
-                  </tbody>
-                </table>
-                {isMemoEditing && editMode ? (
-                  <textarea
-                    value={memo}
-                    onChange={handleMemoChange}
-                    placeholder="메모를 입력하세요."
-                    style={{ backgroundColor: editMode ? '#e7f4ff' : 'transparent', border: editMode ? '1px dashed #007bff' : 'transparent' }}
-                  />
-                ) : (
-                  <p>{memo || "메모가 없습니다."}</p>
-                )}
+                              <input
+                                type="text"
+                                value={value}
+                                onChange={(e) => handleInputChange(key, e.target.value)}
+                                placeholder="데이터를 입력하세요"
+                              />
+                            )
+                          ) : (
+                            <span>{value || "데이터를 입력하세요"}</span>
+                          )}
+                        </td>
+                      </tr>
+                    )
+                  ))}
+                  <tr>
+                    <th>메모</th>
+                    <td>
+                      {isMemoEditing && editMode ? (
+                        <textarea
+                          value={memo}
+                          onChange={handleMemoChange}
+                          placeholder="메모를 입력하세요."
+                          style={{ backgroundColor: editMode ? '#e7f4ff' : 'transparent', border: editMode ? '1px dashed #007bff' : 'transparent' }}
+                        />
+                      ) : (
+                        <p>{memo || "메모가 없습니다."}</p>
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
               </div>
             </div>
           </div>

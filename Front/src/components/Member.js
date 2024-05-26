@@ -355,8 +355,8 @@ function Member() {
       </div>
       {/* 직원 등록 모달창 */}
       {showRegistrationModal && (
-        <div className="modal">
-          <div className="modal-content">
+        <div className="member-modal">
+          <div className="member-modal-content">
             <span className="close" onClick={toggleRegistrationModal}>&times;</span>
             <h2>직원 등록</h2>
             <div className="form-group">
@@ -465,7 +465,7 @@ function Member() {
                 onChange={(e) => setAddress(e.target.value)}
               />
             </div>
-            <div className="modalButton">
+            <div className="member-modalButton">
               <button className="fingerprint-button" onClick={handleFingerprintRegistration}>지문 측정 시작</button>
               <br></br>
               <button className="new-profile-button" onClick={handleSubmit}>등록</button>
@@ -475,8 +475,8 @@ function Member() {
       )}
       {/* 직원 삭제 모달창 */}
       {showDeleteModal && (
-        <div className="modal">
-          <div className="modal-content">
+        <div className="member-modal">
+          <div className="member-modal-content">
             <span className="close" onClick={toggleDeleteModal}>&times;</span>
             <h2>직원 삭제</h2>
             <div className="form-group">
@@ -488,7 +488,7 @@ function Member() {
                 onChange={(e) => setDeleteId(e.target.value)}
               />
             </div>
-            <div className="modalButton">
+            <div className="member-modalButton">
               <button className="delete-button" onClick={handleDelete}>삭제</button>
             </div>
           </div>

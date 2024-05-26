@@ -207,7 +207,7 @@ a:hover {
   background-color: #0056b3;
 }
 
-.modal {
+.member-modal {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -221,16 +221,16 @@ a:hover {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-.modalButton {
+.member-modalButton {
   text-align: center;
   margin-top: 10px;
 }
 
-.modal-content > * {
+.member-modal-content > * {
   margin-bottom: 5px; /* 모든 직속 자식 요소의 아래쪽에 5px 간격 추가 */
 }
 
-.modal-content > *:last-child {
+.member-modal-content > *:last-child {
   margin-bottom: 0; /* 마지막 자식 요소는 간격을 0으로 설정하여 추가 여백 제거 */
 }
 
@@ -238,14 +238,15 @@ a:hover {
   margin-top: 5px;
 }
 
-.modal-content {
+.member-modal-content {
   background-color: #fefefe;
+  width: 300px;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.modal h2 {
+.member-modal h2 {
   text-align: center;
 }
 
@@ -274,9 +275,21 @@ a:hover {
   align-items: center;
 }
 
-.phone-number-inputs input {
-  width: 60px;
-  text-align: center;
-  margin: 0 5px;
+.member-modal .form-group select,
+.member-modal .form-group input,
+.member-modal .phone-number-inputs {
+  width: 100%; /* select 요소의 너비를 부모 요소의 100%로 설정합니다 */
+  box-sizing: border-box; /* padding과 border를 포함하여 너비를 계산합니다 */
+  border: 1px solid #ccc; /* 테두리 색상을 회색으로 통일 */
 }
-/* 추가된 범위 끝 */
+
+.member-modal .phone-number-inputs {
+  display: flex;
+  align-items: center;
+  gap: 5px; /* 각 입력 필드 사이의 간격을 조정합니다 */
+}
+
+.phone-number-inputs {
+  width: 100% !important; /* 각 입력 필드의 너비를 20px로 설정합니다 */
+  text-align: center; /* 입력 필드 내의 텍스트를 중앙 정렬합니다 */
+}
