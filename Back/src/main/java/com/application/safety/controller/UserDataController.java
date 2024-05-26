@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -33,7 +34,7 @@ public class UserDataController {
     public ResponseEntity<UserData> userGoToWork(@RequestBody UserDataDTO userDataDTO) {
 
         UserData userData = userDataService.addUserData(userDataDTO);
-        messageService.sendSMS("출근", userDataDTO.getUserNo());
+        //messageService.sendSMS("출근", userDataDTO.getUserNo());
 
         return ResponseEntity.ok(userData);
     }
@@ -55,5 +56,18 @@ public class UserDataController {
     public Map<String, Double> getTodayAverages() {
         return userDataService.getTodayUserAverages();
     }
+
+    // 근로자 종합데이터 상태(정상, 주의, 심각)인원, 세부정보
+    @GetMapping("/today/user-health-status")
+    public Map<String, Object> getTodayUserHealthStatus() {
+        return userDataService.getTodayUserHealthStatus();
+    }
+
+    // 전날 평균 근로시간
+    @GetMapping("/yesterday/average-worktime")
+    public Map<String, Object> getYesterdayAverageWorkTime() {
+        return userDataService.getYesterdayAverageWorkTime();
+    }
+
 
 }
