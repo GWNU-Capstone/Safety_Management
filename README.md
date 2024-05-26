@@ -15,6 +15,8 @@
 | **근로자 출근현황 요청**      | GET  | '/today/user-status'           | 출근자,결근자 수와 각각의 목록을 반환한다.     |
 | **근로자 알코올 이상자 정보 요청**  | GET  | '/today/alcohol-abusers'   | 알코올 기준수치를 초과한 근로자 수와 그의 목록을 반환한다. |
 | **근로자 측정값 평균 요청**     | GET  | '/today/data-average'           | 근로자들의 측정값(체온, 심박수, 산소포화도) 각각의 평균을 반환한다.   |
+| **근로자 종합 데이터 요청**     | GET  | '/today/user-health-status'           | 근로자 상태(정상,주의,심각)에 대한 인원 수와 사용자 각각에 대한 상태 데이터를 반환한다.   |
+| **전날 평균 근로시간 요청**     | GET  | '/yesterday/average-worktime'           | 전날 데이터를 기준으로 근로자들의 근로시간의 평균을 반환한다.  |
 
 
 
@@ -320,9 +322,94 @@
       "averageTemp": 37.4
    } 
     ```
+    
+* * *
 
+### 📕(Back) 근로자 종합 데이터 요청
+- **URL**: `/today/user-health-status`
+- **Method**: GET
+- **성공 응답**:
+   - **Content**:
+    ```json
+    {
+      "totalResultCount": {
+          "정상": 2,
+          "주의": 2,
+          "심각": 2
+      },
+    
+      "userStatusList": [
+          {
+              "userNo": "1",
+              "userName": "오연택"
+              "totalResult": "정상", 
+              "userDrink": "정상",
+              "userTemp": "정상",
+              "userOxygen": "정상",
+              "userHeartRate": "정상"
+    
+          },
+          {   "userNo": "2",
+              "userName": "김민서",
+              "totalResult": "주의", 
+              "userDrink": "정상",
+              "userTemp": "정상",
+              "userOxygen": "정상",
+              "userHeartRate": "주의"
+              
+          },
+          {   "userNo": "3",
+              "userName": "박광수"
+              "totalResult": "심각",
+              "userDrink": "정상",
+              "userTemp": "심각",
+              "userOxygen": "정상",
+              "userHeartRate": "정상"
+              
+          },
+          {   "userNo": "4",
+              "userName": "이채원",
+              "totalResult": "심각",
+              "userDrink": "심각",
+              "userTemp": "정상",
+              "userOxygen": "정상",
+              "userHeartRate": "정상"
+              
+          },
+          {   "userNo": "5",
+              "userName": "윤예지",
+              "totalResult": "주의",
+              "userDrink": "정상",
+              "userTemp": "정상",
+              "userOxygen": "정상",
+              "userHeartRate": "주의"
+              
+          },
+          {   "userNo": "6",
+              "userName": "박현재",
+              "totalResult": "정상",
+              "userDrink": "정상",
+              "userTemp": "정상",
+              "userOxygen": "정상",
+              "userHeartRate": "정상"
+              
+            }
+        ]
+     }
+    ```
 
-
+ * * *
+### 📕(Back) 전날 평균 근로시간 요청
+- **URL**: `/yesterday/average-worktime`
+- **Method**: GET
+- **성공 응답**:
+   - **Content**:
+    ```json
+    {
+       "hours": 8,
+       "minutes": 36
+   } 
+    ```
 
 
   
