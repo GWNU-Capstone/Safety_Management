@@ -341,7 +341,7 @@
       "userStatusList": [
           {
               "userNo": "1",
-              "userName": "오연택"
+              "userName": "오연택",
               "totalResult": "정상", 
               "userDrink": "정상",
               "userTemp": "정상",
@@ -359,7 +359,7 @@
               
           },
           {   "userNo": "3",
-              "userName": "박광수"
+              "userName": "박광수",
               "totalResult": "심각",
               "userDrink": "정상",
               "userTemp": "심각",
