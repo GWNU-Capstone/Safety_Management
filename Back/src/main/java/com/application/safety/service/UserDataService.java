@@ -128,7 +128,8 @@ public class UserDataService {
     public Map<String, Object> getAlcoholAbusers() {
         // 알코올 이상자 목록
         List<UserProfile> alcoholAbusers = userDataRepository.findAll().stream()
-                .filter(userData -> userData.getUserDrink() >= 0.03)
+                // 부동소수점
+                .filter(userData -> Math.abs(userData.getUserDrink() - 0.03) < 1e-6 || userData.getUserDrink() > 0.03)
                 .map(UserData::getUserProfile)
                 .distinct()
                 .collect(Collectors.toList());

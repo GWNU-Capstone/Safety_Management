@@ -34,7 +34,7 @@ public class UserDataController {
     public ResponseEntity<UserData> userGoToWork(@RequestBody UserDataDTO userDataDTO) {
 
         UserData userData = userDataService.addUserData(userDataDTO);
-        //messageService.sendSMS("출근", userDataDTO.getUserNo());
+        messageService.sendSMS("출근", userDataDTO.getUserNo());
 
         return ResponseEntity.ok(userData);
     }
