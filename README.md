@@ -341,7 +341,7 @@
       "userStatusList": [
           {
               "userNo": "1",
-              "userName": "오연택"
+              "userName": "오연택",
               "totalResult": "정상", 
               "userDrink": "정상",
               "userTemp": "정상",
@@ -349,7 +349,8 @@
               "userHeartRate": "정상"
     
           },
-          {   "userNo": "2",
+          {
+              "userNo": "2",
               "userName": "김민서",
               "totalResult": "주의", 
               "userDrink": "정상",
@@ -358,8 +359,9 @@
               "userHeartRate": "주의"
               
           },
-          {   "userNo": "3",
-              "userName": "박광수"
+          {
+              "userNo": "3",
+              "userName": "박광수",
               "totalResult": "심각",
               "userDrink": "정상",
               "userTemp": "심각",
@@ -367,7 +369,8 @@
               "userHeartRate": "정상"
               
           },
-          {   "userNo": "4",
+          {
+              "userNo": "4",
               "userName": "이채원",
               "totalResult": "심각",
               "userDrink": "심각",
@@ -376,7 +379,8 @@
               "userHeartRate": "정상"
               
           },
-          {   "userNo": "5",
+          {
+              "userNo": "5",
               "userName": "윤예지",
               "totalResult": "주의",
               "userDrink": "정상",
@@ -385,7 +389,8 @@
               "userHeartRate": "주의"
               
           },
-          {   "userNo": "6",
+          {
+              "userNo": "6",
               "userName": "박현재",
               "totalResult": "정상",
               "userDrink": "정상",
