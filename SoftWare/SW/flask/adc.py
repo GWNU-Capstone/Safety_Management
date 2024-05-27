@@ -35,16 +35,17 @@ def get_alcvalue():
    return round(bacsum/10, 3)
 """
 
-def get_alcvalue():
+def get_alcvalue(arg):
    a_0 = ReadVol(0)
    sensorValue = int(a_0)
+   print(f"Sensor_value = {sensorValue}")
    sensor_volt = sensorValue / 1024 * 3.0
    RS_gas = ((3.0 * R2) / sensor_volt) - R2
    
    ratio = RS_gas / R0
    x = 0.4 * ratio
    BAC = pow(x, -1.431)
-   BAC_gDL = BAC * 0.001
+   BAC_gDL = BAC * 0.001 - arg
    print("BAC = {:.3f} g/DL".format(BAC_gDL))
    return BAC_gDL
 

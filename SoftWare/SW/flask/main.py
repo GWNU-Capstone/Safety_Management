@@ -6,6 +6,7 @@ from smbus2 import SMBus
 from mlx90614 import MLX90614
 from picamera2 import Picamera2
 import time
+import sys
 from datetime import datetime
 import math
 import threading
@@ -13,6 +14,16 @@ import requests
 import json
 import as608_combo_lib3 as as608
 import adc as adc
+
+arg = 0.01
+
+if len(sys.argv) == 2:
+    try:
+        arg = float(sys.argv[1])
+    except ValueError:
+        print("Error: The argument bust be a float.")
+        sys.exit(1)
+print(f"Argument: {arg}")
 
 app = Flask(__name__)
 CORS(app) #Frontend CORS Error. 주석처리하면 프론트에서 에러!
@@ -81,16 +92,20 @@ def fingerprint_remove():
 def get_sensor_data_alc():
     result_drink = {}
     consecutive_count = 0
-    required_consecutive_count = 5
+    required_consecutive_count = 3
     last_valid_value = None
-    drink_first_value = adc.get_alcvalue()
+    drink_first_value = adc.get_alcvalue(arg)
     time.sleep(2)
     print(f"first_value : {drink_first_value}")
     while True:
-        time.sleep(1.5)
-        sensor_value = adc.get_alcvalue()
+        time.sleep(0.7)
+        sensor_value = adc.get_alcvalue(arg)
         drink_value = round(sensor_value,2)
-        if not adc.is_within_range(drink_first_value, sensor_value, 0.1):
+        if drink_value <= 0.00:
+            result_drink['userdrink'] = 0.00
+            print("return1")
+            return jsonify(result_drink)
+        if not adc.is_within_range(drink_first_value, sensor_value, 0.5):
             if last_valid_value is None:
                 last_valid_value = drink_value
                 consecutive_count = 1
@@ -104,10 +119,15 @@ def get_sensor_data_alc():
                 last_valid_value = drink_value
                 consecutive_count = 1
                 print(f"Within range: {drink_value} (Consecutive count: {consecutive_count})")
+        elif drink_value == 0.00:
+            result_drink['userdrink'] = 0.00
+            print('return2')
+            return jsonify(result_drink)
         else:
             print(f"drink return failed: {drink_value}")
             consecutive_count = 0
             last_valid_value = None
+    print("return4")
     return jsonify(result_drink)
     
 def read_temperature():
