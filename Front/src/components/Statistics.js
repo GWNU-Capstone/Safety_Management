@@ -30,7 +30,7 @@ function StatisticsPage() {
         const combinedData = [
           ...data.presentUsersList.map(user => ({ ...user, status: '출근' })),
           ...data.departedUsersList.map(user => ({ ...user, status: '퇴근' })),
-          ...data.yetStartedUsersList.map(user => ({ ...user, status: '미출근' }))
+          ...data.yetStartedUsersList.map(user => ({ ...user, status: '출근 전' }))
         ];
         setTodayData(combinedData);
       })
@@ -149,7 +149,7 @@ function StatisticsPage() {
                 <h1>퇴근: {todayData.filter(data => data.status === '결근').length}명</h1>
               </div>
               <div className="statistic-container-top-content-item-content">
-                <h1>미출근: {todayData.filter(data => data.status === '미출근').length}명</h1>
+                <h1>출근 전: {todayData.filter(data => data.status === '출근 전').length}명</h1>
               </div>
             </div>
           </div>
