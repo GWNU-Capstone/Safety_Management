@@ -12,7 +12,7 @@
 | **출근 등록 요청**      | POST   | '/user/go'                     | 각종 센서 측정을 마친 후 출근을 등록한다.     |
 | **근로자 상세정보 수정**  | PATCH  | '/update/{사용자ID}'            | 근로자 상세조회 화면으로 근로자 정보를 반환한다. |
 | **근로자 정보 삭제**     | DELETE  | '/delete/{사용자ID}'           | 근로자 정보를 삭제한다.                   |
-| **근로자 출근현황 요청**      | GET  | '/today/user-status'           | 출근자,결근자 수와 각각의 목록을 반환한다.     |
+| **근로자 출근현황 요청**      | GET  | '/today/user-status'           | 출근자, 퇴근자, 미출근자 수와 각각의 목록을 반환한다.     |
 | **근로자 알코올 이상자 정보 요청**  | GET  | '/today/alcohol-abusers'   | 알코올 기준수치를 초과한 근로자 수와 그의 목록을 반환한다. |
 | **근로자 측정값 평균 요청**     | GET  | '/today/data-average'           | 근로자들의 측정값(체온, 심박수, 산소포화도) 각각의 평균을 반환한다.   |
 | **근로자 종합 데이터 요청**     | GET  | '/today/user-health-status'           | 근로자 상태(정상,주의,심각)에 대한 인원 수와 사용자 각각에 대한 상태 데이터를 반환한다.   |
@@ -249,39 +249,42 @@
   - **Content**:
     ```json
     {
-       "presentCount": 4,
-       "absentCount": 2,
-
-       "presentUsers": [
-            {
-                "userName": "오연택",
-                "userNo": 1
-            },
-            {
-                "userName": "김민서",
-                "userNo": 2
-  
-            },
-            {
-                "userName": "이채원",
-                "userNo": 4
-            },
-            {
-                "userName": "윤예지",
-                "userNo": 5
-            }
-        ],
+          "presentCount": 2,
+          "departedCount": 0,
+          "yetStartedCount": 4,
     
-       "absentUsers": [
+          "presentUsersList": [
+          {
+              "userName": "이채원",
+              "userNo": 4
+          },
           {
               "userName": "박광수",
               "userNo": 3
+          }
+       ],
+
+          "departedUsersList": [],
+  
+          "yetStartedUsersList": [
+          {
+              "userName": "오연택",
+              "userNo": 1
+          },
+          {
+              "userName": "김민서",
+              "userNo": 2
+          },
+          {
+              "userName": "윤예지",
+              "userNo": 5
           },
           {
               "userName": "박현재",
               "userNo": 6
           }
-        ]  
+       ]
+      
     }
     ```
 
