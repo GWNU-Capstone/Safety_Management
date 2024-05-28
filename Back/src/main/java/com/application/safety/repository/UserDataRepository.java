@@ -17,5 +17,5 @@ public interface UserDataRepository extends JpaRepository<UserData, Integer> {
 
     List<UserData> findByUserProfile(Optional<UserProfile> userProfile);
 
-    List<UserData> findByDate(LocalDate today);
+    List<UserData> findByDate(LocalDate date);
 }

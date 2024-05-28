@@ -92,34 +92,49 @@ public class UserDataService {
     // Today 출근자 수, 결근자 수, 목록을 반환하는 앤드포인트
     public Map<String, Object> getTodayUserStatus() {
         List<UserProfile> allUsers = userProfileRepository.findAll();
-        // 전체 사용자 수 totalUsers
-        int totalUsers = allUsers.size();
 
         LocalDate today = LocalDate.now();
 
-        // 출근자 목록
-        List<UserProfile> presentUsers = userDataRepository.findAll().stream()
-                .filter(userData -> userData.getUserStart() != null && userData.getDate().isEqual(today))
+        // 오늘 날짜의 데이터
+        List<UserData> todayUserData = userDataRepository.findByDate(today);
+
+        // 출근자 목록 (userStart만 값 o)
+        List<UserProfile> presentUsers = todayUserData.stream()
+                .filter(userData -> userData.getUserStart() != null && userData.getUserEnd() == null)
                 .map(UserData::getUserProfile)
                 .distinct()
                 .collect(Collectors.toList());
 
+        // 퇴근자 목록 (userEnd에 값 o)
+        List<UserProfile> departedUsers = todayUserData.stream()
+                .filter(userData -> userData.getUserStart() != null && userData.getUserEnd() != null)
+                .map(UserData::getUserProfile)
+                .distinct()
+                .collect(Collectors.toList());
+
+        // 미출근자 목록 (userStart, userEnd에 값 x)
+        List<UserProfile> yetStartedUsers = allUsers.stream()
+                .filter(user -> presentUsers.stream().noneMatch(presentUser -> presentUser.getUserNo() == user.getUserNo())
+                        && departedUsers.stream().noneMatch(departedUser -> departedUser.getUserNo() == user.getUserNo()))
+                .collect(Collectors.toList());
+
         // 출근자 수
         int presentCount = presentUsers.size();
-        // 결근자 수 -> 전체 사용자 - 출근자 수
-        int absentCount = totalUsers - presentCount;
 
-        // 결근자 목록
-        List<UserProfile> absentUsers = allUsers.stream()
-                .filter(user -> presentUsers.stream()
-                        .noneMatch(presentUser -> presentUser.getUserNo() == user.getUserNo()))
-                .collect(Collectors.toList());
+        // 퇴근자 수
+        int departedCount = departedUsers.size();
+
+        // 미출근자 수
+        int yetStartedCount = yetStartedUsers.size();
 
         Map<String, Object> response = new HashMap<>();
         response.put("presentCount", presentCount);
-        response.put("absentCount", absentCount);
-        response.put("presentUsers", presentUsers);
-        response.put("absentUsers", absentUsers);
+        response.put("departedCount", departedCount);
+        response.put("yetStartedCount", yetStartedCount);
+
+        response.put("presentUsersList", presentUsers);
+        response.put("departedUsersList", departedUsers);
+        response.put("yetStartedUsersList", yetStartedUsers);
 
         return response;
     }
@@ -228,15 +243,15 @@ public class UserDataService {
         return result;
     }
 
-    // 체온: (정상) 36.1 이상 37.2 이하, (주의) 35.0 이상 36.0 이하 , 37.3 이상 38.0 이하, (심각) 35.0 이하, 38.1 이상
+
+    // 알코올: (심각) 0.03 이상
+    // 체온: (정상) 36.1 이상 37.2 이하, (주의) 37.3 이상 38.0 이하, (심각) 35.0 이하, 38.1 이상
     // 심박수: (정상) 60 이상 100 이하, (주의) 50 이상 59 이하, 101 이상 120 이하, (심각) 50 미만, 120 초과
-    // 산소포화도: (정상) 95이상, (주의) 90 초과 95 이하, (심각) 90이하
+    // 산소포화도: (정상) 95이상, (주의) 90초과 95 미만, (심각) 90이하
 
     // 알코올 상태 판별
-    // (보류) return userDrink >= 0.03 ? "심각" : "정상";
     private String getUserDrinkStatus(float userDrink) {
-        float threshold = 0.03f;
-        if (userDrink >= threshold) {
+        if (userDrink >= 0.03f) {
             return "심각";
         }
         return "정상";
@@ -250,31 +265,41 @@ public class UserDataService {
     }
 
     // 체온 상태 판별
+    // 부동소수점 , 경곗값에서 정상.주의.심각 판별 오류
+    private static final double EPSILON = 0.0001;
+    private boolean isApproximatelyEqual(double a, double b) {
+        return Math.abs(a - b) < EPSILON;
+    }
+
     private String getUserTempStatus(float userTemp) {
-        if (userTemp >= 36.1 && userTemp <= 37.2) return "정상";
-        if ((userTemp >= 35.0 && userTemp <= 36.0) || (userTemp >= 37.3 && userTemp <= 38.0)) return "주의";
-        return "심각";
+        if ((userTemp >= 36.1 && userTemp <= 37.2) || isApproximatelyEqual(userTemp, 36.1) || isApproximatelyEqual(userTemp, 37.2)) {
+            return "정상";
+        } else if ((userTemp >= 37.3 && userTemp <= 38.0) || isApproximatelyEqual(userTemp, 37.3) || isApproximatelyEqual(userTemp, 38.0)) {
+            return "주의";
+        } else if (userTemp >= 38.1 || isApproximatelyEqual(userTemp, 38.1)) {
+            return "심각";
+        } else {
+            return "심각";
+        }
     }
 
     // 심박수 상태 판별
     private String getUserHeartRateStatus(int userHeartRate) {
         if (userHeartRate >= 60 && userHeartRate <= 100) return "정상";
-        if ((userHeartRate >= 50 && userHeartRate <= 59) || (userHeartRate >= 101 && userHeartRate <= 120)) return "주의";
+        if ((userHeartRate >= 50 && userHeartRate < 60) || (userHeartRate > 100 && userHeartRate <= 120)) {
+            return "주의";
+        }
         return "심각";
     }
 
     // 종합상태 (정상, 주의, 심각) 반환하는 메서드
     private String calculateTotalResult(String... statuses) {
-
-        // 주의, 심각
         boolean hasCaution = false;
         boolean hasSerious = false;
 
 
-        // 심각, 주의를 먼저 판별 후 나머지는 정상으로 처리
+        // 심각을 우선으로 탐색 후, 주의 탐색
         for (String status : statuses) {
-
-            // 심각이 1개라도 있으면 결과는 심각
             if (status.equals("심각")) {
                 hasSerious = true;
                 break;
