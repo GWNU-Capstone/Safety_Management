@@ -109,7 +109,7 @@ const MonitoringScreen = () => {
     if (step === 4 || step === 5 || step === 6) {
       const timer = setTimeout(() => {
         resetStatesAndScan();
-      }, 2500);
+      }, 5000);
       return () => clearTimeout(timer);
     }
     else if (step === 2) {
