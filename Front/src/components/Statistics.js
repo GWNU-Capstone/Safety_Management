@@ -258,7 +258,7 @@ function StatisticsPage() {
                   </thead>
                   <tbody>
                     {alcoholData.alcoholAbusers.map((employee) => (
-                      <tr key={employee.userNo}>
+                      <tr key={employee.userNo} onClick={() => window.location.href = `/detail/${employee.userNo}`} style={{ cursor: 'pointer' }}>
                         <td className="column-userNo">{employee.userNo}</td>
                         <td className="column-userName">{employee.userName}</td>
                       </tr>
