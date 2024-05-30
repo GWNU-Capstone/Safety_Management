@@ -6,19 +6,19 @@ import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import './Statistics.css';
 import { userApiBaseUrl } from './Api';
-import Modal from './Modal'; // 모달 컴포넌트 임포트
 
 // 필요한 스케일 및 플러그인 수동 등록
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 function StatisticsPage() {
+  const [showTodayDataModal, setShowTodayDataModal] = useState(false);
+  const [showWorkerDataModal, setShowWorkerDataModal] = useState(false);
+  const [showAlcoholAbusersModal, setShowAlcoholAbusersModal] = useState(false);
   const [todayData, setTodayData] = useState([]);
   const [alcoholData, setAlcoholData] = useState({ alcoholAbuserCount: 0, alcoholAbusers: [] });
   const [avgData, setAvgData] = useState({ averageOxygen: 0, averageHeartRate: 0, averageTemp: 0 });
   const [totalResultCount, setTotalResultCount] = useState({ 정상: 0, 주의: 0, 심각: 0 });
   const [workerData, setWorkerData] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState(null); // 모달 내용 상태 추가
   const [yesterdayWorkTime, setYesterdayWorkTime] = useState({ hours: 0, minutes: 0 }); 
   const [yesterdayWorkTimeMessage, setYesterdayWorkTimeMessage] = useState('');
 
@@ -28,9 +28,8 @@ function StatisticsPage() {
       .then(response => response.json())
       .then(data => {
         const combinedData = [
-          ...data.presentUsersList.map(user => ({ ...user, status: '출근' })),
-          ...data.departedUsersList.map(user => ({ ...user, status: '퇴근' })),
-          ...data.yetStartedUsersList.map(user => ({ ...user, status: '출근 전' }))
+          ...data.presentUsers.map(user => ({ ...user, status: '출근' })),
+          ...data.absentUsers.map(user => ({ ...user, status: '결근' }))
         ];
         setTodayData(combinedData);
       })
@@ -96,15 +95,18 @@ function StatisticsPage() {
     }
   };
 
-  const handleOpenModal = (content) => {
-    setModalContent(content);
-    setIsModalOpen(true);
+  const toggleTodayDataModal = () => {
+    setShowTodayDataModal(!showTodayDataModal);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setModalContent(null);
+  const toggleWorkerDataModal = () => {
+    setShowWorkerDataModal(!showWorkerDataModal);
   };
+
+  const toggleAlcoholAbusersModal = () => {
+    setShowAlcoholAbusersModal(!showAlcoholAbusersModal);
+  };
+
 
   return (
     <div className="statistic-container-main">
@@ -135,7 +137,7 @@ function StatisticsPage() {
       <div className="statistic-container">
         <div className="statistic-container-top">
 
-          <div className="statistic-container-top-content clickable" onClick={() => handleOpenModal('todayStatus')}>
+          <div className="statistic-container-top-content clickable" onClick={toggleTodayDataModal}>
             <div className="statistic-container-top-content-title">
               <img src="/img/today.png" alt="icon" className="statistic-container-top-content-icon" />
               <h2>Today 출근 현황</h2>
@@ -146,15 +148,40 @@ function StatisticsPage() {
                 <h1>출근: {todayData.filter(data => data.status === '출근').length}명</h1>
               </div>
               <div className="statistic-container-top-content-item-content">
-                <h1>퇴근: {todayData.filter(data => data.status === '결근').length}명</h1>
-              </div>
-              <div className="statistic-container-top-content-item-content">
-                <h1>출근 전: {todayData.filter(data => data.status === '출근 전').length}명</h1>
+                <h1>결근: {todayData.filter(data => data.status === '결근').length}명</h1>
               </div>
             </div>
           </div>
 
-          <div className="statistic-container-top-content clickable" onClick={() => handleOpenModal('workerData')}>
+          {showTodayDataModal && (
+            <div className="statistics-modal" onClick={toggleTodayDataModal}>
+              <div className="statistics-modal-todayData" onClick={(e) => e.stopPropagation()}>
+                <h2>Today 출근 현황</h2>
+                <table>
+                  <thead>
+                    <tr>
+                      <th className="column-userNo">사원번호</th>
+                      <th className="column-userName">이름</th>
+                      <th className="column-status">상태</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {todayData.map((employee) => (
+                      <tr key={employee.userNo} onClick={() => window.location.href = `/detail/${employee.userNo}`} style={{ cursor: 'pointer' }}>
+                        <td className="column-userNo">{employee.userNo}</td>
+                        <td className="column-userName">{employee.userName}</td>
+                        <td className="column-status">{employee.status}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+
+
+          <div className="statistic-container-top-content clickable" onClick={toggleWorkerDataModal}>
             <div className="statistic-container-top-content-title">
               <img src="/img/total.png" alt="icon" className="statistic-container-top-content-icon" />
               <h2>근로자 종합 데이터</h2>
@@ -172,7 +199,41 @@ function StatisticsPage() {
             </div>
           </div>
 
-          <div className="statistic-container-top-content clickable" onClick={() => handleOpenModal('alcoholAbusers')}>
+          {showWorkerDataModal && (
+            <div className="statistics-modal" onClick={toggleWorkerDataModal}>
+              <div className="statistics-modal-workerData" onClick={(e) => e.stopPropagation()}>
+                <h2>근로자 종합 데이터</h2>
+                <table>
+                  <thead>
+                    <tr>
+                      <th className="column-userNo">사원번호</th>
+                      <th className="column-userName">이름</th>
+                      <th>알코올</th>
+                      <th>체온</th>
+                      <th>산소포화도</th>
+                      <th>심박수</th>
+                      <th>결과</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {workerData.map((employee) => (
+                      <tr key={employee.userNo} onClick={() => window.location.href = `/detail/${employee.userNo}`} style={{ cursor: 'pointer' }}>
+                        <td className="column-userNo">{employee.userNo}</td>
+                        <td className="column-userName">{employee.userName}</td>
+                        <td>{employee.userDrink}</td>
+                        <td>{employee.userTemp}</td>
+                        <td>{employee.userOxygen}</td>
+                        <td>{employee.userHeartRate}</td>
+                        <td>{employee.totalResult}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          <div className="statistic-container-top-content clickable" onClick={toggleAlcoholAbusersModal}>
             <div className="statistic-container-top-content-title">
               <img src="/img/alcoholic.png" alt="icon" className="statistic-container-top-content-icon" />
               <h2>근로자 알코올 이상자</h2>
@@ -183,6 +244,30 @@ function StatisticsPage() {
               </div>
             </div>
           </div>
+
+          {showAlcoholAbusersModal && (
+            <div className="statistics-modal" onClick={toggleAlcoholAbusersModal}>
+              <div className="statistics-modal-alcoholAbusers" onClick={(e) => e.stopPropagation()}>
+                <h2>근로자 알코올 이상자</h2>
+                <table>
+                  <thead>
+                    <tr>
+                      <th className="column-userNo">사원번호</th>
+                      <th className="column-userName">이름</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {alcoholData.alcoholAbusers.map((employee) => (
+                      <tr key={employee.userNo}>
+                        <td className="column-userNo">{employee.userNo}</td>
+                        <td className="column-userName">{employee.userName}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
           
           <div className="statistic-container-top-content">
             <div className="statistic-container-top-content-title">
@@ -267,84 +352,6 @@ function StatisticsPage() {
           
         </div>
       </div>
-
-      <Modal show={isModalOpen} onClose={handleCloseModal}>
-        {modalContent === 'todayStatus' && (
-          <div className="statistics-modal">
-            <h2>Today 출근 현황</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>사원번호</th>
-                  <th>이름</th>
-                  <th>상태</th>
-                </tr>
-              </thead>
-              <tbody>
-                {todayData.map((employee) => (
-                  <tr key={employee.userNo}>
-                    <td>{employee.userNo}</td>
-                    <td>{employee.userName}</td>
-                    <td>{employee.status}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-        {modalContent === 'alcoholAbusers' && (
-          <div className="statistics-modal">
-            <h2>근로자 알코올 이상자</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>사원번호</th>
-                  <th>이름</th>
-                </tr>
-              </thead>
-              <tbody>
-                {alcoholData.alcoholAbusers.map((employee) => (
-                  <tr key={employee.userNo}>
-                    <td>{employee.userNo}</td>
-                    <td>{employee.userName}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-        {modalContent === 'workerData' && (
-          <div className="statistics-modal">
-            <h2>근로자 종합 데이터</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>사원번호</th>
-                  <th>이름</th>
-                  <th>알코올</th>
-                  <th>체온</th>
-                  <th>산소포화도</th>
-                  <th>심박수</th>
-                  <th>결과</th>
-                </tr>
-              </thead>
-              <tbody>
-                {workerData.map((employee) => (
-                  <tr key={employee.userNo}>
-                    <td>{employee.userNo}</td>
-                    <td>{employee.userName}</td>
-                    <td>{employee.userDrink}</td>
-                    <td>{employee.userTemp}</td>
-                    <td>{employee.userOxygen}</td>
-                    <td>{employee.userHeartRate}</td>
-                    <td>{employee.totalResult}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Modal>
 
       <footer>
         <div className="footer">

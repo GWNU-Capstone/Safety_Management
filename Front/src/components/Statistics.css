@@ -248,3 +248,83 @@ body {
 .clickable {
   cursor: pointer;
 }
+
+.statistics-modal {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: fixed;
+	z-index: 10;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;	
+	background-color: rgba(0, 0, 0, 0.4);
+  }
+
+.statistics-modal h2 {
+	font-size: 30x;
+	font-weight: bold;
+}
+
+.statistics-modal-todayData {
+	background-color: #fefefe;
+	width: 450px;
+	height: 500px;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.statistics-modal-workerData {
+	background-color: #fefefe;
+	width: 800px;
+	height: 500px;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.statistics-modal-alcoholAbusers {
+	background-color: #fefefe;
+	width: 450px;
+	height: 500px;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+  
+.statistics-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.column-userNo {
+	width: 80px; /* 원하는 너비 값으로 변경 */
+  }
+  
+.column-userName {
+	width: 100px; /* 원하는 너비 값으로 변경 */
+}
+
+.column-status {
+	width: 30%; /* 원하는 너비 값으로 변경 */
+}
+
+/* 추가적인 스타일이 필요한 경우 */
+table {
+	width: 100%; /* 테이블 전체 너비 설정 */
+	table-layout: fixed; /* 열 너비를 고정 */
+}
+
+th, td {
+	padding: 10px; /* 셀 내부 여백 */
+	text-align: left; /* 텍스트 정렬 */
+}
+  
