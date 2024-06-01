@@ -16,4 +16,6 @@ public interface UserDataRepository extends JpaRepository<UserData, Integer> {
     void deleteByUserProfile(UserProfile userProfile);
 
     List<UserData> findByUserProfile(Optional<UserProfile> userProfile);
+
+    List<UserData> findByDate(LocalDate date);
 }

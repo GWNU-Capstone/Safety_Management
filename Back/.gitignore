@@ -178,4 +178,4 @@ README.html
 .exercism
 
 ### Spring boot ###
-application.properties
+application-secret.properties
