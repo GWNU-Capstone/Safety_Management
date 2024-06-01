@@ -10,10 +10,7 @@ import com.application.safety.repository.UserProfileRepository;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
-import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,7 +69,8 @@ public class MessageService {
                     "\n사원 성함 : " + userProfile.getUserName() +
                     "\n\n알코올 수치 : " + userData.getUserDrink() +
                     "\n체온 : " + userData.getUserTemp() + "°C" +
-                    "\n심박수: " + userData.getUserHeartRate() + "mmHg" +
+                    "\n심박수 : " + userData.getUserHeartRate() + "bpm" +
+                    "\n산소포화도 : " +userData.getUserOxygen() + "%" +
                     "\n\n부디 건강을 해치는 일 없이 안전, " +
                     "\n또 안전하게 일 해주시길 바랍니다." +
                     "\n\n항상 감사합니다.";
