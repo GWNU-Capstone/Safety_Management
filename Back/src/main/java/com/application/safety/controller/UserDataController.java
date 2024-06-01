@@ -67,6 +67,4 @@ public class UserDataController {
     public Map<String, Object> getYesterdayAverageWorkTime() {
         return userDataService.getYesterdayAverageWorkTime();
     }
-
-
 }
