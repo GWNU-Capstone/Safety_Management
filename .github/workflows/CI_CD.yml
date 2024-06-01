@@ -94,18 +94,3 @@ jobs:
           script_stop: true
           script: |
             sudo docker exec -i nginxserver1 bash -c 'echo "set \$service_url ${{ env.TARGET_UPSTREAM }};" > /etc/nginx/conf.d/service-env.inc && nginx -s reload'
-      
-      - name: Stop current server
-        uses: appleboy/ssh-action@master
-        with:
-          username: ubuntu
-          host: ${{ secrets.SERVER_IP }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script_stop: true
-          script: |
-            if [ $(docker ps -aq -f ${{env.CURRENT_UPSTREAM}}) ]; then
-              sudo docker stop ${{env.CURRENT_UPSTREAM}}
-              sudo docker rm ${{env.CURRENT_UPSTREAM}}
-            else
-              echo "No such container: ${{env.CURRENT_UPSTREAM}}"
-            fi
