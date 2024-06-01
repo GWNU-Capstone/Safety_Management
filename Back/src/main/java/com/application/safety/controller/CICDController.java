@@ -31,4 +31,12 @@ public class CICDController {
     public ResponseEntity<?> getEnv() {
         return ResponseEntity.ok(env);
     }
+
+
+    @GetMapping("/test")
+    public String Test(){
+
+        return "ok";
+    }
+
 }
