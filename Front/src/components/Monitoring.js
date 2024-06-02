@@ -20,7 +20,7 @@ const MonitoringScreen = () => {
   const [spo2, setSpo2] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
 
-  const maxRetries = 6;
+  const maxRetries = 3;
 
   // 유저 아이디를 가져오는 useEffect
   useEffect(() => {
@@ -54,7 +54,7 @@ const MonitoringScreen = () => {
     if (!userId && step === 1 && retryCount < maxRetries) {
       const retryTimeout = setTimeout(() => {
         fetchUserId();
-      }, 5000); // 3초 후에 다시 시도
+      }, 1000); // 3초 후에 다시 시도
 
       return () => clearTimeout(retryTimeout);
     }

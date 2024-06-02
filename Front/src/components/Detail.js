@@ -11,15 +11,8 @@ function Detail() {
   const [endDate, setEndDate] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [activeSection2, setActiveSection2] = useState('main');
-  const [filterMode, setFilterMode] = useState(true);
-  const [memo, setMemo] = useState(''); // 메모 내용을 저장할 상태
   const [isMemoEditing, setIsMemoEditing] = useState(false);
   const [attendanceRecords, setAttendanceRecords] = useState([]);
-
-  const toggleFilterMode = () => {
-    setFilterMode(!filterMode);
-    setActiveSection2(filterMode ? 'filtering' : 'main');  // 조건에 따라 섹션 설정
-  };
 
   const [inputFields, setInputFields] = useState({
     name: '',
@@ -33,7 +26,8 @@ function Detail() {
     pos: '',
     empDate: '',
     bank: '',
-    account: ''
+    account: '',
+    memo: ''  // 메모 내용을 저장할 상태
   });
 
   const { id } = useParams();
@@ -54,15 +48,12 @@ function Detail() {
           pos: data.userPosition,
           empDate: data.userJoinDate,
           bank: data.userBank,
-          account: data.userAccount
+          account: data.userAccount,
+          memo: data.memo 
         });
       })
       .catch(error => console.error('Error fetching user data:', error));
   }, [id]);
-
-  const handleMemoChange = (e) => {
-    setMemo(e.target.value);
-  };
 
   const handleEditProfile = () => {
     // 편집 모드가 비활성화된 경우 (편집 시작)
@@ -92,7 +83,7 @@ function Detail() {
         userBank: inputFields.bank,
         userAccount: inputFields.account,
         userJoinDate: inputFields.empDate,
-        memo: memo  // 메모 데이터 추가
+        memo: inputFields.memo 
       })
         .then(response => {
           console.log('프로필 업데이트 요청 성공:', response.data);
@@ -125,7 +116,8 @@ function Detail() {
     bank: '은행',
     account: '계좌번호',
     pos: '직위',
-    empDate: '입사일자'
+    empDate: '입사일자',
+    memo: '메모'  // 추가된 메모 레이블
   };
 
   useEffect(() => {
@@ -269,6 +261,13 @@ function Detail() {
                                 <option value="사무원">사무원</option>
                                 <option value="안전 감독관">안전 감독관</option>
                               </select>
+                            ) : key === 'memo' ? ( // Check if the current field is memo
+                              <textarea
+                                value={value}
+                                onChange={(e) => handleInputChange('memo', e.target.value)}
+                                placeholder="메모를 입력하세요."
+                                style={{ backgroundColor: editMode ? '#e7f4ff' : 'transparent', border: editMode ? '1px dashed #007bff' : 'transparent' }}
+                              />
                             ) : (
                               <input
                                 type="text"
@@ -284,21 +283,6 @@ function Detail() {
                       </tr>
                     )
                   ))}
-                  <tr>
-                    <th>메모</th>
-                    <td>
-                      {isMemoEditing && editMode ? (
-                        <textarea
-                          value={memo}
-                          onChange={handleMemoChange}
-                          placeholder="메모를 입력하세요."
-                          style={{ backgroundColor: editMode ? '#e7f4ff' : 'transparent', border: editMode ? '1px dashed #007bff' : 'transparent' }}
-                        />
-                      ) : (
-                        <p>{memo || "메모가 없습니다."}</p>
-                      )}
-                    </td>
-                  </tr>
                 </tbody>
               </table>
 
@@ -310,12 +294,6 @@ function Detail() {
         <div className="attendance-records">
           <div className="personal-info-div">
             <h2>Attendance Records</h2>
-
-            <div className="personal-info-button">
-              <div className="attendance-button" onClick={toggleFilterMode}>
-                {filterMode ? '필터링' : '전체보기'}
-              </div>
-            </div>
           </div>
           {activeSection2 === 'main' && (
             <div className="table-wrapper">
@@ -362,55 +340,8 @@ function Detail() {
               </table>
             </div>
           )}
-
-          {activeSection2 === 'filtering' && (
-            <div className="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>날짜</th>
-                    <th>출근시간</th>
-                    <th>퇴근시간</th>
-                    <th>알코올 농도</th>
-                    <th>체온</th>
-                    <th>심박수</th>
-                    <th>산소포화도</th>
-                    <th>상태</th>
-                  </tr>
-                </thead>
-                <tbody className="table-body">
-                  {attendanceRecords.filter((record) => {
-                    const recordDate = new Date(record.date);
-                    const adjustedStartDate = startDate ? new Date(startDate) : null;
-                    const adjustedEndDate = endDate ? new Date(endDate) : null;
-                    if (adjustedStartDate && adjustedEndDate) {
-                      recordDate.setHours(0, 0, 0, 0); // 시간을 자정으로 설정합니다
-                      adjustedStartDate.setHours(0, 0, 0, 0);
-                      adjustedEndDate.setHours(0, 0, 0, 0);
-                      return recordDate >= adjustedStartDate && recordDate <= adjustedEndDate;
-                    } else {
-                      // If either start date or end date is not set, show all records
-                      return true;
-                    }
-                  }).map((record, index) => (
-                    <tr key={index} style={{ color: !filterMode ? 'red' : 'black' }}>
-                      <td>{record.date}</td>
-                      <td>{record.enter}</td>
-                      <td>{record.exit}</td>
-                      <td>{record.bac}%</td>
-                      <td>{record.temp}°C</td>
-                      <td>{record.hr} bpm</td>
-                      <td>{record.oxy}%</td>
-                      <td>{record.status}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
         </div>
       </div>
-
       <footer>
         <div className="footer">
           Ⓒ 안전하조. 캡스톤 디자인 프로젝트

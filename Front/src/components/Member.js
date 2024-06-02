@@ -316,6 +316,7 @@ function Member() {
                 id="employeeId"
                 value={employeeId}
                 onChange={(e) => setEmployeeId(e.target.value)}
+                readOnly
               />
             </div>
             <div className="form-group">

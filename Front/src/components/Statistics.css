@@ -379,9 +379,23 @@ th, td {
 	text-align: left; /* 텍스트 정렬 */
 }
 
+.modal-close-button {
+	position: absolute;
+	bottom: 300px;
+	left: 50%;
+	transform: translateX(-50%);
+	padding: 10px 20px;
+	background-color: #007bff;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+  }
   
-
-  
+  .modal-close-button:hover {
+	background-color: #0056b3;
+  }
+    
   .feedback-item-modal {
 	display: inline-block;
 	margin: 0 10px;

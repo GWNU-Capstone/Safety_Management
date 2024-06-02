@@ -94,7 +94,9 @@ function StatisticsPage() {
         setSunshineData(sunshines);
       })
       .catch(error => console.error('Error fetching data:', error));
+  }, []);
 
+  useEffect(() => {
     fetch(`${userApiBaseUrl}/ai`)
       .then(response => response.json())
       .then(data => setFeedbackData(data))
@@ -105,11 +107,11 @@ function StatisticsPage() {
     const interval = setInterval(() => {
       setCurrentFeedbackIndex(prevIndex => (prevIndex + 1) % feedbackData.length);
     }, 10000);
-  
+
     return () => clearInterval(interval);
   }, [feedbackData]);
 
-  
+
 
   const calculateMinMax = (data) => {
     const min = Math.min(...data);
@@ -162,6 +164,34 @@ function StatisticsPage() {
   const toggleAIModal = () => {
     setShowAIModal(!showAIModal);
   };
+
+  const resetAIData = () => {
+    if (showAIModal) {
+      fetch(`${userApiBaseUrl}/ai/refresh`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          console.log('Refresh successful');
+          alert('AI데이터 재설정이 완료되었습니다. 10초 뒤에 AI분석 데이터가 변경됩니다.');
+          setTimeout(() => {
+            fetch(`${userApiBaseUrl}/ai`)
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Network response was not ok');
+                }
+                return response.json();
+              })
+              .then(data => {
+                setFeedbackData(data);
+                setCurrentFeedbackIndex(0); // 인덱스를 초기화
+              })
+              .catch(error => console.error('Error fetching data:', error));
+          }, 10000);
+        })
+        .catch(error => console.error('Error refreshing data:', error));
+    }
+  }
 
   return (
     <div className="statistic-container-main">
@@ -376,9 +406,6 @@ function StatisticsPage() {
             </div>
           </div>
 
-          
-
-
           {showAIModal && (
             <div className="statistics-modal" onClick={toggleAIModal}>
               <div className="statistics-modal-ai" onClick={(e) => e.stopPropagation()}>
@@ -391,6 +418,7 @@ function StatisticsPage() {
                     <p>● {feedback.feedback.contents}</p>
                   </div>
                 ))}
+                <button className="modal-close-button" onClick={resetAIData}>AI데이터 재설정</button>
               </div>
             </div>
           )}
