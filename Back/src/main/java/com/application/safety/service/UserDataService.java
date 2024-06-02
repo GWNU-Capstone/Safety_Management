@@ -141,8 +141,10 @@ public class UserDataService {
 
     // 알코올 이상자 수, 목록을 반환한는 앤드포인트
     public Map<String, Object> getAlcoholAbusers() {
+
+        LocalDate today = LocalDate.now();
         // 알코올 이상자 목록
-        List<UserProfile> alcoholAbusers = userDataRepository.findAll().stream()
+        List<UserProfile> alcoholAbusers = userDataRepository.findByDate(today).stream()
                 // 0.03일 경우에만 데이터가 안 들어가는 이유 . 부동소수점
                 .filter(userData -> Math.abs(userData.getUserDrink() - 0.03) < 1e-6 || userData.getUserDrink() > 0.03)
                 .map(UserData::getUserProfile)
