@@ -97,11 +97,10 @@ jobs:
           username: ubuntu
           host: ${{ secrets.SERVER_IP }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          script_stop: true
           script: |
             if [ $(sudo docker ps -aq -f name=${{env.CURRENT_UPSTREAM}}) ]; then
-              sudo docker stop ${{env.CURRENT_UPSTREAM}} || { echo "Failed to stop container: ${{env.CURRENT_UPSTREAM}}"; exit 1; }
-              sudo docker rm ${{env.CURRENT_UPSTREAM}} || { echo "Failed to remove container: ${{env.CURRENT_UPSTREAM}}"; exit 1; }
+              sudo docker stop ${{env.CURRENT_UPSTREAM}}
+              sudo docker rm ${{env.CURRENT_UPSTREAM}}
             else
               echo "No such container: ${{env.CURRENT_UPSTREAM}}"
             fi
