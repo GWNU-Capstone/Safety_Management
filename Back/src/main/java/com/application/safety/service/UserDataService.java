@@ -245,7 +245,7 @@ public class UserDataService {
 
 
     // 알코올: (심각) 0.03 이상
-    // 체온: (정상) 36.1 이상 37.2 이하, (주의) 37.3 이상 38.0 이하, (심각) 35.0 이하, 38.1 이상
+    // 체온: (정상) 35.1 이상 37.2 이하, (주의) 37.3 이상 38.0 이하, (심각) 35.0 이하, 38.1 이상
     // 심박수: (정상) 60 이상 100 이하, (주의) 50 이상 59 이하, 101 이상 120 이하, (심각) 50 미만, 120 초과
     // 산소포화도: (정상) 95이상, (주의) 90초과 95 미만, (심각) 90이하
 
@@ -272,7 +272,7 @@ public class UserDataService {
     }
 
     private String getUserTempStatus(float userTemp) {
-        if ((userTemp >= 36.1 && userTemp <= 37.2) || isApproximatelyEqual(userTemp, 36.1) || isApproximatelyEqual(userTemp, 37.2)) {
+        if ((userTemp >= 35.1 && userTemp <= 37.2) || isApproximatelyEqual(userTemp, 35.1) || isApproximatelyEqual(userTemp, 37.2)) {
             return "정상";
         } else if ((userTemp >= 37.3 && userTemp <= 38.0) || isApproximatelyEqual(userTemp, 37.3) || isApproximatelyEqual(userTemp, 38.0)) {
             return "주의";
