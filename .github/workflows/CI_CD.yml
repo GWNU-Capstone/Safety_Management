@@ -99,7 +99,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
-            if [ $(docker ps -aq -f ${{env.CURRENT_UPSTREAM}}) ]; then
+            if [ $(docker ps -aq -f name=${{env.CURRENT_UPSTREAM}}) ]; then
               sudo docker stop ${{env.CURRENT_UPSTREAM}}
               sudo docker rm ${{env.CURRENT_UPSTREAM}}
             else
