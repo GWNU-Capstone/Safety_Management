@@ -19,13 +19,15 @@ function StatisticsPage() {
   const [avgData, setAvgData] = useState({ averageOxygen: 0, averageHeartRate: 0, averageTemp: 0 });
   const [totalResultCount, setTotalResultCount] = useState({ 정상: 0, 주의: 0, 심각: 0 });
   const [workerData, setWorkerData] = useState([]);
-  const [yesterdayWorkTime, setYesterdayWorkTime] = useState({ hours: 0, minutes: 0 }); 
+  const [yesterdayWorkTime, setYesterdayWorkTime] = useState({ hours: 0, minutes: 0 });
   const [yesterdayWorkTimeMessage, setYesterdayWorkTimeMessage] = useState('');
 
   const [temperatureData, setTemperatureData] = useState([]);
   const [humidityData, setHumidityData] = useState([]);
   const [fineDustData, setFineDustData] = useState([]);
   const [sunshineData, setSunshineData] = useState([]);
+
+  const [feedbackData, setFeedbackData] = useState([]);
 
   useEffect(() => {
     // 출근 현황
@@ -40,19 +42,19 @@ function StatisticsPage() {
         setTodayData(combinedData);
       })
       .catch(error => console.error('Error fetching data:', error));
-    
+
     // 근로자 알코올 이상자
     fetch(`${userApiBaseUrl}/today/alcohol-abusers`)
       .then(response => response.json())
       .then(data => setAlcoholData(data))
       .catch(error => console.error('Error fetching data:', error));
-    
+
     // 근로자 평균 수치
     fetch(`${userApiBaseUrl}/today/data-average`)
       .then(response => response.json())
       .then(data => setAvgData(data))
       .catch(error => console.error('Error fetching data:', error));
-    
+
     // 근로자 건강 상태
     fetch(`${userApiBaseUrl}/today/user-health-status`)
       .then(response => response.json())
@@ -76,20 +78,47 @@ function StatisticsPage() {
 
     // 환경 데이터
     fetch(`${userApiBaseUrl}/data`)
-    .then(response => response.json())
-    .then(data => {
-      const temperatures = data.map(entry => entry.data.temperature);
-      const humidities = data.map(entry => entry.data.humidity);
-      const fineDusts = data.map(entry => entry.data.fineDust);
-      const sunshines = data.map(entry => entry.data.sunshine);
-      
-      setTemperatureData(temperatures);
-      setHumidityData(humidities);
-      setFineDustData(fineDusts);
-      setSunshineData(sunshines);
-    })
-    .catch(error => console.error('Error fetching data:', error));
+      .then(response => response.json())
+      .then(data => {
+        const temperatures = data.map(entry => entry.data.temperature);
+        const humidities = data.map(entry => entry.data.humidity);
+        const fineDusts = data.map(entry => entry.data.fineDust);
+        const sunshines = data.map(entry => entry.data.sunshine);
+
+        setTemperatureData(temperatures);
+        setHumidityData(humidities);
+        setFineDustData(fineDusts);
+        setSunshineData(sunshines);
+      })
+      .catch(error => console.error('Error fetching data:', error));
+
+    fetch(`${userApiBaseUrl}/ai`)
+      .then(response => response.json())
+      .then(data => setFeedbackData(data))
   }, []);
+
+  const calculateMinMax = (data) => {
+    const min = Math.min(...data);
+    const max = Math.max(...data);
+    return { min: min - 10, max: max + 10 };
+  };
+
+  const getChartOptions = (data) => {
+    const { min, max } = calculateMinMax(data);
+    return {
+      scales: {
+        y: {
+          min: min,
+          max: max,
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        }
+      }
+    };
+  };
 
   const lineChartData = (label, data) => ({
     labels: ['10m', '9m', '8m', '7m', '6m', '5m', '4m', '3m', '2m', '1m'],
@@ -104,19 +133,6 @@ function StatisticsPage() {
     ]
   });
 
-  const lineChartOptions = {
-    scales: {
-      y: {
-        beginAtZero: true
-      }
-    },
-    plugins: {
-      legend: {
-        display: false
-      }
-    }
-  };
-
   const toggleTodayDataModal = () => {
     setShowTodayDataModal(!showTodayDataModal);
   };
@@ -128,7 +144,6 @@ function StatisticsPage() {
   const toggleAlcoholAbusersModal = () => {
     setShowAlcoholAbusersModal(!showAlcoholAbusersModal);
   };
-
 
   return (
     <div className="statistic-container-main">
@@ -173,7 +188,7 @@ function StatisticsPage() {
                 <h1>퇴근: {todayData.filter(data => data.status === '퇴근').length}명</h1>
               </div>
               <div className="statistic-container-top-content-item-content">
-                <h1>결근: {todayData.filter(data => data.status === '출근 전').length}명</h1>
+                <h1>출근 전: {todayData.filter(data => data.status === '출근 전').length}명</h1>
               </div>
             </div>
           </div>
@@ -203,8 +218,6 @@ function StatisticsPage() {
               </div>
             </div>
           )}
-
-
 
           <div className="statistic-container-top-content clickable" onClick={toggleWorkerDataModal}>
             <div className="statistic-container-top-content-title">
@@ -293,7 +306,7 @@ function StatisticsPage() {
               </div>
             </div>
           )}
-          
+
           <div className="statistic-container-top-content">
             <div className="statistic-container-top-content-title">
               <img src="/img/average.png" alt="icon" className="statistic-container-top-content-icon" />
@@ -329,14 +342,19 @@ function StatisticsPage() {
           <div className="statistic-container-top-content">
             <div className="statistic-container-top-content-title">
               <img src="/img/ai.png" alt="icon" className="statistic-container-top-content-icon" />
-              <h2>AI 통계</h2>
+              <h2 style={{ display: 'inline-block', verticalAlign: 'middle' }}>AI 통계</h2>
             </div>
-            <div className="statistic-container-top-content-item">
-
+            <div className="statistic-container-top-content-item" style={{ overflowX: 'auto', whiteSpace: 'nowrap' }}>
+              {feedbackData.map(feedback => (
+                <div key={feedback.feedbackId} className="feedback-item" style={{ display: 'inline-block', margin: '0 10px' }}>
+                  <h3>{feedback.feedback.title}</h3>
+                  <p>{feedback.feedback.contents}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
-        
+
         <div className="statistic-container-bottom">
           <div className="statistic-container-bottom-content">
             <div className="statistic-container-bottom-content-title">
@@ -344,7 +362,7 @@ function StatisticsPage() {
               <h2>기온</h2>
             </div>
             <div className="statistic-container-bottom-content-item">
-              <Line data={lineChartData('Temperature', temperatureData)} options={lineChartOptions} className="line-chart"/>
+              <Line data={lineChartData('Temperature', temperatureData)} options={getChartOptions(temperatureData)} className="line-chart" />
             </div>
           </div>
           <div className="statistic-container-bottom-content">
@@ -353,7 +371,7 @@ function StatisticsPage() {
               <h2>습도</h2>
             </div>
             <div className="statistic-container-bottom-content-item">
-              <Line data={lineChartData('Humidity', humidityData)} options={lineChartOptions} className="line-chart" />
+              <Line data={lineChartData('Humidity', humidityData)} options={getChartOptions(humidityData)} className="line-chart" />
             </div>
           </div>
           <div className="statistic-container-bottom-content">
@@ -362,7 +380,7 @@ function StatisticsPage() {
               <h2>미세먼지</h2>
             </div>
             <div className="statistic-container-bottom-content-item">
-              <Line data={lineChartData('Air Pollution', fineDustData)} options={lineChartOptions} className="line-chart" />
+              <Line data={lineChartData('Air Pollution', fineDustData)} options={getChartOptions(fineDustData)} className="line-chart" />
             </div>
           </div>
           <div className="statistic-container-bottom-content">
@@ -371,10 +389,10 @@ function StatisticsPage() {
               <h2>일조량</h2>
             </div>
             <div className="statistic-container-bottom-content-item">
-              <Line data={lineChartData('Sunlight', sunshineData)} options={lineChartOptions} className="line-chart" />
+              <Line data={lineChartData('Sunlight', sunshineData)} options={getChartOptions(sunshineData)} className="line-chart" />
             </div>
           </div>
-          
+
         </div>
       </div>
 

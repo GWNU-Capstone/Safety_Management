@@ -130,6 +130,7 @@ function Detail() {
 
   useEffect(() => {
     if (inputFields.id) {
+      console.log(inputFields.id);
       axios.get(`${userApiBaseUrl}/user/data/${inputFields.id}`)
         .then(response => {
           const userData = response.data;
@@ -146,8 +147,8 @@ function Detail() {
             };
           });
           console.log(newData);
-          setAttendanceRecords([]);
-          setAttendanceRecords(prevRecords => [...prevRecords, ...newData]);
+          setAttendanceRecords(newData);
+          console.log(attendanceRecords);
         })
         .catch(error => console.error('Error fetching user data:', error));
     }

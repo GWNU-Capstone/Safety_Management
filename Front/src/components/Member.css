@@ -293,3 +293,35 @@ a:hover {
   width: 100% !important; /* 각 입력 필드의 너비를 20px로 설정합니다 */
   text-align: center; /* 입력 필드 내의 텍스트를 중앙 정렬합니다 */
 }
+
+.table-column-id {
+  width: 5%;
+}
+
+.table-column-pos {
+  width: 10%;
+}
+
+.table-column-name {
+  width: 10%;
+}
+
+.table-column-age {
+  width: 5%;
+}
+
+.table-column-gender {
+  width: 5%;
+}
+
+.table-column-pNumber {
+  width: 15%;
+}
+
+.table-column-email {
+  width: 25%;
+}
+
+.table-column-address {
+  width: 25%;
+}
