@@ -141,8 +141,10 @@ public class UserDataService {
 
     // 알코올 이상자 수, 목록을 반환한는 앤드포인트
     public Map<String, Object> getAlcoholAbusers() {
+
+        LocalDate today = LocalDate.now();
         // 알코올 이상자 목록
-        List<UserProfile> alcoholAbusers = userDataRepository.findAll().stream()
+        List<UserProfile> alcoholAbusers = userDataRepository.findByDate(today).stream()
                 // 0.03일 경우에만 데이터가 안 들어가는 이유 . 부동소수점
                 .filter(userData -> Math.abs(userData.getUserDrink() - 0.03) < 1e-6 || userData.getUserDrink() > 0.03)
                 .map(UserData::getUserProfile)
@@ -245,7 +247,7 @@ public class UserDataService {
 
 
     // 알코올: (심각) 0.03 이상
-    // 체온: (정상) 36.1 이상 37.2 이하, (주의) 37.3 이상 38.0 이하, (심각) 35.0 이하, 38.1 이상
+    // 체온: (정상) 35.1 이상 37.2 이하, (주의) 37.3 이상 38.0 이하, (심각) 35.0 이하, 38.1 이상
     // 심박수: (정상) 60 이상 100 이하, (주의) 50 이상 59 이하, 101 이상 120 이하, (심각) 50 미만, 120 초과
     // 산소포화도: (정상) 95이상, (주의) 90초과 95 미만, (심각) 90이하
 
@@ -272,7 +274,7 @@ public class UserDataService {
     }
 
     private String getUserTempStatus(float userTemp) {
-        if ((userTemp >= 36.1 && userTemp <= 37.2) || isApproximatelyEqual(userTemp, 36.1) || isApproximatelyEqual(userTemp, 37.2)) {
+        if ((userTemp >= 35.1 && userTemp <= 37.2) || isApproximatelyEqual(userTemp, 35.1) || isApproximatelyEqual(userTemp, 37.2)) {
             return "정상";
         } else if ((userTemp >= 37.3 && userTemp <= 38.0) || isApproximatelyEqual(userTemp, 37.3) || isApproximatelyEqual(userTemp, 38.0)) {
             return "주의";
