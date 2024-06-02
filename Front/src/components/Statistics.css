@@ -31,6 +31,30 @@ body {
 	flex-direction: row; /* 자식들을 가로로 배치 */
 }
 
+.statistic-ai-message {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	background-color: #ffffff;
+	padding: 20px;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	max-height: calc(100vh - 160px);
+	margin-right: 20px;
+}
+
+.statistic-ai-message-content {
+	display: flex;
+	align-items: center;
+	margin-right: 20px; /* 아이콘과 텍스트 사이의 간격 조절 */
+}
+
+.feedback-item {
+	display: flex;
+	align-items: center;
+	white-space: normal;
+	font-size: 20px;
+}
 .statistic-header-menu {
 	display: flex;
 	flex: 0 0 50px;
@@ -42,6 +66,7 @@ body {
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 	max-height: calc(100vh - 160px);
 }
+
 
 .logo-section .statistic-logo {
 	width: 15vw;
@@ -95,26 +120,30 @@ body {
 }
 
 .statistic-container-top-content {
-  flex: 1 1 0; /* 각 요소가 동일한 크기를 갖도록 설정 */
-  background-color: #ffffff; /* 배경색을 흰색으로 설정 */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* 내부 요소들을 좌측 정렬 */
-  gap: 20px;
-  padding: 20px; /* 패딩 추가 */
-  border-radius: 5px; /* 경계선 둥글게 처리 */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 약간의 그림자 효과 */
-}
+	flex: 1 1 0; /* 각 요소가 동일한 크기를 갖도록 설정 */
+	background-color: #ffffff; /* 배경색을 흰색으로 설정 */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start; /* 내부 요소들을 좌측 정렬 */
+	gap: 20px;
+	padding: 20px; /* 패딩 추가 */
+	border-radius: 5px; /* 경계선 둥글게 처리 */
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 약간의 그림자 효과 */
+	overflow: hidden; /* 스크롤바 숨기기 */
+  }
+  
 
 .statistic-container-top-content-item {
 	width: 100%;
 	height: 100%;
 	display: flex;
 	flex-direction: column;
+	overflow: hidden;
 	border-top: 1px solid #ddd;
 	justify-content: center;
-  font-size: 10px;
-  text-align: left; /* 텍스트를 좌측 정렬 */
+	font-size: 10px;
+	text-align: left; /* 텍스트를 좌측 정렬 */
+	position: relative; /* 자식 요소의 절대 위치를 설정하기 위해 추가 */
 }
 
 .statistic-container-top-content-item-content {
@@ -249,6 +278,10 @@ body {
   cursor: pointer;
 }
 
+.ai {
+	background-color: azure;
+}
+
 .statistics-modal {
 	display: flex;
 	align-items: center;
@@ -294,6 +327,15 @@ body {
 	border-radius: 10px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+.statistics-modal-ai {
+	background-color: #fefefe;
+	width: 700px;
+	height: 500px;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
   
 .statistics-modal-close {
   position: absolute;
@@ -303,6 +345,15 @@ body {
   border: none;
   font-size: 16px;
   cursor: pointer;
+}
+
+
+.statistics-modal-title {
+	display: flex;
+	align-items: center;
+	justify-content: center; /* 가로 중앙 정렬 */
+	width: 100%; /* 부모 요소의 전체 너비 사용 */
+	text-align: center;
 }
 
 .column-userNo {
@@ -327,3 +378,13 @@ th, td {
 	padding: 10px; /* 셀 내부 여백 */
 	text-align: left; /* 텍스트 정렬 */
 }
+
+  
+
+  
+  .feedback-item-modal {
+	display: inline-block;
+	margin: 0 10px;
+	overflow: hidden;
+	white-space: nowrap;
+  }

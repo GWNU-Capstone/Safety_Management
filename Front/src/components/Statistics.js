@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
@@ -14,6 +14,7 @@ function StatisticsPage() {
   const [showTodayDataModal, setShowTodayDataModal] = useState(false);
   const [showWorkerDataModal, setShowWorkerDataModal] = useState(false);
   const [showAlcoholAbusersModal, setShowAlcoholAbusersModal] = useState(false);
+  const [showAIModal, setShowAIModal] = useState(false);
   const [todayData, setTodayData] = useState([]);
   const [alcoholData, setAlcoholData] = useState({ alcoholAbuserCount: 0, alcoholAbusers: [] });
   const [avgData, setAvgData] = useState({ averageOxygen: 0, averageHeartRate: 0, averageTemp: 0 });
@@ -28,6 +29,8 @@ function StatisticsPage() {
   const [sunshineData, setSunshineData] = useState([]);
 
   const [feedbackData, setFeedbackData] = useState([]);
+  const [currentFeedbackIndex, setCurrentFeedbackIndex] = useState(0);
+  const feedbackRef = useRef(null);
 
   useEffect(() => {
     // 출근 현황
@@ -95,7 +98,18 @@ function StatisticsPage() {
     fetch(`${userApiBaseUrl}/ai`)
       .then(response => response.json())
       .then(data => setFeedbackData(data))
+      .catch(error => console.error('Error fetching data:', error));
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentFeedbackIndex(prevIndex => (prevIndex + 1) % feedbackData.length);
+    }, 10000);
+  
+    return () => clearInterval(interval);
+  }, [feedbackData]);
+
+  
 
   const calculateMinMax = (data) => {
     const min = Math.min(...data);
@@ -145,6 +159,10 @@ function StatisticsPage() {
     setShowAlcoholAbusersModal(!showAlcoholAbusersModal);
   };
 
+  const toggleAIModal = () => {
+    setShowAIModal(!showAIModal);
+  };
+
   return (
     <div className="statistic-container-main">
       <header className="statistic-header">
@@ -155,6 +173,16 @@ function StatisticsPage() {
         </div>
 
         <div className="statistic-rightSection">
+          <div className="statistic-ai-message clickable ai" onClick={toggleAIModal}>
+            <div className="statistic-ai-message-content">
+              <img src="/img/ai.png" alt="icon" className="statistic-container-top-content-icon" />
+            </div>
+            {feedbackData.length > 0 && (
+              <div className="feedback-item" ref={feedbackRef}>
+                {feedbackData[currentFeedbackIndex].feedback.contents}
+              </div>
+            )}
+          </div>
           <div className="statistic-header-menu">
             <div className="statistic-menu-wrapper">
               <Link to="/member" className="statistic-menu-item">
@@ -196,7 +224,10 @@ function StatisticsPage() {
           {showTodayDataModal && (
             <div className="statistics-modal" onClick={toggleTodayDataModal}>
               <div className="statistics-modal-todayData" onClick={(e) => e.stopPropagation()}>
-                <h2>Today 출근 현황</h2>
+                <div className="statistics-modal-title">
+                  <img src="/img/today.png" alt="icon" className="statistic-container-top-content-icon" />
+                  <h2>Today 출근 현황</h2>
+                </div>
                 <table>
                   <thead>
                     <tr>
@@ -240,7 +271,10 @@ function StatisticsPage() {
           {showWorkerDataModal && (
             <div className="statistics-modal" onClick={toggleWorkerDataModal}>
               <div className="statistics-modal-workerData" onClick={(e) => e.stopPropagation()}>
-                <h2>근로자 종합 데이터</h2>
+                <div className="statistics-modal-title">
+                  <img src="/img/total.png" alt="icon" className="statistic-container-top-content-icon" />
+                  <h2>근로자 종합 데이터</h2>
+                </div>
                 <table>
                   <thead>
                     <tr>
@@ -286,7 +320,10 @@ function StatisticsPage() {
           {showAlcoholAbusersModal && (
             <div className="statistics-modal" onClick={toggleAlcoholAbusersModal}>
               <div className="statistics-modal-alcoholAbusers" onClick={(e) => e.stopPropagation()}>
-                <h2>근로자 알코올 이상자</h2>
+                <div className="statistics-modal-title">
+                  <img src="/img/alcoholic.png" alt="icon" className="statistic-container-top-content-icon" />
+                  <h2>근로자 알코올 이상자</h2>
+                </div>
                 <table>
                   <thead>
                     <tr>
@@ -339,20 +376,24 @@ function StatisticsPage() {
             </div>
           </div>
 
-          <div className="statistic-container-top-content">
-            <div className="statistic-container-top-content-title">
-              <img src="/img/ai.png" alt="icon" className="statistic-container-top-content-icon" />
-              <h2 style={{ display: 'inline-block', verticalAlign: 'middle' }}>AI 통계</h2>
-            </div>
-            <div className="statistic-container-top-content-item" style={{ overflowX: 'auto', whiteSpace: 'nowrap' }}>
-              {feedbackData.map(feedback => (
-                <div key={feedback.feedbackId} className="feedback-item" style={{ display: 'inline-block', margin: '0 10px' }}>
-                  <h3>{feedback.feedback.title}</h3>
-                  <p>{feedback.feedback.contents}</p>
+          
+
+
+          {showAIModal && (
+            <div className="statistics-modal" onClick={toggleAIModal}>
+              <div className="statistics-modal-ai" onClick={(e) => e.stopPropagation()}>
+                <div className="statistics-modal-title">
+                  <img src="/img/ai.png" alt="icon" className="statistic-container-top-content-icon" />
+                  <h2>AI 분석</h2>
                 </div>
-              ))}
+                {feedbackData.map(feedback => (
+                  <div key={feedback.feedbackId} className="feedback-item-modal" style={{ display: 'inline-block', margin: '0 10px' }}>
+                    <p>● {feedback.feedback.contents}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="statistic-container-bottom">
