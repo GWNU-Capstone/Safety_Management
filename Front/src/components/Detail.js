@@ -80,8 +80,8 @@ function Detail() {
       // 프로필 정보와 메모 데이터 업데이트 요청
       axios.patch(`${userApiBaseUrl}/update/${inputFields.id}`, {
         userNo: inputFields.id,
-        userName: inputFields.name,
-        userImage: inputFields.name,  // 이미지 정보 업데이트
+        userName: newName,
+        userImage: newName,  // 이미지 정보 업데이트
         userResidentNum: inputFields.ssn,
         userAge: inputFields.age,
         userTelNo: inputFields.phone,
@@ -129,26 +129,29 @@ function Detail() {
   };
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/user/data/${inputFields.id}`)
-      .then(response => {
-        const userData = response.data;
-        const newData = Object.values(userData).map(item => {
-          return {
-            date: item.userData.date,
-            enter: item.userData.userStart,
-            exit: item.userData.userEnd,
-            bac: `${item.userData.userDrink}`,
-            temp: `${item.userData.userTemp}`,
-            hr: `${item.userData.userHeartRate}`,
-            oxy: `${item.userData.userOxygen}`,
-            status: item.state
-          };
-        });
-        setAttendanceRecords([]);
-        setAttendanceRecords(prevRecords => [...prevRecords, ...newData]);
-      })
-      .catch(error => console.error('Error fetching user data:', error));
-  }, [inputFields.id]);
+    if (inputFields.id) {
+      axios.get(`${userApiBaseUrl}/user/data/${inputFields.id}`)
+        .then(response => {
+          const userData = response.data;
+          const newData = Object.values(userData).map(item => {
+            return {
+              date: item.userData.date,
+              enter: item.userData.userStart,
+              exit: item.userData.userEnd,
+              bac: `${item.userData.userDrink}`,
+              temp: `${item.userData.userTemp}`,
+              hr: `${item.userData.userHeartRate}`,
+              oxy: `${item.userData.userOxygen}`,
+              status: item.state
+            };
+          });
+          console.log(newData);
+          setAttendanceRecords([]);
+          setAttendanceRecords(prevRecords => [...prevRecords, ...newData]);
+        })
+        .catch(error => console.error('Error fetching user data:', error));
+    }
+  }, [inputFields.id]);  
 
   return (
     <div className="detail-container">

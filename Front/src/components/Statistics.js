@@ -22,6 +22,11 @@ function StatisticsPage() {
   const [yesterdayWorkTime, setYesterdayWorkTime] = useState({ hours: 0, minutes: 0 }); 
   const [yesterdayWorkTimeMessage, setYesterdayWorkTimeMessage] = useState('');
 
+  const [temperatureData, setTemperatureData] = useState([]);
+  const [humidityData, setHumidityData] = useState([]);
+  const [fineDustData, setFineDustData] = useState([]);
+  const [sunshineData, setSunshineData] = useState([]);
+
   useEffect(() => {
     // 출근 현황
     fetch(`${userApiBaseUrl}/today/user-status`)
@@ -58,7 +63,7 @@ function StatisticsPage() {
       .catch(error => console.error('Error fetching data:', error));
 
     // 전날 평균 근무 시간
-    fetch('http://localhost:8080/yesterday/average-worktime')
+    fetch(`${userApiBaseUrl}/yesterday/average-worktime`)
       .then(response => response.json())
       .then(data => {
         if (data.message) {
@@ -68,10 +73,26 @@ function StatisticsPage() {
         }
       })
       .catch(error => console.error('Error fetching data:', error));
+
+    // 환경 데이터
+    fetch(`${userApiBaseUrl}/data`)
+    .then(response => response.json())
+    .then(data => {
+      const temperatures = data.map(entry => entry.data.temperature);
+      const humidities = data.map(entry => entry.data.humidity);
+      const fineDusts = data.map(entry => entry.data.fineDust);
+      const sunshines = data.map(entry => entry.data.sunshine);
+      
+      setTemperatureData(temperatures);
+      setHumidityData(humidities);
+      setFineDustData(fineDusts);
+      setSunshineData(sunshines);
+    })
+    .catch(error => console.error('Error fetching data:', error));
   }, []);
 
   const lineChartData = (label, data) => ({
-    labels: ['1m', '2m', '3m', '4m', '5m', '6m', '7m', '8m', '9m', '10m'],
+    labels: ['10m', '9m', '8m', '7m', '6m', '5m', '4m', '3m', '2m', '1m'],
     datasets: [
       {
         label: label,
@@ -323,7 +344,7 @@ function StatisticsPage() {
               <h2>기온</h2>
             </div>
             <div className="statistic-container-bottom-content-item">
-              <Line data={lineChartData('Temperature', [33, 25, 35, 51, 54, 76, 80])} options={lineChartOptions} className="line-chart" />
+              <Line data={lineChartData('Temperature', temperatureData)} options={lineChartOptions} className="line-chart"/>
             </div>
           </div>
           <div className="statistic-container-bottom-content">
@@ -332,7 +353,7 @@ function StatisticsPage() {
               <h2>습도</h2>
             </div>
             <div className="statistic-container-bottom-content-item">
-              <Line data={lineChartData('Humidity', [45, 30, 50, 60, 70, 80, 90])} options={lineChartOptions} className="line-chart" />
+              <Line data={lineChartData('Humidity', humidityData)} options={lineChartOptions} className="line-chart" />
             </div>
           </div>
           <div className="statistic-container-bottom-content">
@@ -341,7 +362,7 @@ function StatisticsPage() {
               <h2>미세먼지</h2>
             </div>
             <div className="statistic-container-bottom-content-item">
-              <Line data={lineChartData('Air Pollution', [12, 19, 3, 5, 2, 3, 7])} options={lineChartOptions} className="line-chart" />
+              <Line data={lineChartData('Air Pollution', fineDustData)} options={lineChartOptions} className="line-chart" />
             </div>
           </div>
           <div className="statistic-container-bottom-content">
@@ -350,7 +371,7 @@ function StatisticsPage() {
               <h2>일조량</h2>
             </div>
             <div className="statistic-container-bottom-content-item">
-              <Line data={lineChartData('Sunlight', [5, 10, 15, 20, 25, 30, 30])} options={lineChartOptions} className="line-chart" />
+              <Line data={lineChartData('Sunlight', sunshineData)} options={lineChartOptions} className="line-chart" />
             </div>
           </div>
           

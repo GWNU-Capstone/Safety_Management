@@ -28,10 +28,6 @@ function Member() {
     return data.slice().sort((a, b) => a.id - b.id);
   };
 
-  useEffect(() => {
-    setMembersData(prevData => sortMembersData(prevData));
-  }, [membersData]);
-
   // 사원번호 상태 초기화
   useEffect(() => {
     setEmployeeId('');
