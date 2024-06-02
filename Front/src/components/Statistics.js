@@ -33,67 +33,79 @@ function StatisticsPage() {
   const feedbackRef = useRef(null);
 
   useEffect(() => {
-    // 출근 현황
-    fetch(`${userApiBaseUrl}/today/user-status`)
-      .then(response => response.json())
-      .then(data => {
-        const combinedData = [
-          ...data.presentUsersList.map(user => ({ ...user, status: '출근' })),
-          ...data.departedUsersList.map(user => ({ ...user, status: '퇴근' })),
-          ...data.yetStartedUsersList.map(user => ({ ...user, status: '출근 전' }))
-        ];
-        setTodayData(combinedData);
-      })
-      .catch(error => console.error('Error fetching data:', error));
-
-    // 근로자 알코올 이상자
-    fetch(`${userApiBaseUrl}/today/alcohol-abusers`)
-      .then(response => response.json())
-      .then(data => setAlcoholData(data))
-      .catch(error => console.error('Error fetching data:', error));
-
-    // 근로자 평균 수치
-    fetch(`${userApiBaseUrl}/today/data-average`)
-      .then(response => response.json())
-      .then(data => setAvgData(data))
-      .catch(error => console.error('Error fetching data:', error));
-
-    // 근로자 건강 상태
-    fetch(`${userApiBaseUrl}/today/user-health-status`)
-      .then(response => response.json())
-      .then(data => {
-        setTotalResultCount(data.totalResultCount);
-        setWorkerData(data.userStatusList);
-      })
-      .catch(error => console.error('Error fetching data:', error));
-
-    // 전날 평균 근무 시간
-    fetch(`${userApiBaseUrl}/yesterday/average-worktime`)
-      .then(response => response.json())
-      .then(data => {
-        if (data.message) {
-          setYesterdayWorkTimeMessage(data.message);
-        } else {
-          setYesterdayWorkTime(data);
-        }
-      })
-      .catch(error => console.error('Error fetching data:', error));
-
-    // 환경 데이터
-    fetch(`${userApiBaseUrl}/data`)
-      .then(response => response.json())
-      .then(data => {
-        const temperatures = data.map(entry => entry.data.temperature);
-        const humidities = data.map(entry => entry.data.humidity);
-        const fineDusts = data.map(entry => entry.data.fineDust);
-        const sunshines = data.map(entry => entry.data.sunshine);
-
-        setTemperatureData(temperatures);
-        setHumidityData(humidities);
-        setFineDustData(fineDusts);
-        setSunshineData(sunshines);
-      })
-      .catch(error => console.error('Error fetching data:', error));
+    const fetchData = () => {
+      // 출근 현황
+      fetch(`${userApiBaseUrl}/today/user-status`)
+        .then(response => response.json())
+        .then(data => {
+          const combinedData = [
+            ...data.presentUsersList.map(user => ({ ...user, status: '출근' })),
+            ...data.departedUsersList.map(user => ({ ...user, status: '퇴근' })),
+            ...data.yetStartedUsersList.map(user => ({ ...user, status: '출근 전' }))
+          ];
+          setTodayData(combinedData);
+        })
+        .catch(error => console.error('Error fetching data:', error));
+  
+      // 근로자 알코올 이상자
+      fetch(`${userApiBaseUrl}/today/alcohol-abusers`)
+        .then(response => response.json())
+        .then(data => setAlcoholData(data))
+        .catch(error => console.error('Error fetching data:', error));
+  
+      // 근로자 평균 수치
+      fetch(`${userApiBaseUrl}/today/data-average`)
+        .then(response => response.json())
+        .then(data => setAvgData(data))
+        .catch(error => console.error('Error fetching data:', error));
+  
+      // 근로자 건강 상태
+      fetch(`${userApiBaseUrl}/today/user-health-status`)
+        .then(response => response.json())
+        .then(data => {
+          setTotalResultCount(data.totalResultCount);
+          setWorkerData(data.userStatusList);
+        })
+        .catch(error => console.error('Error fetching data:', error));
+  
+      // 전날 평균 근무 시간
+      fetch(`${userApiBaseUrl}/yesterday/average-worktime`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.message) {
+            setYesterdayWorkTimeMessage(data.message);
+          } else {
+            setYesterdayWorkTime(data);
+          }
+        })
+        .catch(error => console.error('Error fetching data:', error));
+  
+      // 환경 데이터
+      fetch(`${userApiBaseUrl}/data`)
+        .then(response => response.json())
+        .then(data => {
+          const temperatures = data.map(entry => entry.data.temperature);
+          const humidities = data.map(entry => entry.data.humidity);
+          const fineDusts = data.map(entry => entry.data.fineDust);
+          const sunshines = data.map(entry => entry.data.sunshine);
+  
+          setTemperatureData(temperatures);
+          setHumidityData(humidities);
+          setFineDustData(fineDusts);
+          setSunshineData(sunshines);
+        })
+        .catch(error => console.error('Error fetching data:', error));
+      console.log('Data fetched at:', new Date());
+    };
+  
+    // 최초 1회 데이터 요청
+    fetchData();
+  
+    // 1분마다 데이터 다시 요청
+    const interval = setInterval(fetchData, 60000);
+  
+    // 컴포넌트가 unmount될 때 interval 정리
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
