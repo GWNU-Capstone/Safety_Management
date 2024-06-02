@@ -52,9 +52,6 @@ jobs:
             CURRENT_UPSTREAM=yellow
           fi
           echo CURRENT_UPSTREAM=$CURRENT_UPSTREAM >> $GITHUB_ENV
-
-      - name: Set environment variables
-        run: |
           if [ $CURRENT_UPSTREAM = red ]; then
             echo "CURRENT_PORT=8080" >> $GITHUB_ENV
             echo "STOPPED_PORT=8081" >> $GITHUB_ENV
@@ -66,6 +63,7 @@ jobs:
           else
             echo "error"
             exit 1
+          fi
           
       - name: Docker compose
         uses: appleboy/ssh-action@master
