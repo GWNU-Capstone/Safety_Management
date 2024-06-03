@@ -5,10 +5,12 @@ import com.application.safety.entity.UserData;
 import com.application.safety.entity.UserProfile;
 import com.application.safety.repository.UserDataRepository;
 import com.application.safety.repository.UserProfileRepository;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -351,6 +353,57 @@ public class UserDataService {
         response.put("hours", averageHours);
         response.put("minutes", averageMinutes);
         return response;
+    }
+
+
+    // userNo 가 1번인 사람에게 데이터 값 임의로 넣어놓기
+    @PostConstruct
+    public void generateAndSaveUserDataForUser() {
+        UserProfile userProfile = userProfileRepository.findByUserNo(1);
+        if (userProfile == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        List<UserData> userDataList = new ArrayList<>();
+        Random random = new Random();
+
+        for (int i = 0; i < 13; i++) {
+            UserData userData = new UserData();
+            userData.setDate(LocalDate.of(2024, 4, (i % 30) + 1));
+            userData.setUserStart(LocalTime.of(7, 23, 18));
+            userData.setUserEnd(LocalTime.of(17, 23, 18));
+            userData.setUserDrink(0.0F);
+            userData.setUserTemp((float) (i % 2 == 0 ? 36.5 : 36.6));
+            userData.setUserHeartRate(80 + random.nextInt(11)); // 80에서 90 사이의 임의값 설정
+            userData.setUserOxygen(100);
+            userDataList.add(userData);
+        }
+
+        userDataRepository.saveAll(userDataList);
+    }
+
+    @Transactional
+    public List<Map<String, Object>> getUserDataList() {
+        List<UserData> userDataAll = userDataRepository.findAll();
+        List<Map<String, Object>> userDataList = new ArrayList<>();
+
+        for (UserData userData : userDataAll) {
+            Map<String, Object> response = new HashMap<>();
+            String state = (userData.getUserEnd() == null) ? "출근" : "퇴근";
+
+            response.put("id", 1); // 모든 데이터의 id를 1로 설정
+            response.put("date", userData.getDate());
+            response.put("userStart", userData.getUserStart());
+            response.put("userEnd", userData.getUserEnd());
+            response.put("userDrink", userData.getUserDrink());
+            response.put("userTemp", userData.getUserTemp());
+            response.put("userHeartRate", userData.getUserHeartRate());
+            response.put("userOxygen", userData.getUserOxygen());
+            response.put("state", state);
+            userDataList.add(response);
+        }
+
+        return userDataList;
     }
 
 }

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -67,4 +68,13 @@ public class UserDataController {
     public Map<String, Object> getYesterdayAverageWorkTime() {
         return userDataService.getYesterdayAverageWorkTime();
     }
+
+
+    // 특정 사원- 상세 정보에 데이터 값 넣어놓기
+    // 사원번호 1번인 김민서 사원
+    @GetMapping("/user-data")
+    public List<Map<String, Object>> getUserData() {
+        return userDataService.getUserDataList();
+    }
+
 }
