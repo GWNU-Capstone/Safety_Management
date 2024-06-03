@@ -5,10 +5,12 @@ import com.application.safety.entity.UserData;
 import com.application.safety.entity.UserProfile;
 import com.application.safety.repository.UserDataRepository;
 import com.application.safety.repository.UserProfileRepository;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -31,7 +33,7 @@ public class UserDataService {
 
         List<UserData> userDataAll = userDataRepository.findByUserProfile(userProfile);
 
-        for(UserData userData : userDataAll) {
+        for (UserData userData : userDataAll) {
             Map<String, Object> response = new HashMap<>();
             String state;
 
@@ -43,11 +45,10 @@ public class UserDataService {
             dto.setUserHeartRate(userData.getUserHeartRate());
             dto.setUserOxygen(userData.getUserOxygen());
 
-            if(userData.getUserEnd() == null) {
-                dto.setUserEnd(LocalTime.of(0,0,0));
+            if (userData.getUserEnd() == null) {
+                dto.setUserEnd(LocalTime.of(0, 0, 0));
                 state = "출근";
-            }
-            else {
+            } else {
                 dto.setUserEnd(userData.getUserEnd());
                 state = "퇴근";
             }
@@ -55,7 +56,7 @@ public class UserDataService {
             response.put("userData", dto);
             response.put("state", state);
 
-            userDataList.put(userData.getUserDataNo(),response);
+            userDataList.put(userData.getUserDataNo(), response);
         }
 
         return userDataList;
@@ -269,6 +270,7 @@ public class UserDataService {
     // 체온 상태 판별
     // 부동소수점 , 경곗값에서 정상.주의.심각 판별 오류
     private static final double EPSILON = 0.0001;
+
     private boolean isApproximatelyEqual(double a, double b) {
         return Math.abs(a - b) < EPSILON;
     }
@@ -353,4 +355,71 @@ public class UserDataService {
         return response;
     }
 
+
+    // userNo 가 1번인 사람에게 데이터 값 임의로 넣어놓기
+    public List<Map<String, Object>> addSampleUserData() {
+        Optional<UserProfile> userProfileOpt = userProfileRepository.findById(1);
+        if (userProfileOpt.isPresent()) {
+            UserProfile userProfile = userProfileOpt.get();
+            List<UserData> userDataList = new ArrayList<>();
+            List<Map<String, Object>> userDataJsonList = new ArrayList<>();
+
+            // 체온 3개 중에 랜덤
+            Random random = new Random();
+            List<Float> possibleTemps = Arrays.asList(36.3f, 36.4f, 36.5f);
+
+            for (int i = 0; i < 15; i++) {
+                LocalDate date = LocalDate.of(2024, 4, 3).plusDays(i);
+
+                // 출근시간 랜덤 (07:00 ~ 09:00 사이)
+                int startHour = 7 + random.nextInt(3);
+                int startMinute = random.nextInt(60);
+                int startSecond = random.nextInt(60);
+                LocalTime userStart = LocalTime.of(startHour, startMinute, startSecond);
+
+                // 퇴근 시간 랜덤 (17:00 ~ 19:00 사이)
+                int endHour = 17 + random.nextInt(3);
+                int endMinute = random.nextInt(60);
+                int endSecond = random.nextInt(60);
+                LocalTime userEnd = LocalTime.of(endHour, endMinute, endSecond);
+
+                // 체온, 심박수, 산소포화도
+                float userTemp = possibleTemps.get(random.nextInt(possibleTemps.size()));
+                int userHeartRate = 95 + random.nextInt(6);
+                int userOxygen = 95 + random.nextInt(6);
+
+                UserData userData = new UserData();
+                userData.setUserProfile(userProfile);
+                userData.setUserDrink(0.0f);
+                userData.setUserHeartRate(userHeartRate);
+                userData.setUserTemp(userTemp);
+                userData.setUserOxygen(userOxygen);
+                userData.setDate(date);
+                userData.setUserStart(userStart);
+                userData.setUserEnd(userEnd);
+
+                userDataList.add(userData);
+
+                Map<String, Object> userDataJson = new HashMap<>();
+                userDataJson.put("userNo", userProfile.getUserNo());
+                userDataJson.put("userDrink", userData.getUserDrink());
+                userDataJson.put("userHeartRate", userData.getUserHeartRate());
+                userDataJson.put("userTemp", userData.getUserTemp());
+                userDataJson.put("userOxygen", userData.getUserOxygen());
+                userDataJson.put("date", userData.getDate());
+                userDataJson.put("userStart", userData.getUserStart());
+                userDataJson.put("userEnd", userData.getUserEnd());
+                userDataJson.put("state", "퇴근");
+
+                userDataJsonList.add(userDataJson);
+            }
+
+            userDataRepository.saveAll(userDataList);
+            return userDataJsonList;
+        } else {
+            throw new IllegalArgumentException("Invalid user profile ID");
+        }
+    }
+
 }
+
