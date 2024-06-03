@@ -68,14 +68,4 @@ public class UserDataController {
     public Map<String, Object> getYesterdayAverageWorkTime() {
         return userDataService.getYesterdayAverageWorkTime();
     }
-
-
-    // 임의 데이터 추가 (userNo가 1인 김민서 사원)
-    @PostMapping("/add-sample-data")
-    public ResponseEntity<List<Map<String, Object>>> addSampleUserData() {
-        List<Map<String, Object>> initializedData = userDataService.addSampleUserData();
-        return ResponseEntity.ok(initializedData);
-    }
-
-
 }
