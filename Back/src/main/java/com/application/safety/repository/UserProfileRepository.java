@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface UserProfileRepository extends JpaRepository<UserProfile, Integer> {
-    UserProfile findByUserNo(int i);
+
 }

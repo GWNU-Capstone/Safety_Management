@@ -70,11 +70,12 @@ public class UserDataController {
     }
 
 
-    // 특정 사원- 상세 정보에 데이터 값 넣어놓기
-    // 사원번호 1번인 김민서 사원
-    @GetMapping("/user-data")
-    public List<Map<String, Object>> getUserData() {
-        return userDataService.getUserDataList();
+    // 임의 데이터 추가 (userNo가 1인 김민서 사원)
+    @PostMapping("/add-sample-data")
+    public ResponseEntity<List<Map<String, Object>>> addSampleUserData() {
+        List<Map<String, Object>> initializedData = userDataService.addSampleUserData();
+        return ResponseEntity.ok(initializedData);
     }
+
 
 }
