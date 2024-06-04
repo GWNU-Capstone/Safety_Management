@@ -1,4 +1,26 @@
 # Safety_Management
+아두이노(Arduino) + 라즈베리파이(Raspberry Pi) + 스프링부트(Spring Boot) + 리액트(React)
+
+<br>
+
+## 📑 프로젝트 설명
+건설 현장에서의 안전 관리 중요성은 매년 점점 증가하고 있습니다.
+
+이러한 문제에 대응하기 위해, 출입 관리와 건강 상태 모니터링을 통합한 시스템을 개발 목표로 선정했습니다.
+
+<br>
+
+## 🕒 개발 기간
+* 2024.03.11일 ~
+
+## 👩🏻‍💻🧑🏻‍💻 프로젝트 멤버
+|<img src="https://avatars.githubusercontent.com/u/118153233?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/163621982?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/99818847?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/132491134?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/148872743?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/149156628?v=4" width="150" height="150"/>|
+|:-:|:-:|:-:|:-:|:-:|:-:|
+|[@taek2222](https://github.com/taek2222)|[@chaewon9472](https://github.com/chaewon9472)|[@02present](https://github.com/02present)|[@Yunwendy](https://github.com/Yunwendy)|[@fullmoon1219](https://github.com/fullmoon1219)|[@sapang123](https://github.com/sapang123)|
+|✔️ PM - Back |✔️ Back |✔️ Hardware |✔️ Hardware |✔️ Front |✔️ Front |
+
+
+# Safety_Management
 [GWNU] 공사장 안전 관리 시스템
 
 ## 🗂️ API 명세서
