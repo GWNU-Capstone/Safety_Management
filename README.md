@@ -1,5 +1,14 @@
-# Safety_Management
-아두이노(Arduino) + 라즈베리파이(Raspberry Pi) + 스프링부트(Spring Boot) + 리액트(React)
+# 👷🏻 SMART GATE - Safety_Management
+> 공사장 출입시스템을 개발해 근로자의 건강 상태 및 근로 환경을 모니터링 하는 시스템 🔥
+
+<p align="center">
+  <img width="70%" alt="applogo" src="https://github.com/GWNU-Capstone/Safety_Management/assets/118153233/671cc4b6-7c42-4748-8177-fbf60292f9f9">
+  <br><br>
+  <img alt="Static Badge" src="https://img.shields.io/badge/Spring%20Boot-Back-%6DB33F?style=for-the-badge&logo=springboot&logoSize=auto">
+  <img alt="Static Badge" src="https://img.shields.io/badge/React-Front-%2361DAFB?style=for-the-badge&logo=React&logoSize=auto">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Raspberry%20Pi-Hardware-%23A22846?style=for-the-badge&logo=raspberrypi&logoSize=auto">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Arduino-Hardware-%2300878F?style=for-the-badge&logo=arduino&logoSize=auto">
+</p>
 
 <br>
 
@@ -13,15 +22,13 @@
 ## 🕒 개발 기간
 * 2024.03.11일 ~
 
+<br>
+
 ## 👩🏻‍💻🧑🏻‍💻 프로젝트 멤버
-|<img src="https://avatars.githubusercontent.com/u/118153233?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/163621982?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/99818847?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/132491134?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/148872743?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/149156628?v=4" width="150" height="150"/>|
+|<img src="https://avatars.githubusercontent.com/u/118153233?v=4" width="100" height="100"/>|<img src="https://avatars.githubusercontent.com/u/163621982?v=4" width="100" height="100"/>|<img src="https://avatars.githubusercontent.com/u/99818847?v=4" width="100" height="100"/>|<img src="https://avatars.githubusercontent.com/u/132491134?v=4" width="100" height="100"/>|<img src="https://avatars.githubusercontent.com/u/148872743?v=4" width="100" height="100"/>|<img src="https://avatars.githubusercontent.com/u/149156628?v=4" width="100" height="100"/>|
 |:-:|:-:|:-:|:-:|:-:|:-:|
 |[@taek2222](https://github.com/taek2222)|[@chaewon9472](https://github.com/chaewon9472)|[@02present](https://github.com/02present)|[@Yunwendy](https://github.com/Yunwendy)|[@fullmoon1219](https://github.com/fullmoon1219)|[@sapang123](https://github.com/sapang123)|
 |✔️ PM - Back |✔️ Back |✔️ Hardware |✔️ Hardware |✔️ Front |✔️ Front |
-
-
-# Safety_Management
-[GWNU] 공사장 안전 관리 시스템
 
 ## 🗂️ API 명세서
 ### 📕 Backend(Spring Boot)
