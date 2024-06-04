@@ -30,6 +30,8 @@
 |[@taek2222](https://github.com/taek2222)|[@chaewon9472](https://github.com/chaewon9472)|[@02present](https://github.com/02present)|[@Yunwendy](https://github.com/Yunwendy)|[@fullmoon1219](https://github.com/fullmoon1219)|[@sapang123](https://github.com/sapang123)|
 |✔️ PM - Back |✔️ Back |✔️ Hardware |✔️ Hardware |✔️ Front |✔️ Front |
 
+<br>
+
 ## 🗂️ API 명세서
 ### 📕 Backend(Spring Boot)
 | 포인트 역할             | Method | URL                           | 요약 설명                              |
@@ -46,10 +48,6 @@
 | **근로자 측정값 평균 요청**     | GET  | '/today/data-average'           | 근로자들의 측정값(체온, 심박수, 산소포화도) 각각의 평균을 반환한다.   |
 | **근로자 종합 데이터 요청**     | GET  | '/today/user-health-status'           | 근로자 상태(정상,주의,심각)에 대한 인원 수와 사용자 각각에 대한 상태 데이터를 반환한다.   |
 | **전날 평균 근로시간 요청**     | GET  | '/yesterday/average-worktime'           | 전날 데이터를 기준으로 근로자들의 근로시간의 평균을 반환한다.  |
-
-
-
-
 
 
 ### 📘 Software 아두이노(Arduino) + 라즈베리파이(Raspberry Pi)
