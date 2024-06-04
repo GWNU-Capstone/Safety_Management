@@ -6,8 +6,8 @@
   <br><br>
   <img alt="Static Badge" src="https://img.shields.io/badge/Spring%20Boot-Back-%6DB33F?style=for-the-badge&logo=springboot&logoSize=auto">
   <img alt="Static Badge" src="https://img.shields.io/badge/React-Front-%2361DAFB?style=for-the-badge&logo=React&logoSize=auto">
-  <img alt="Static Badge" src="https://img.shields.io/badge/Raspberry%20Pi-Hardware-%23A22846?style=for-the-badge&logo=raspberrypi&logoSize=auto">
-  <img alt="Static Badge" src="https://img.shields.io/badge/Arduino-Hardware-%2300878F?style=for-the-badge&logo=arduino&logoSize=auto">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Raspberry%20Pi-Software-%23A22846?style=for-the-badge&logo=raspberrypi&logoSize=auto">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Arduino-Software-%2300878F?style=for-the-badge&logo=arduino&logoSize=auto">
 </p>
 
 <br>
@@ -48,7 +48,8 @@
 | **근로자 측정값 평균 요청**     | GET  | '/today/data-average'           | 근로자들의 측정값(체온, 심박수, 산소포화도) 각각의 평균을 반환한다.   |
 | **근로자 종합 데이터 요청**     | GET  | '/today/user-health-status'           | 근로자 상태(정상,주의,심각)에 대한 인원 수와 사용자 각각에 대한 상태 데이터를 반환한다.   |
 | **전날 평균 근로시간 요청**     | GET  | '/yesterday/average-worktime'           | 전날 데이터를 기준으로 근로자들의 근로시간의 평균을 반환한다.  |
-
+### 📝 [Backend API 상세 명세서 자세히보기 (클릭)](https://github.com/GWNU-Capstone/Safety_Management/blob/taek2222-patch-1/Back/README.md)
+<br>
 
 ### 📘 Software 아두이노(Arduino) + 라즈베리파이(Raspberry Pi)
 | 포인트 역할             | Method | URL                 | 요약 설명                              |
@@ -62,6 +63,6 @@
 | **체온 및 심박 측정결과**| GET    | '/tempheart'          | 체온 및 심박 센서에서의 측정값을 반환한다.     |
 | **심박센서 켜기**| GET    | '/hrstart'          | 심박센서를 켠다 (서버 실행시 기본으로 켜짐)     |
 | **심박센서 끄기**| GET    | '/hrstop'          | 심박센서를 끈다 (심박센서 오류발생시 대처용)     |
-
+### 📝 [Software API 상세 명세서 자세히보기 (클릭)](https://github.com/GWNU-Capstone/Safety_Management/blob/taek2222-patch-1/SoftWare/README.md)
 
   
