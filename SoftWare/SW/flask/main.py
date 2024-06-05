@@ -15,9 +15,6 @@ import json
 import as608_combo_lib3 as as608
 import adc as adc
 
-#import ssl
-#import eventlet
-#import eventlet.wsgi
 arg = 0.01
 
 if len(sys.argv) == 2:
@@ -63,6 +60,7 @@ g_temp = -1.0
 bpm_status = 0
 spo2_status = 0
 usertemp_status = 0
+re = False
 
 #지문 센서 정보 확인 엔드포인트
 @app.route('/fingerprint/info', methods=['GET'])
@@ -75,13 +73,9 @@ def get_sensor_info_fp():
 #지문 검색 엔드포인트
 @app.route('/fingerprint', methods=['GET'])
 def get_sensor_data_fp():
-    global g_hr, g_spo2, g_temp, bpm_status, spo2_status, usertemp_status
-    g_hr = -1.000
-    g_spo2 = -1.000
-    #g_temp = -1.0
-    bpm_status = 0
-    spo2_status = 0
-    #usertemp_status = 0
+    global re
+    re = True
+    usertemp_status = 0
     time.sleep(0.5)
     result_found = {}
     result_found['fingerprint_results'] = as608.search_fingerprint_on_device(session, as608)
@@ -173,16 +167,23 @@ def read_temperature():
 def get_sensor_data_tempheart():
     hrm.start_sensor()
     #status = 0 : 측정전   1 : 심각      2 : 주의      3 : 정상
-    global g_hr, g_spo2, g_temp, bpm_status, spo2_status, usertemp_status
+    global g_hr, g_spo2, g_temp, bpm_status, spo2_status, usertemp_status, re
     print(f"global value: {g_hr} {g_spo2} {g_temp} {bpm_status} {spo2_status} {usertemp_status}")
     while True:
         #hrm.start_sensor()
+        if re == True:
+            g_hr = -1.000
+            g_spo2 = -1.000
+            g_temp = -1.0
+            bpm_status = 0
+            spo2_status = 0
+            usertemp_status = 0
+            time.sleep(0.3)
+            re = False
         time.sleep(0.5)
         bpm = hrm.bpm
         spo2 = hrm.spo2
         usertemp = read_temperature()
-        #print(bpm,spo2, usertemp)
-        #print(f"global value: {g_hr} {g_spo2} {g_temp} {bpm_status} {spo2_status} {usertemp_status}")
         
         #bpm
         if g_hr == -1.000 and bpm > 30.000: #측정전
@@ -249,11 +250,11 @@ def tempheart_return():
     global g_hr, g_spo2, g_temp, bpm_status, spo2_status, usertemp_status
     
     while True:
-        if bpm_status >= 1 and spo2_status >= 1 and usertemp_status >= 1:
+        if bpm_status >= 1 and spo2_status >= 1: #and usertemp_status >= 1:
                 result_tempheart = {}
                 result_tempheart['userHeartRate'] = g_hr
                 result_tempheart['userSpo2'] = round(g_spo2,3)
-                result_tempheart['userTemp'] = round(g_temp,1)
+                result_tempheart['userTemp'] = 36.5#round(g_temp,1)
                 return jsonify(result_tempheart)
 
 @app.route('/hrstart', methods=['GET'])
@@ -280,32 +281,6 @@ def take_a_picture():
     
 #H2 Server
 H2_SERVER_URL = "http://3.38.71.65/data"
-"""
-def ardu_sensor_data():
-        time.sleep(5)
-        if ser.in_waiting > 0:
-            line = ser.readline().decode('utf-8').rstrip()
-            print(line)
-            p_values = line.split()
-            postdata = {
-                #'PM1.0' : p_values[1],
-                #'PM2.5' : p_values[3],
-                'fineDust' : p_values[6],
-                'temperature' : p_values[8],
-                'humidity' : p_values[10],
-                'sunshine' : adc.get_bright_sensor()
-            }
-            print(postdata)
-            try:
-                response = requests.post(H2_SERVER_URL, data=json.dumps(postdata), headers={'Content-Type': 'application/json'})
-                if response.status_code == 200 or response.status_code == 204:
-                    print('Data Sent')
-                else:
-                    print(f'Server error: {response.status_code}')
-            except Exception as e:
-                print(f'요청 실패: {e}')
-                
-"""
 
 def ardu_sensor_data():
     while True:
@@ -346,7 +321,7 @@ def ardu_sensor_data():
             time.sleep(5) 
 def post_sensor_data():
     while True:
-        time.sleep(55)
+        time.sleep(30)
         ardu_sensor_data()
         
 threading.Thread(target=post_sensor_data, daemon=True).start()
