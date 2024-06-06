@@ -22,6 +22,12 @@
 ## 🕒 개발 기간
 * 2024.03.11일 ~
 
+|<img src="https://github.com/GWNU-Capstone/Safety_Management/assets/118153233/7e013c6e-09d0-4c2d-9765-97e7b41189b2" width="475" height="260"/>|<img src="https://github.com/GWNU-Capstone/Safety_Management/assets/118153233/c91f438c-6e24-4596-a8bd-a276b0630b58" width="475" height="260"/>|
+|:-:|:-:|
+
+|<img src="https://github.com/GWNU-Capstone/Safety_Management/assets/118153233/4c30045f-6051-4de1-bc11-8241f210fb3b" width="475" height="260"/>|<img src="https://github.com/GWNU-Capstone/Safety_Management/assets/118153233/3ee36e03-e0a7-49c1-9aba-904adba68f46" width="475" height="260"/>|
+|:-:|:-:|
+
 <br>
 
 ## 👩🏻‍💻🧑🏻‍💻 프로젝트 멤버
