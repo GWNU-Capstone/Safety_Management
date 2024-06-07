@@ -82,7 +82,6 @@ public class UserProfileService {
         return responseData;
     }
 
-    @Cacheable(value = "userProfiles", key = "#user_no")
     @Transactional(readOnly = true)
     public Optional<UserProfile> getUserProfile(int user_no) {
         return userProfileRepository.findById(user_no);

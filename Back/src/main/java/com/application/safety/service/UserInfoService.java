@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 public class UserInfoService {
     private final UserInfoRepository userInfoRepository;
     private final UserProfileRepository userProfileRepository;
+    private final UserDataRepository userDataRepository;
 
     // 근로자 등록 Create Service
     @Transactional
@@ -130,10 +131,9 @@ public class UserInfoService {
     public void deleteUser(int userNo) {
         UserProfile userProfile = userProfileRepository.findById(userNo).orElseThrow();
 
-        /*cascade 적용 -> Data, Info 데이터 자동 삭제
+        //cascade 보류, 기존방식으로 삭제
         userDataRepository.deleteByUserProfile(userProfile);
         userInfoRepository.deleteById(userNo);
-        userProfileRepository.deleteById(userNo);*/
         userProfileRepository.deleteById(userNo);
 
     }

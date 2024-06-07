@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,5 +37,35 @@ public class UserDataController {
         messageService.sendSMS("출근", userDataDTO.getUserNo());
 
         return ResponseEntity.ok(userData);
+    }
+
+    // Today 출근자,결근자 수, 목록
+    @GetMapping("/today/user-status")
+    public Map<String, Object> getTodayUserCountsAndList() {
+        return userDataService.getTodayUserStatus();
+    }
+
+    // 근로자 알코올 이상자 수, 목록
+    @GetMapping("/today/alcohol-abusers")
+    public Map<String, Object> getAlcoholAbusers() {
+        return userDataService.getAlcoholAbusers();
+    }
+
+    // 근로자 평균수치 (체온, 심박수, 산소포화도)
+    @GetMapping("/today/data-average")
+    public Map<String, Double> getTodayAverages() {
+        return userDataService.getTodayUserAverages();
+    }
+
+    // 근로자 종합데이터 상태(정상, 주의, 심각)인원, 세부정보
+    @GetMapping("/today/user-health-status")
+    public Map<String, Object> getTodayUserHealthStatus() {
+        return userDataService.getTodayUserHealthStatus();
+    }
+
+    // 전날 평균 근로시간
+    @GetMapping("/yesterday/average-worktime")
+    public Map<String, Object> getYesterdayAverageWorkTime() {
+        return userDataService.getYesterdayAverageWorkTime();
     }
 }
