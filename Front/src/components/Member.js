@@ -5,9 +5,7 @@ import './Member.css';
 import { fingerprintApiBaseUrl, userApiBaseUrl } from './Api';
 import axios from 'axios';
 
-
 function Member() {
-  // 데이터와 컬럼 정의
   const [membersData, setMembersData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
@@ -19,7 +17,7 @@ function Member() {
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [deleteId, setDeleteId] = useState('');
-  const [employeeId, setEmployeeId] = useState(''); // 사원번호 상태 추가
+  const [employeeId, setEmployeeId] = useState('');
   const [phonePart1, setPhonePart1] = useState('');
   const [phonePart2, setPhonePart2] = useState('');
   const [phonePart3, setPhonePart3] = useState('');
@@ -29,13 +27,8 @@ function Member() {
   };
 
   useEffect(() => {
-    setMembersData(prevData => sortMembersData(prevData));
-  }, [membersData]);
-
-  // 사원번호 상태 초기화
-  useEffect(() => {
     setEmployeeId('');
-  }, [showRegistrationModal]); // 모달이 열릴 때마다 사원번호 상태 초기화
+  }, [showRegistrationModal]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,86 +52,55 @@ function Member() {
 
     fetchData();
   }, []);
-  /*
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // 여기서 데이터를 가져와서 membersData 상태에 설정
-        const dummyData = [
-          { id: 1, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 2, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 3, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 4, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 5, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 6, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 7, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 8, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 9, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 10, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 11, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 12, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 13, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 14, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 15, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 16, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 17, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 18, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 19, pos: 'Owner', name: '테스트2', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 20, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 21, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' },
-          { id: 22, pos: 'Owner', name: '테스트', age: 25, gender: '남자', pNumber: '010-1234-5678', email: "test@example.com", address: '강원도 원주시 테스트 테스트 11 (11111)' }
-        ];
-        setMembersData(dummyData);
-      } catch (error) {
-        console.log("네트워크 오류 [Join]", error);
-      }
-    };
 
-    fetchData();
-  }, []);
-  */
   const columns = React.useMemo(
     () => [
       {
         Header: '사원번호',
-        accessor: 'id'
+        accessor: 'id',
+        className: 'table-column-id'
       },
       {
         Header: '직위',
-        accessor: 'pos'
+        accessor: 'pos',
+        className: 'table-column-pos'
       },
       {
         Header: '이름',
-        accessor: 'name'
+        accessor: 'name',
+        className: 'table-column-name'
       },
       {
         Header: '나이',
-        accessor: 'age'
+        accessor: 'age',
+        className: 'table-column-age'
       },
       {
         Header: '성별',
-        accessor: 'gender'
+        accessor: 'gender',
+        className: 'table-column-gender'
       },
       {
         Header: '전화번호',
-        accessor: 'pNumber'
+        accessor: 'pNumber',
+        className: 'table-column-pNumber'
       },
       {
         Header: '이메일',
-        accessor: 'email'
+        accessor: 'email',
+        className: 'table-column-email'
       },
       {
         Header: '주소',
-        accessor: 'address'
+        accessor: 'address',
+        className: 'table-column-address'
       }
     ],
     []
   );
 
-  // useTable 훅을 사용하여 테이블 생성
   const table = useTable({ columns, data: membersData });
 
-  // 모달 열기/닫기 함수
   const toggleRegistrationModal = () => {
     setShowRegistrationModal(!showRegistrationModal);
   };
@@ -154,11 +116,10 @@ function Member() {
       );
       if (response.data.fingerprint_addresults.startsWith("Stored model at")) {
         const storedEmployeeId = response.data.fingerprint_addresults.match(/\d+/)[0];
-        setEmployeeId(storedEmployeeId); // # 뒤에 있는 값을 추출하여 사원번호로 설정
+        setEmployeeId(storedEmployeeId);
       } else if (response.data.fingerprint_addresults === "False") {
         alert('지문 센서에 손을 올려주세요.');
       } else {
-        // 다른 예외 상황에 대한 처리
       }
       console.log(response.data);
     } catch (error) {
@@ -209,10 +170,8 @@ function Member() {
         userAddress: address
       });
   
-      // 성공적으로 등록되면 서버에서 받은 데이터를 콘솔에 출력합니다.
       console.log("직원 등록 성공:", response.data);
   
-      // 입력된 데이터를 새로운 객체로 만듭니다.
       const newData = {
         id: parseInt(employeeId),
         pos: position,
@@ -224,10 +183,8 @@ function Member() {
         address: address
       };
   
-      // 기존 데이터에 새로운 데이터를 추가합니다.
       setMembersData(prevData => sortMembersData([...prevData, newData]));
   
-      // 입력 필드 초기화
       setPosition('');
       setName('');
       setAge('');
@@ -239,7 +196,6 @@ function Member() {
       setAddress('');
       setEmployeeId('');
   
-      // 모달 닫기
       setShowRegistrationModal(false);
     } catch (error) {
       console.error('직원 등록 오류:', error);
@@ -252,10 +208,8 @@ function Member() {
       return;
     }
 
-    // 입력된 사원번호와 일치하는 행을 찾습니다.
     const indexToDelete = membersData.findIndex(member => member.id.toString() === deleteId);
 
-    // 사원번호와 일치하는 행이 없으면 알림을 표시하고 종료합니다.
     if (indexToDelete === -1) {
       alert("일치하는 사원번호가 없습니다.");
       return;
@@ -264,15 +218,12 @@ function Member() {
     handleFingerprintRemoval(deleteId);
     employeeRemoval(deleteId);
 
-    // 사원번호와 일치하는 행을 삭제하고 업데이트된 데이터를 설정합니다.
     const updatedData = [...membersData];
     updatedData.splice(indexToDelete, 1);
     setMembersData(sortMembersData(updatedData));
 
-    // 입력 필드 초기화
     setDeleteId('');
 
-    // 모달 닫기
     setShowDeleteModal(false);
   };
 
@@ -321,7 +272,7 @@ function Member() {
               {table.headerGroups.map(headerGroup => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
                   {headerGroup.headers.map(column => (
-                    <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                    <th {...column.getHeaderProps({ className: column.className })}>{column.render('Header')}</th>
                   ))}
                 </tr>
               ))}
@@ -338,7 +289,7 @@ function Member() {
                     <tr {...row.getRowProps()} key={rowIndex}>
                       {row.cells.map((cell, cellIndex) => {
                         return (
-                          <td {...cell.getCellProps()} key={cellIndex}>
+                          <td {...cell.getCellProps({ className: cell.column.className })} key={cellIndex}>
                             <Link to={`/detail/${row.original.id}`}>{cell.render('Cell')}</Link>
                           </td>
                         )
@@ -353,10 +304,9 @@ function Member() {
           </table>
         </div>
       </div>
-      {/* 직원 등록 모달창 */}
       {showRegistrationModal && (
-        <div className="modal">
-          <div className="modal-content">
+        <div className="member-modal">
+          <div className="member-modal-content">
             <span className="close" onClick={toggleRegistrationModal}>&times;</span>
             <h2>직원 등록</h2>
             <div className="form-group">
@@ -366,7 +316,7 @@ function Member() {
                 id="employeeId"
                 value={employeeId}
                 onChange={(e) => setEmployeeId(e.target.value)}
-              //readOnly
+                readOnly
               />
             </div>
             <div className="form-group">
@@ -465,7 +415,7 @@ function Member() {
                 onChange={(e) => setAddress(e.target.value)}
               />
             </div>
-            <div className="modalButton">
+            <div className="member-modalButton">
               <button className="fingerprint-button" onClick={handleFingerprintRegistration}>지문 측정 시작</button>
               <br></br>
               <button className="new-profile-button" onClick={handleSubmit}>등록</button>
@@ -473,10 +423,9 @@ function Member() {
           </div>
         </div>
       )}
-      {/* 직원 삭제 모달창 */}
       {showDeleteModal && (
-        <div className="modal">
-          <div className="modal-content">
+        <div className="member-modal">
+          <div className="member-modal-content">
             <span className="close" onClick={toggleDeleteModal}>&times;</span>
             <h2>직원 삭제</h2>
             <div className="form-group">
@@ -488,7 +437,7 @@ function Member() {
                 onChange={(e) => setDeleteId(e.target.value)}
               />
             </div>
-            <div className="modalButton">
+            <div className="member-modalButton">
               <button className="delete-button" onClick={handleDelete}>삭제</button>
             </div>
           </div>
@@ -499,7 +448,6 @@ function Member() {
           Ⓒ 안전하조. 캡스톤 디자인 프로젝트
         </div>
       </footer>
-
     </div>
   );
 }

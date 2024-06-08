@@ -3,23 +3,16 @@ import { Link, useParams } from 'react-router-dom';
 import './Detail.css';
 import { userApiBaseUrl } from './Api';
 import axios from 'axios';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 function Detail() {
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [editMode, setEditMode] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
   const [activeSection2, setActiveSection2] = useState('main');
-  const [filterMode, setFilterMode] = useState(true);
-  const [memo, setMemo] = useState(''); // 메모 내용을 저장할 상태
   const [isMemoEditing, setIsMemoEditing] = useState(false);
   const [attendanceRecords, setAttendanceRecords] = useState([]);
-
-
-
-
-  const toggleFilterMode = () => {
-    setFilterMode(!filterMode);
-    setActiveSection2(filterMode ? 'filtering' : 'main');  // 조건에 따라 섹션 설정
-  };
 
   const [inputFields, setInputFields] = useState({
     name: '',
@@ -33,7 +26,8 @@ function Detail() {
     pos: '',
     empDate: '',
     bank: '',
-    account: ''
+    account: '',
+    memo: ''  // 메모 내용을 저장할 상태
   });
 
   const { id } = useParams();
@@ -54,15 +48,12 @@ function Detail() {
           pos: data.userPosition,
           empDate: data.userJoinDate,
           bank: data.userBank,
-          account: data.userAccount
+          account: data.userAccount,
+          memo: data.memo 
         });
       })
       .catch(error => console.error('Error fetching user data:', error));
   }, [id]);
-
-  const handleMemoChange = (e) => {
-    setMemo(e.target.value);
-  };
 
   const handleEditProfile = () => {
     // 편집 모드가 비활성화된 경우 (편집 시작)
@@ -80,8 +71,8 @@ function Detail() {
       // 프로필 정보와 메모 데이터 업데이트 요청
       axios.patch(`${userApiBaseUrl}/update/${inputFields.id}`, {
         userNo: inputFields.id,
-        userName: inputFields.name,
-        userImage: inputFields.name,  // 이미지 정보 업데이트
+        userName: newName,
+        userImage: newName,  // 이미지 정보 업데이트
         userResidentNum: inputFields.ssn,
         userAge: inputFields.age,
         userTelNo: inputFields.phone,
@@ -92,7 +83,7 @@ function Detail() {
         userBank: inputFields.bank,
         userAccount: inputFields.account,
         userJoinDate: inputFields.empDate,
-        memo: memo  // 메모 데이터 추가
+        memo: inputFields.memo 
       })
         .then(response => {
           console.log('프로필 업데이트 요청 성공:', response.data);
@@ -106,8 +97,6 @@ function Detail() {
       setIsMemoEditing(false);
     }
   };
-
-
 
   const handleInputChange = (key, value) => {
     setInputFields({
@@ -127,54 +116,35 @@ function Detail() {
     bank: '은행',
     account: '계좌번호',
     pos: '직위',
-    empDate: '입사일자'
+    empDate: '입사일자',
+    memo: '메모'  // 추가된 메모 레이블
   };
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/user/data/${inputFields.id}`)
-      .then(response => {
-        const userData = response.data;
-        const newData = Object.values(userData).map(item => {
-          return {
-            date: item.userData.date,
-            enter: item.userData.userStart,
-            exit: item.userData.userEnd,
-            bac: `${item.userData.userDrink}`,
-            temp: `${item.userData.userTemp}`,
-            hr: `${item.userData.userHeartRate}`,
-            oxy: `${item.userData.userOxygen}`,
-            status: item.state
-          };
-        });
-        setAttendanceRecords(prevRecords => [...prevRecords, ...newData]);
-      })
-      .catch(error => console.error('Error fetching user data:', error));
-  }, [inputFields.id]);
-
-  /*
-  const attendanceRecords = [
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''},
-    { date: '2024-01-01', enter: '14:00', exit: '20:20', bac: '0.01', temp: '36.5', hr: '??', oxy: '??', status: 'Present', note: ''}
-  ];
-  */
+    if (inputFields.id) {
+      console.log(inputFields.id);
+      axios.get(`${userApiBaseUrl}/user/data/${inputFields.id}`)
+        .then(response => {
+          const userData = response.data;
+          const newData = Object.values(userData).map(item => {
+            return {
+              date: item.userData.date,
+              enter: item.userData.userStart,
+              exit: item.userData.userEnd,
+              bac: `${item.userData.userDrink}`,
+              temp: `${item.userData.userTemp}`,
+              hr: `${item.userData.userHeartRate}`,
+              oxy: `${item.userData.userOxygen}`,
+              status: item.state
+            };
+          });
+          console.log(newData);
+          setAttendanceRecords(newData);
+          console.log(attendanceRecords);
+        })
+        .catch(error => console.error('Error fetching user data:', error));
+    }
+  }, [inputFields.id]);  
 
   return (
     <div className="detail-container">
@@ -198,12 +168,24 @@ function Detail() {
               <img src="/img/search.png" alt="icon" className="detail-search-icon" />
               <h> 데이터 검색</h>
             </div>
-            <input
-              type="text"
-              placeholder="데이터를 입력하세요."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              title="날짜 또는 상태를 입력하세요."
+            <DatePicker
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              placeholderText="시작일"
+              dateFormat="yyyy-MM-dd"
+            />
+            <DatePicker
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate}
+              placeholderText="종료일"
+              dateFormat="yyyy-MM-dd"
             />
           </div>
 
@@ -229,7 +211,6 @@ function Detail() {
       </header>
 
       <div className="main-content">
-
         <div className="profile">
           <div className="profile-info">
             <div className="profile-img">
@@ -251,54 +232,68 @@ function Detail() {
             </div>
             <div className="personal-info-container">
               <div className="info">
-                <table>
-                  <tbody>
-                    {Object.entries(inputFields).map(([key, value]) => (
-                      key !== "name" && (
-                        <tr key={key}>
-                          <th>{fixedLabels[key]}</th>
-                          <td>
-                            {editMode && key !== 'id' ? (
+              <table>
+                <tbody>
+                  {Object.entries(inputFields).map(([key, value]) => (
+                    key !== "name" && (
+                      <tr key={key}>
+                        <th>{fixedLabels[key]}</th>
+                        <td>
+                          {editMode && key !== 'id' ? (
+                            key === 'gender' ? ( // Check if the current field is gender
+                              <select
+                                value={inputFields.gender}
+                                onChange={(e) => handleInputChange('gender', e.target.value)}
+                              >
+                                <option value="">성별을 선택하시오.</option>
+                                <option value="남자">남자</option>
+                                <option value="여자">여자</option>
+                              </select>
+                            ) : key === 'pos' ? ( // Check if the current field is position
+                              <select
+                                value={inputFields.pos}
+                                onChange={(e) => handleInputChange('pos', e.target.value)}
+                              >
+                                <option value="">직위를 선택하세요.</option>
+                                <option value="현장 관리자">현장 관리자</option>
+                                <option value="기술자">기술자</option>
+                                <option value="일용직">일용직</option>
+                                <option value="사무원">사무원</option>
+                                <option value="안전 감독관">안전 감독관</option>
+                              </select>
+                            ) : key === 'memo' ? ( // Check if the current field is memo
+                              <textarea
+                                value={value}
+                                onChange={(e) => handleInputChange('memo', e.target.value)}
+                                placeholder="메모를 입력하세요."
+                                style={{ backgroundColor: editMode ? '#e7f4ff' : 'transparent', border: editMode ? '1px dashed #007bff' : 'transparent' }}
+                              />
+                            ) : (
                               <input
                                 type="text"
                                 value={value}
                                 onChange={(e) => handleInputChange(key, e.target.value)}
                                 placeholder="데이터를 입력하세요"
                               />
-                            ) : (
-                              <span>{value || "데이터를 입력하세요"}</span>
-                            )}
-                          </td>
-                        </tr>
-                      )
-                    ))}
-                  </tbody>
-                </table>
-                {isMemoEditing && editMode ? (
-                  <textarea
-                    value={memo}
-                    onChange={handleMemoChange}
-                    placeholder="메모를 입력하세요."
-                    style={{ backgroundColor: editMode ? '#e7f4ff' : 'transparent', border: editMode ? '1px dashed #007bff' : 'transparent' }}
-                  />
-                ) : (
-                  <p>{memo || "메모가 없습니다."}</p>
-                )}
+                            )
+                          ) : (
+                            <span>{value || "데이터를 입력하세요"}</span>
+                          )}
+                        </td>
+                      </tr>
+                    )
+                  ))}
+                </tbody>
+              </table>
+
               </div>
             </div>
           </div>
-          
         </div>
 
         <div className="attendance-records">
           <div className="personal-info-div">
             <h2>Attendance Records</h2>
-
-            <div className="personal-info-button">
-              <div className="attendance-button" onClick={toggleFilterMode}>
-                {filterMode ? '필터링' : '전체보기'}
-              </div>
-            </div>
           </div>
           {activeSection2 === 'main' && (
             <div className="table-wrapper">
@@ -317,51 +312,20 @@ function Detail() {
                 </thead>
                 <tbody className="table-body">
                   {attendanceRecords.filter((record) => {
-                    return (
-                      record.date.includes(searchTerm) ||
-                      record.status.toLowerCase().includes(searchTerm.toLowerCase())
-                    );
+                    const recordDate = new Date(record.date);
+                    const adjustedStartDate = startDate ? new Date(startDate) : null;
+                    const adjustedEndDate = endDate ? new Date(endDate) : null;
+                    if (adjustedStartDate && adjustedEndDate) {
+                      recordDate.setHours(0, 0, 0, 0); // 시간을 자정으로 설정합니다
+                      adjustedStartDate.setHours(0, 0, 0, 0);
+                      adjustedEndDate.setHours(0, 0, 0, 0);
+                      return recordDate >= adjustedStartDate && recordDate <= adjustedEndDate;
+                    } else {
+                      // If either start date or end date is not set, show all records
+                      return true;
+                    }
                   }).map((record, index) => (
                     <tr key={index}>
-                      <td>{record.date}</td>
-                      <td>{record.enter}</td>
-                      <td>{record.exit}</td>
-                      <td>{record.bac}%</td>
-                      <td>{record.temp}°C</td>
-                      <td>{record.hr} bpm</td>
-                      <td>{record.oxy}%</td>
-                      <td>{record.status}</td>
-                    </tr>
-                  ))}
-                </tbody>
-
-              </table>
-            </div>
-          )}
-
-          {activeSection2 === 'filtering' && (
-            <div className="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>날짜</th>
-                    <th>출근시간</th>
-                    <th>퇴근시간</th>
-                    <th>알코올 농도</th>
-                    <th>체온</th>
-                    <th>심박수</th>
-                    <th>산소포화도</th>
-                    <th>상태</th>
-                  </tr>
-                </thead>
-                <tbody className="table-body">
-                  {attendanceRecords.filter((record) => {
-                    return (
-                      record.date.includes(searchTerm) ||
-                      record.status.toLowerCase().includes(searchTerm.toLowerCase())
-                    );
-                  }).map((record, index) => (
-                    <tr key={index} style={{ color: !filterMode ? 'red' : 'black' }}>
                       <td>{record.date}</td>
                       <td>{record.enter}</td>
                       <td>{record.exit}</td>
@@ -378,7 +342,6 @@ function Detail() {
           )}
         </div>
       </div>
-
       <footer>
         <div className="footer">
           Ⓒ 안전하조. 캡스톤 디자인 프로젝트

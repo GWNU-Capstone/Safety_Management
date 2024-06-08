@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+#ip주소를 업로드안하기
+Api.js
+
 # testing
 /coverage
 

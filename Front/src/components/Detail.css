@@ -13,7 +13,6 @@ body {
   flex-direction: column;
   height: 100vh; /* 전체 화면의 높이와 같게 설정 */
   margin: 20px;
-  overflow: hidden; /* 컨테이너 외부로 내용이 넘칠 경우 숨김 처리 */
 }
 
 .detail-header {
@@ -111,9 +110,9 @@ body {
 /* Main Content의 배경색 및 레이아웃 설정 */
 .main-content {
   display: flex;
+  flex-direction: row; /* 가로로 배치 */
   flex-grow: 1; /* 남은 공간을 모두 채움 */
   overflow: hidden; /* main-content 내 스크롤바 비활성화 */
-  flex-wrap: wrap;
   gap: 20px;
   background-color: #ffffff; /* 배경색을 흰색으로 설정 */
   padding: 20px; /* 패딩 추가 */
@@ -137,10 +136,8 @@ body {
 }
 
 .profile {
-  flex-basis: 40%;
+  flex-grow: 1; /* 남은 공간을 모두 차지 */
   max-width: 40%;
-  height: calc(71vh);
-  margin-right: 20px;
   background-color: white;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -228,13 +225,13 @@ body {
 }
 
 .attendance-records {
-  flex-grow: 1;
-  overflow: hidden;
-  height: calc(71vh);
   background-color: white;
+  flex-grow: 1; /* 남은 공간을 모두 차지 */
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-radius: 5px;
+  display: flex;
+  flex-direction: column;
 }
 
 .personal-info table {
@@ -322,7 +319,6 @@ input[type="text"]:disabled {
   background-color: #f8f9fa;
   position: sticky;
   top: 0;
-  z-index: 2;
 }
 
 .table-wrapper table th, table td {
