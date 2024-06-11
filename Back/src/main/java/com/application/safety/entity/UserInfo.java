@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 
@@ -17,20 +18,23 @@ import java.time.LocalDate;
 public class UserInfo {
     @Id
     @Column(name="USER_NO")
-    private int userNo; // 사원 번호
+    private Long userNo; // 사원 번호
 
     @Column(name = "USER_IMAGE")
     private String userImage; // 사진
 
+    @NotNull
     @Column(name = "USER_RESIDENT_NUM")
     private String userResidentNum; // 주민등록번호
 
     @Column(name="USER_AGE")
     private int userAge; // 나이
 
+    @NotNull
     @Column(name="USER_TELNO")
     private String userTelNo; // 전화번호
 
+    @NotNull
     @Column(name="USER_GENDER")
     private String userGender; // 성별
 
@@ -56,7 +60,7 @@ public class UserInfo {
     private String memo; // 메모
 
     @MapsId
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_NO")
     private UserProfile UserProfile;
 }

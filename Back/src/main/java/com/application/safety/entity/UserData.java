@@ -20,9 +20,9 @@ public class UserData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="USER_DATA_NO")
-    private int UserDataNo; // 데이터 번호
+    private Long UserDataNo; // 데이터 번호
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_NO")
     private UserProfile userProfile;
 
