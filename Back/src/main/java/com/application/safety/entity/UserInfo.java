@@ -38,6 +38,7 @@ public class UserInfo {
     @Column(name="USER_GENDER")
     private String userGender; // 성별
 
+    @NotNull
     @Column(name="USER_POSITION")
     private String userPosition; // 직위
 

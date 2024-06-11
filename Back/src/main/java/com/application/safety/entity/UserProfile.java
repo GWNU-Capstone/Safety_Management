@@ -20,7 +20,7 @@ public class UserProfile {
     private Long UserNo; // 사원 번호
 
     @NotNull
-    @Column(name = "USER_NAME", nullable = false)
+    @Column(name = "USER_NAME")
     private String UserName; // 이름
 
 }
