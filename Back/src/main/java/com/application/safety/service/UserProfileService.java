@@ -87,7 +87,7 @@ public class UserProfileService {
 
         return responseData;
     }
-
+ㅗ
     /**
      * 사원 상세 조회 - 우측 화면에 날짜순 출퇴근 시간, 건강데이터, 출퇴근 상태 출력을 위해 사원번호를 넘겨주는 메서드
      * 주어진 사원 번호로 UserProfile 조회
