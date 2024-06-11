@@ -5,12 +5,10 @@ import com.application.safety.entity.UserData;
 import com.application.safety.entity.UserProfile;
 import com.application.safety.repository.UserDataRepository;
 import com.application.safety.repository.UserProfileRepository;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -26,7 +24,13 @@ public class UserDataService {
     private final UserDataRepository userDataRepository;
     private final UserProfileRepository userProfileRepository;
 
-    // 출력할 데이터 날짜, 출근 시간, 퇴근 시간, 알콜올 농도, 체온, 심박수, 산소포화도, 상태
+    /**
+     * 사원 상세 조회 - 우측 화면에 사용되는 메서드
+     * 출력할 데이터는 날짜, 출근 시간, 퇴근 시간, 알콜 농도, 체온, 심박수, 산소포화도, 상태를 포함
+     *
+     * @param userProfile 사용자의 프로필 정보
+     * @return 데이터 번호를 기준으로 해당 데이터 Map
+     */
     @Transactional(readOnly = true)
     public Map<Integer, Object> getUserDataList(Optional<UserProfile> userProfile) {
         Map<Integer, Object> userDataList = new HashMap<>();
@@ -56,12 +60,20 @@ public class UserDataService {
             response.put("userData", dto);
             response.put("state", state);
 
-            userDataList.put(userData.getUserDataNo(), response);
+            userDataList.put(Math.toIntExact(userData.getUserDataNo()), response);
         }
 
         return userDataList;
     }
 
+    /**
+     * 출근 기록
+     * 주어진 사원 데이터 DTO를 기반으로 출근 기록을 수행
+     *
+     * @param userDataDTO 출근 기록시 필요한 데이터 (출근시간 및 건강 데이터 측정값)
+     * @return 추가된 출근 기록을 담고 있는 UserData 객체
+     * @throws EntityNotFoundException 주어진 사원 번호에 해당하는 데이터를 찾을 수 없는 경우
+     */
     @Transactional
     public UserData addUserData(UserDataDTO userDataDTO) {
         // 요청의 userNo 번호를 토대로 UserProfile 에서 사용자 정보 탐색
@@ -90,13 +102,16 @@ public class UserDataService {
         return userData;
     }
 
-    // Today 출근자 수, 결근자 수, 목록을 반환하는 앤드포인트
+    /**
+     * 출근 현황
+     * 오늘의 출근자 수, 결근자 수, 출근자 목록, 퇴근자 목록, 미출근자 목록을 반환
+     *
+     * @return 위의 데이터가 포함된 Map 객체
+     */
     public Map<String, Object> getTodayUserStatus() {
         List<UserProfile> allUsers = userProfileRepository.findAll();
 
         LocalDate today = LocalDate.now();
-
-        // 오늘 날짜의 데이터
         List<UserData> todayUserData = userDataRepository.findByDate(today);
 
         // 출근자 목록 (userStart만 값 o)
@@ -115,17 +130,12 @@ public class UserDataService {
 
         // 미출근자 목록 (userStart, userEnd에 값 x)
         List<UserProfile> yetStartedUsers = allUsers.stream()
-                .filter(user -> presentUsers.stream().noneMatch(presentUser -> presentUser.getUserNo() == user.getUserNo())
-                        && departedUsers.stream().noneMatch(departedUser -> departedUser.getUserNo() == user.getUserNo()))
+                .filter(user -> presentUsers.stream().noneMatch(presentUser -> Objects.equals(presentUser.getUserNo(), user.getUserNo()))
+                        && departedUsers.stream().noneMatch(departedUser -> Objects.equals(departedUser.getUserNo(), user.getUserNo())))
                 .collect(Collectors.toList());
 
-        // 출근자 수
         int presentCount = presentUsers.size();
-
-        // 퇴근자 수
         int departedCount = departedUsers.size();
-
-        // 미출근자 수
         int yetStartedCount = yetStartedUsers.size();
 
         Map<String, Object> response = new HashMap<>();
@@ -140,67 +150,13 @@ public class UserDataService {
         return response;
     }
 
-    // 알코올 이상자 수, 목록을 반환한는 앤드포인트
-    public Map<String, Object> getAlcoholAbusers() {
-
-        LocalDate today = LocalDate.now();
-        // 알코올 이상자 목록
-        List<UserProfile> alcoholAbusers = userDataRepository.findByDate(today).stream()
-                // 0.03일 경우에만 데이터가 안 들어가는 이유 . 부동소수점
-                .filter(userData -> Math.abs(userData.getUserDrink() - 0.03) < 1e-6 || userData.getUserDrink() > 0.03)
-                .map(UserData::getUserProfile)
-                .distinct()
-                .collect(Collectors.toList());
-
-        // 알코올 이상자 수
-        int alcoholAbuserCount = alcoholAbusers.size();
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("alcoholAbuserCount", alcoholAbuserCount);
-        response.put("alcoholAbusers", alcoholAbusers);
-
-        return response;
-    }
-
-
-    // 근로자 측정값의 평균 수치 (체온, 심박수, 산소포화도)를 반환하는 앤드포인트
-    public Map<String, Double> getTodayUserAverages() {
-        LocalDate today = LocalDate.now();
-
-        List<UserData> todayUserData = userDataRepository.findAll().stream()
-                .filter(userData -> userData.getDate().isEqual(today))
-                .toList();
-
-        // 심박수 평균
-        OptionalDouble averageHeartRate = todayUserData.stream()
-                .mapToInt(UserData::getUserHeartRate)
-                .average();
-
-        // 체온 평균
-        OptionalDouble averageTemp = todayUserData.stream()
-                .mapToDouble(UserData::getUserTemp)
-                .average();
-
-        // 산소포화도 평균
-        OptionalDouble averageOxygen = todayUserData.stream()
-                .mapToInt(UserData::getUserOxygen)
-                .average();
-
-        Map<String, Double> averages = new HashMap<>();
-        averages.put("averageHeartRate", FirstDecimal(averageHeartRate.isPresent() ? averageHeartRate.getAsDouble() : 0.0));
-        averages.put("averageTemp", FirstDecimal(averageTemp.isPresent() ? averageTemp.getAsDouble() : 0.0));
-        averages.put("averageOxygen", FirstDecimal(averageOxygen.isPresent() ? averageOxygen.getAsDouble() : 0.0));
-
-        return averages;
-    }
-
-    // 측정값의 평균 수치 (체온, 심박수, 산소포화도) 반환 시 평균값 소수 첫째짜리까지만 출력
-    private double FirstDecimal(double value) {
-        return Math.round(value * 10) / 10.0;
-    }
-
-
-    // 근로자 종합데이터 (정상, 주의, 심각) 각 인원, 세부정보를 반환하는 앤드포인트
+    /**
+     * 오늘의 근로자 종합데이터를 반환
+     * 각 근로자의 상태를 정상, 주의, 심각으로 분류하여 인원 수와 세부 정보를 반환
+     *
+     * @return 정상, 주의, 심각 상태의 근로자 수와 세부 정보(각 항목의 정상/주의/심각 판별)
+     * @throws EntityNotFoundException 사원정보를 찾을 수 없는 경우
+     */
     public Map<String, Object> getTodayUserHealthStatus() {
         LocalDate today = LocalDate.now();
 
@@ -214,7 +170,7 @@ public class UserDataService {
 
         // 사용자 데이터 가져오기
         List<Map<String, String>> userStatusList = todayUserData.stream().map(userData -> {
-            UserProfile userProfile = userProfileRepository.findById(userData.getUserProfile().getUserNo())
+            UserProfile userProfile = userProfileRepository.findById(Math.toIntExact(userData.getUserProfile().getUserNo()))
                     .orElseThrow(() -> new EntityNotFoundException("UserProfile not found for userNo: " + userData.getUserProfile().getUserNo()));
 
             // 각 항목의 기준 수치대로 상태 판별 결과 저장
@@ -246,12 +202,6 @@ public class UserDataService {
         return result;
     }
 
-
-    // 알코올: (심각) 0.03 이상
-    // 체온: (정상) 35.1 이상 37.2 이하, (주의) 37.3 이상 38.0 이하, (심각) 35.0 이하, 38.1 이상
-    // 심박수: (정상) 60 이상 100 이하, (주의) 50 이상 59 이하, 101 이상 120 이하, (심각) 50 미만, 120 초과
-    // 산소포화도: (정상) 95이상, (주의) 90초과 95 미만, (심각) 90이하
-
     // 알코올 상태 판별
     private String getUserDrinkStatus(float userDrink) {
         if (userDrink >= 0.03f) {
@@ -268,7 +218,6 @@ public class UserDataService {
     }
 
     // 체온 상태 판별
-    // 부동소수점 , 경곗값에서 정상.주의.심각 판별 오류
     private static final double EPSILON = 0.0001;
 
     private boolean isApproximatelyEqual(double a, double b) {
@@ -318,7 +267,84 @@ public class UserDataService {
         return "정상";
     }
 
-    // 전날 평균 근로시간을 반환하는 앤드포인트
+    /**
+     * 오늘의 알코올 이상자 수와 목록을 반환
+     *
+     * @return 오늘의 알코올 이상자 수와 목록을 담고 있는 Map 객체
+     */
+    public Map<String, Object> getAlcoholAbusers() {
+
+        LocalDate today = LocalDate.now();
+
+        List<UserProfile> alcoholAbusers = userDataRepository.findByDate(today).stream()
+                // 0.03일 경우에만 데이터가 안 들어가는 이유 . 부동소수점
+                .filter(userData -> Math.abs(userData.getUserDrink() - 0.03) < 1e-6 || userData.getUserDrink() > 0.03)
+                .map(UserData::getUserProfile)
+                .distinct()
+                .collect(Collectors.toList());
+
+        int alcoholAbuserCount = alcoholAbusers.size();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("alcoholAbuserCount", alcoholAbuserCount);
+        response.put("alcoholAbusers", alcoholAbusers);
+
+        return response;
+    }
+
+    /**
+     * 오늘의 근로자 측정값의 평균 수치(체온, 심박수, 산소포화도)를 반환
+     *
+     * @return 오늘의 체온, 심박수, 산소포화도의 평균 값을 담고 있는 Map 객체
+     */
+    public Map<String, Double> getTodayUserAverages() {
+        LocalDate today = LocalDate.now();
+
+        List<UserData> todayUserData = userDataRepository.findAll().stream()
+                .filter(userData -> userData.getDate().isEqual(today))
+                .toList();
+
+        // 심박수 평균
+        OptionalDouble averageHeartRate = todayUserData.stream()
+                .mapToInt(UserData::getUserHeartRate)
+                .average();
+
+        // 체온 평균
+        OptionalDouble averageTemp = todayUserData.stream()
+                .mapToDouble(UserData::getUserTemp)
+                .average();
+
+        // 산소포화도 평균
+        OptionalDouble averageOxygen = todayUserData.stream()
+                .mapToInt(UserData::getUserOxygen)
+                .average();
+
+        Map<String, Double> averages = new HashMap<>();
+        averages.put("averageHeartRate", FirstDecimal(averageHeartRate.isPresent() ? averageHeartRate.getAsDouble() : 0.0));
+        averages.put("averageTemp", FirstDecimal(averageTemp.isPresent() ? averageTemp.getAsDouble() : 0.0));
+        averages.put("averageOxygen", FirstDecimal(averageOxygen.isPresent() ? averageOxygen.getAsDouble() : 0.0));
+
+        return averages;
+    }
+
+    /**
+     * 건강데이터 측정값 평균 수치 계산에 활용되는 메서드
+     * 측정값의 평균 수치를 소수 첫째 자리까지만 출력
+     *
+     * @param value 평균 수치 값
+     * @return 소수 첫째 자리까지 반올림된 값
+     */
+    private double FirstDecimal(double value) {
+        return Math.round(value * 10) / 10.0;
+    }
+
+
+    /**
+     * 전날의 평균 근로시간을 반환
+     * 전날 날짜 기준으로 데이터베이스에서 출퇴근 시간을 계산하여 평균 반환
+     *
+     * @return 전날의 평균 근로시간
+     */
     public Map<String, Object> getYesterdayAverageWorkTime() {
         // 하루 전 데이터
         LocalDate yesterday = LocalDate.now().minusDays(1);
@@ -331,7 +357,6 @@ public class UserDataService {
 
         Map<String, Object> response = new HashMap<>();
 
-        // Duration 근로시간 계산
         List<Duration> workDurations = yesterdayUserData.stream()
                 .map(userData -> Duration.between(userData.getUserStart(), userData.getUserEnd()))
                 .toList();
@@ -341,7 +366,6 @@ public class UserDataService {
             return response;
         }
 
-        // Duration으로 두 데이터 간 시간 간격 계산 (총 근로시간 계산)
         Duration totalWorkDuration = workDurations.stream()
                 .reduce(Duration.ZERO, Duration::plus);
 

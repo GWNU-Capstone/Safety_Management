@@ -27,7 +27,13 @@ public class UserProfileService {
     private final UserInfoRepository userInfoRepository;
     private final MessageService messageService;
 
-    // 출퇴근 검사
+    /**
+     * 사원 출근 시 사원번호를 기준으로 이름, 사진 반환 및 퇴근의 경우 퇴근 시간 저장
+     *
+     * @param user_no 사원번호
+     * @return 출퇴근 정보를 포함하는 맵 객체. 퇴근 전, 이미 퇴근한 경우, 출근 기록이 없는 경우에 따라 코드 반환
+     * @throws RuntimeException 주어진 사원 번호에 해당하는 데이터가 없는 경우
+     */
     @Transactional
     public Map<String, Object> getUserProfileInfo(int user_no) {
 
@@ -82,6 +88,13 @@ public class UserProfileService {
         return responseData;
     }
 
+    /**
+     * 사원 상세 조회 - 우측 화면에 날짜순 출퇴근 시간, 건강데이터, 출퇴근 상태 출력을 위해 사원번호를 넘겨주는 메서드
+     * 주어진 사원 번호로 UserProfile 조회
+     *
+     * @param user_no 사원번호
+     * @return 주어진 사원 번호에 해당하는 UserProfile 데이터
+     */
     @Transactional(readOnly = true)
     public Optional<UserProfile> getUserProfile(int user_no) {
         return userProfileRepository.findById(user_no);
