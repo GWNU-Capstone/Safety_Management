@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -16,20 +17,10 @@ import java.util.List;
 public class UserProfile {
     @Id
     @Column(name = "USER_NO")
-    private int UserNo; // 사원 번호
+    private Long UserNo; // 사원 번호
 
-    @Column(name = "USER_NAME")
+    @NotNull
+    @Column(name = "USER_NAME", nullable = false)
     private String UserName; // 이름
-
-    /*cascade 보류
-
-    @OneToOne(mappedBy = "UserProfile", cascade = CascadeType.ALL)
-    private UserInfo userInfo;
-
-    // cascade 추가
-    @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL)
-    private List<UserData> userDataList;
-
-    */
 
 }
