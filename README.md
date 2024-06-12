@@ -1,5 +1,42 @@
-# Safety_Management
-[GWNU] 공사장 안전 관리 시스템
+# 👷🏻 SMART GATE - Safety_Management
+> 공사장 출입시스템을 개발해 근로자의 건강 상태 및 근로 환경을 모니터링 하는 시스템 🔥
+
+<p align="center">
+  <img width="70%" alt="applogo" src="https://github.com/GWNU-Capstone/Safety_Management/assets/118153233/671cc4b6-7c42-4748-8177-fbf60292f9f9">
+  <br><br>
+  <img alt="Static Badge" src="https://img.shields.io/badge/Spring%20Boot-Back-%6DB33F?style=for-the-badge&logo=springboot&logoSize=auto">
+  <img alt="Static Badge" src="https://img.shields.io/badge/React-Front-%2361DAFB?style=for-the-badge&logo=React&logoSize=auto">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Raspberry%20Pi-Software-%23A22846?style=for-the-badge&logo=raspberrypi&logoSize=auto">
+  <img alt="Static Badge" src="https://img.shields.io/badge/Arduino-Software-%2300878F?style=for-the-badge&logo=arduino&logoSize=auto">
+</p>
+
+<br>
+
+## 📑 프로젝트 설명
+건설 현장에서의 안전 관리 중요성은 매년 점점 증가하고 있습니다.
+
+이러한 문제에 대응하기 위해, 출입 관리와 건강 상태 모니터링을 통합한 시스템을 개발 목표로 선정했습니다.
+
+<br>
+
+## 🕒 개발 기간
+* 2024.03.11일 ~
+
+|<img src="https://github.com/GWNU-Capstone/Safety_Management/assets/118153233/7e013c6e-09d0-4c2d-9765-97e7b41189b2" width="475" height="260"/>|<img src="https://github.com/GWNU-Capstone/Safety_Management/assets/118153233/c91f438c-6e24-4596-a8bd-a276b0630b58" width="475" height="260"/>|
+|:-:|:-:|
+
+|<img src="https://github.com/GWNU-Capstone/Safety_Management/assets/118153233/4c30045f-6051-4de1-bc11-8241f210fb3b" width="475" height="260"/>|<img src="https://github.com/GWNU-Capstone/Safety_Management/assets/118153233/3ee36e03-e0a7-49c1-9aba-904adba68f46" width="475" height="260"/>|
+|:-:|:-:|
+
+<br>
+
+## 👩🏻‍💻🧑🏻‍💻 프로젝트 멤버
+|<img src="https://avatars.githubusercontent.com/u/118153233?v=4" width="100" height="100"/>|<img src="https://avatars.githubusercontent.com/u/163621982?v=4" width="100" height="100"/>|<img src="https://avatars.githubusercontent.com/u/99818847?v=4" width="100" height="100"/>|<img src="https://avatars.githubusercontent.com/u/132491134?v=4" width="100" height="100"/>|<img src="https://avatars.githubusercontent.com/u/148872743?v=4" width="100" height="100"/>|<img src="https://avatars.githubusercontent.com/u/149156628?v=4" width="100" height="100"/>|
+|:-:|:-:|:-:|:-:|:-:|:-:|
+|[@taek2222](https://github.com/taek2222)|[@chaewon9472](https://github.com/chaewon9472)|[@02present](https://github.com/02present)|[@Yunwendy](https://github.com/Yunwendy)|[@fullmoon1219](https://github.com/fullmoon1219)|[@sapang123](https://github.com/sapang123)|
+|✔️ PM - Back |✔️ Back |✔️ Hardware |✔️ Hardware |✔️ Front |✔️ Front |
+
+<br>
 
 ## 🗂️ API 명세서
 ### 📕 Backend(Spring Boot)
@@ -17,11 +54,8 @@
 | **근로자 측정값 평균 요청**     | GET  | '/today/data-average'           | 근로자들의 측정값(체온, 심박수, 산소포화도) 각각의 평균을 반환한다.   |
 | **근로자 종합 데이터 요청**     | GET  | '/today/user-health-status'           | 근로자 상태(정상,주의,심각)에 대한 인원 수와 사용자 각각에 대한 상태 데이터를 반환한다.   |
 | **전날 평균 근로시간 요청**     | GET  | '/yesterday/average-worktime'           | 전날 데이터를 기준으로 근로자들의 근로시간의 평균을 반환한다.  |
-
-
-
-
-
+### 📝 [Backend API 상세 명세서 자세히보기 (클릭)](https://github.com/GWNU-Capstone/Safety_Management/blob/taek2222-patch-1/Back/README.md)
+<br>
 
 ### 📘 Software 아두이노(Arduino) + 라즈베리파이(Raspberry Pi)
 | 포인트 역할             | Method | URL                 | 요약 설명                              |
@@ -30,214 +64,8 @@
 | **지문 등록정보**       | GET    | '/fingerprint/info'  | 지문 인식기에 등록되어있는 정보를 확인한다.     |
 | **지문 등록**         | GET    | '/fingerprint/add/?location=' | 지문을 등록한다. ?location= 뒤에 번호를 입력하면 특정 위치에 등록할 수 있다. </br>없는경우 0번부터 순서대로 입력됨.     |
 | **지문 제거**         | GET    | '/fingerprint/rm/?location='       | 지문을 삭제한다. ?location= 뒤에 삭제할 번호를 입력해야 작동한다.     |
-| ~**지문 전체제거**~       | ~GET~    | ~'/fingerprint/rmall'~       | ~지문인식센서에 등록된 모든 지문을 삭제한다~ </br>**<u>보안 문제로 프론트에서 구현은 하지 말아주세요</u>**     |
 | **음주 측정결과**      | GET    | '/drink'              | 음주 센서에서의 측정값을 반환한다.           |
 | **체온 및 심박 측정결과**| GET    | '/tempheart'          | 체온 및 심박 센서에서의 측정값을 반환한다.     |
 | **사진 촬영**| GET    | '/camera'          | 사진을 촬영한 후 해당 사진을 반환한다.     |
 | **심박센서 켜기**| GET    | '/hrstart'          | 심박센서를 켠다 (서버 실행시 기본으로 켜짐)     |
-| **심박센서 끄기**| GET    | '/hrstop'          | 심박센서를 끈다 (심박센서 오류발생시 대처용)     |
-
-
-## 🗂️ API 상세 정보
-### 📕(Back) 근로자 일부 정보 요청
-- **URL**: `/users/fingerprint/{사용자 ID}`
-- **Method**: GET
-- **성공 응답**:
-  - **출근 O / 퇴근 X**:
-    ```json
-    {
-      "code": 101,
-      "userEnd": "21:43:51" (퇴근 기록 시간)
-    }
-    ```
-  - **출근 O / 퇴근 O**:
-    ```json
-    {
-      "code": 102
-    }
-    ```
-  - **출근 X / 퇴근 X**:
-    ```json
-    {
-      "code": 103,
-      "userImage": "1.png" (사진)
-      "userNo": 1, (사원 번호)
-      "userName": "홍길동" (이름)
-    }
-      ```
-* * *
-
-### 📕(Back) 근로자 전체 정보 요청
-- **URL**: `/users/all`
-- **Method**: GET
-- **성공 응답**:
-  - **Content**:
-    ```json
-    {
-      "userNo": 1,
-      "userPosition": "관리직", (근로자 관직)
-      "userName": "홍길동", 
-      "userAge": 25, (나이)
-      "userGender": "남성", (성별)
-      "userTelNo": "01012345678", (전화번호)
-      "userEmail": "abc@naver.com", (이메일)
-      "userAddress": "강원특별자치도 원주시" (주소)
-    }
-    ...
-    ```
-
-* * *
-
-### 📕(Back) 근로자 상세 정보 요청
-- **URL**: `/detail/{사용자 ID}`
-- **Method**: GET
-- **성공 응답**:
-  - **Content**:
-    ```json
-    {
-      "userNo": 1,
-      "userName": "홍길동",
-      "userImage": "1.png",
-      "userResidentNum": "000000-1234567",
-      "userAge": 25,
-      "userTelNo": "01012345678",
-      "userGender": "남성",
-      "userPosition": "관리직",
-      "userEmail": "1abc@naver.com",
-      "userAddress": "강원특별자치도 원주시",
-      "userBank": "우리은행", (은행)
-      "userAccount": "1002-123-456789", (계좌 번호)
-      "userJoinDate": "2024-03-01", (입사 일자)
-      "memo": "메모" (메모)
-    }
-    ```
-
-* * *
-
-### 📕(Back) 근로자 등록
-- **URL**: `/user/crate`
-- **Method**: POST
-- **전송 데이터**:
-  - **Params**
-    ```json
-    {
-        "userNo" : 7, 
-        "userPosition" : "사장",
-        "userName" : "홍길동", 
-        "userAge" : 33,
-        "userGender" : "남성",
-        "userTelNo" : "01012345678",
-        "userEmail" : "1abc@naver.com",
-        "userAddress" : "강원도"
-    }
-    ```  
-- **성공 응답**:
-  - **Content**:
-    ```json
-    {
-        "userNo" : 7, 
-        "userPosition" : "사장",
-        "userName" : "홍길동", 
-        "userAge" : 33,
-        "userGender" : "남성",
-        "userTelNo" : "01012345678",
-        "userEmail" : "1abc@naver.com",
-        "userAddress" : "강원도"
-    }
-    ```
-
-* * *
-
-### 📕(Back) 출근 등록 요청
-- **URL**: `/user/go`
-- **Method**: POST
-- **전송 데이터**:
-  - **Params**
-    ```json
-    {
-      "userNo": 1, (사원 번호)
-      "userDrink" : 0.05, (음주 측정)
-      "userHeartRate": 69, (심박수)
-      "userTemp": 29.8, (체온)
-      "userOxygen" : 89 (산소포화도)
-    }
-    ```  
-- **성공 응답**:
-  - **Content**:
-    ```json
-    {
-      "userProfile": {
-        "userName": "홍길동",
-        "userNo": 1
-      },
-      "date": "2024-04-13", (출근 날짜)
-      "userEnd": null, (퇴근 시간)
-      "userDrink": 0.05, 
-      "userTemp": 29.8,
-      "userHeartRate": 69,
-      "userOxygen": 89,
-      "userDataNo": 14, (데이터 번호)
-      "userStart": "18:30:00"
-    }
-    ```
-
-* * *
-
-### 📕(Back) 사용자 상세정보 수정
-- **URL**: `/update/{사용자ID}`
-- **Method**: PATCH
-- **전송 데이터**:
-  - **Params**
-    ```json
-    {
-      "userNo" : 3,
-      "userName" : "홍길동",
-      "userImage" : "11.png",
-      "userResidentNum" : "123456-1234567",
-      "userAge" : 60,
-      "userTelNo" : "01044444441",
-      "userGender" : "남성",
-      "userPosition": "사장",
-      "userEmail": "1abc@naver.com",
-      "userAddress": "강원도",
-      "userBank" : "국민은행",
-      "userAccount": "123-4567-1234",
-      "userJoinDate": "2024-04-28"
-      "memo" : "example"
-    }
-    ```
-    
-- **성공 응답**:
-  - **Content**:
-    ```json
-    {
-      "userNo": 3,
-      "userImage": "11.png",
-      "userResidentNum": "123456-1234567",
-      "userAge": 60,
-      "userTelNo": "01044444441",
-      "userGender": "남성",
-      "userPosition": "사장",
-      "userEmail": "1abc@naver.com",
-      "userAddress": "강원도",
-      "userBank": "국민은행",
-      "userAccount": "123-4567-1234",
-      "userJoinDate": "2024-04-28",
-      "memo": "example",
-      "userProfile": {
-        "userName": "홍길동",
-        "userNo": 3
-                    }
-    }
-    ```
-
-* * *
-    
-### 📕(Back) 사용자 정보 삭제
-- **URL**: `/delete/{사용자ID}`
-- **Method**: DELETE
-- **응답 상태**:
-- 
-  성공 시 204 No Content
-  
-  오류발생 시 500 Internal Server Error 등
+| **심박센서 끄기**| GET    | '/hrstop'          | 심박센서를 끈다 (심박센서 오류발생시 대처용)     
