@@ -112,10 +112,9 @@ public class AIFeedbackService {
     private void messageSave(String gptMessage) {
         String[] messages = gptMessage.split(" NEXT ");
 
-        for(int i = 0; i < messages.length; i++) {
+        for (String message : messages) {
             AIFeedback aiFeedback = new AIFeedback();
-            aiFeedback.setFeedbackId((long) (i+1));
-            aiFeedback.setContents(messages[i]);
+            aiFeedback.setContents(message);
 
             aiFeedbackRepository.save(aiFeedback);
         }

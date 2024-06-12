@@ -13,8 +13,9 @@ import lombok.NoArgsConstructor;
 public class AIFeedback {
     @Id
     @Column(name = "FEEDBACK_ID")
-    private Long feedbackId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long feedbackId; // AI 메시지 데이터 번호
 
     @Column(name = "CONTENTS")
-    private String contents;
+    private String contents; // AI 메시지 내용
 }
