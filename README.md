@@ -68,4 +68,5 @@
 | **체온 및 심박 측정결과**| GET    | '/tempheart'          | 체온 및 심박 센서에서의 측정값을 반환한다.     |
 | **사진 촬영**| GET    | '/camera'          | 사진을 촬영한 후 해당 사진을 반환한다.     |
 | **심박센서 켜기**| GET    | '/hrstart'          | 심박센서를 켠다 (서버 실행시 기본으로 켜짐)     |
-| **심박센서 끄기**| GET    | '/hrstop'          | 심박센서를 끈다 (심박센서 오류발생시 대처용)     
+| **심박센서 끄기**| GET    | '/hrstop'          | 심박센서를 끈다 (심박센서 오류발생시 대처용) |
+### 📝 [Software API 상세 명세서 자세히보기 (클릭)](https://github.com/GWNU-Capstone/Safety_Management/blob/taek2222-patch-1/SoftWare/README.md)
